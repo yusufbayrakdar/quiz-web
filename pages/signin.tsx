@@ -35,6 +35,7 @@ function SignUp() {
       <Head>
         <title>Giriş</title>
         <meta name="description" content="BilsemIQ giriş sayfası" />
+        <link rel="icon" href="/ideas.png" />
       </Head>
       <Form
         form={form}

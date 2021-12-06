@@ -8,7 +8,6 @@ import { store } from "../redux/configureStore";
 import Container from "../components/Container";
 import CustomHeader from "../components/CustomHeader";
 import CustomDrawer from "../components/CustomDrawer";
-import "../styles.css";
 
 const { Content } = Layout;
 

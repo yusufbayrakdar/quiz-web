@@ -21,6 +21,9 @@ function CustomHeader() {
   };
 
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  const userInfoVisible = useSelector(
+    (state: RootState) => state.auth.userInfoVisible
+  );
   const [currentRoute, setCurrentRoute] = useState(1);
 
   useEffect(
@@ -66,9 +69,9 @@ function CustomHeader() {
           {!loggedIn && <MenuItem link="/signin" title="GİRİŞ YAP" />}
           {!loggedIn && <MenuItem link="/signup" title="KAYDOL" />}
           {loggedIn && (
-            <Menu.Item key="5" onClick={toggleUserInfo}>
+            <MenuItem onClick={toggleUserInfo} active={userInfoVisible}>
               <UserOutlined style={{ fontSize: 20 }} />
-            </Menu.Item>
+            </MenuItem>
           )}
         </Menu>
       </Row>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Checkbox, Row, Col, Card } from "antd";
 import useRedux from "../hooks/useRedux";
 import { useSelector } from "react-redux";
@@ -25,7 +25,7 @@ function SignUp() {
   useEffect(() => {
     if (loggedIn) {
       form.resetFields();
-      // router.push("/");
+      router.push("/");
     }
   }, [loggedIn]);
 
@@ -34,6 +34,7 @@ function SignUp() {
       <Head>
         <title>Kaydol</title>
         <meta name="description" content="BilsemIQ kayıt sayfası" />
+        <link rel="icon" href="/ideas.png" />
       </Head>
       <Form
         form={form}
