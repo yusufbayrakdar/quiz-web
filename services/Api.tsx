@@ -67,7 +67,7 @@ class Api {
   };
 
   autoLogin = () => {
-    return this._doGetWithAuth("/users/profile");
+    return this._doGetWithAuth("/instructors/profile");
   };
 
   emailConfirm = (userId: string) => {

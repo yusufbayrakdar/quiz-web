@@ -36,9 +36,12 @@ const tryAutoLoginSaga = function* () {
 const trySignupInstructorSaga = function* ({ payload }) {
   try {
     const { data } = yield call(Api.signupInstructor, payload);
+    const { token, student, instructor } = data;
 
-    localStorage.setItem(TOKEN, data.token);
-    yield put($A($.LOGIN_SUCCESS, data.user));
+    localStorage.setItem(TOKEN, token);
+    if (instructor) yield put($A($.INSTRUCTOR_LOGIN_SUCCESS, instructor));
+    else if (student) yield put($A($.STUDENT_LOGIN_SUCCESS, student));
+    else throw new Error();
     showSuccessMessage("Kayıt başarılı");
   } catch {
     showErrorMessage("Kaydolurken bir hata oluştu");

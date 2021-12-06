@@ -40,7 +40,7 @@ export default function authReducer(state = initialState, { type, payload }) {
       return {
         ...state,
         autoLoginInLoading: false,
-        user: payload,
+        instructor: payload,
         loggedIn: true,
       };
 
