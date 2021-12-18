@@ -8,11 +8,7 @@ function index(props: object) {
   useEffect(() => {
     dispatchAction($.AUTO_LOGIN_REQUEST);
   }, [dispatchAction, $]);
-  return (
-    <div className="w-full h-full">
-      <ConfigProvider {...props}></ConfigProvider>
-    </div>
-  );
+  return <ConfigProvider {...props}></ConfigProvider>;
 }
 
 export default index;

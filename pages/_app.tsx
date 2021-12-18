@@ -6,7 +6,6 @@ import "tailwindcss/tailwind.css";
 
 import { store } from "../redux/configureStore";
 import Container from "../components/Container";
-import CustomHeader from "../components/CustomHeader";
 import CustomDrawer from "../components/CustomDrawer";
 
 const { Content } = Layout;
@@ -17,7 +16,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Provider store={store}>
         <Container>
           <div className="flex flex-col h-full ">
-            <CustomHeader />
             <Content className="flex-1 flex items-center justify-center relative">
               <Component {...pageProps} />
               <CustomDrawer />
