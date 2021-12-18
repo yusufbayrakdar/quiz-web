@@ -14,14 +14,17 @@ const Styled = styled.div`
       transition: filter 0.5s ease-in-out;
     }
     transition: filter 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    height: 100vh;
   }
   .login-button {
     width: 60px;
-    height: 66px;
+    height: 68px;
     background-color: rgba(255, 255, 255, 0);
     position: absolute;
     right: 217px;
-    top: 348px;
+    top: 49%;
     cursor: pointer;
     z-index: 15;
   }
@@ -59,7 +62,7 @@ const Home: NextPage = () => {
       <main>
         <div className="h-screen w-screen bg-blue-600 relative">
           <Styled>
-            <div className="absolute right-0 flex items-center h-screen lg:blur-md bg-image">
+            <div className="absolute right-0 bg-image">
               <Image
                 src={"/varlik.png"}
                 width={729 * rate}
