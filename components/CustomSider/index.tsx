@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 
@@ -15,12 +15,24 @@ import {
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import useRedux from "../../hooks/useRedux";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/configureStore";
 
 const { Sider } = Layout;
 
 function CustomSider() {
   const router = useRouter();
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+
   const { dispatchAction, $ } = useRedux();
+
+  const instructor = useSelector((state: RootState) => state.auth.instructor);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      router.push("/");
+    }
+  }, [loggedIn]);
 
   if (["/signin", "/signup", "/"].includes(router.pathname)) return null;
 
@@ -36,26 +48,28 @@ function CustomSider() {
   return (
     <Sider theme="light">
       <Menu mode="inline" defaultSelectedKeys={[selectedKey]}>
-        <Menu.SubMenu
-          key="Sub1"
-          icon={<FontAwesomeIcon icon={faUserGraduate} width={15} />}
-          title="Öğrenciler"
-        >
-          <Menu.Item
-            key="1"
-            icon={<UnorderedListOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.student}?page=1`)}
+        {instructor && (
+          <Menu.SubMenu
+            key="Sub1"
+            icon={<FontAwesomeIcon icon={faUserGraduate} width={15} />}
+            title="Öğrenciler"
           >
-            Liste
-          </Menu.Item>
-          <Menu.Item
-            key="2"
-            icon={<PlusCircleOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.student}/create`)}
-          >
-            Oluştur
-          </Menu.Item>
-        </Menu.SubMenu>
+            <Menu.Item
+              key="1"
+              icon={<UnorderedListOutlined />}
+              onClick={() => router.push(`${BASE_ENDPOINT.student}?page=1`)}
+            >
+              Liste
+            </Menu.Item>
+            <Menu.Item
+              key="2"
+              icon={<PlusCircleOutlined />}
+              onClick={() => router.push(`${BASE_ENDPOINT.student}/create`)}
+            >
+              Oluştur
+            </Menu.Item>
+          </Menu.SubMenu>
+        )}
         <Menu.Item
           key="3"
           icon={<QuestionCircleOutlined />}

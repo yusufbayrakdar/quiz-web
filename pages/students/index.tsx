@@ -31,7 +31,7 @@ function students() {
   const hasPhone = query["hasPhone"];
 
   useEffect(() => {
-    if (instructor)
+    if (instructor) {
       dispatchAction($.GET_STUDENTS, {
         page,
         limit,
@@ -39,6 +39,7 @@ function students() {
         hasPhone,
         instructor: instructor?._id,
       });
+    }
   }, [dispatchAction, $, page, limit, search, hasPhone, instructor]);
 
   const columns = [
