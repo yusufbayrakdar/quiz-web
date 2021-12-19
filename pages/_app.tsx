@@ -7,7 +7,6 @@ import styled from "styled-components";
 
 import { store } from "../redux/configureStore";
 import Container from "../components/Container";
-import CustomDrawer from "../components/CustomDrawer";
 import CustomHeader from "../components/CustomHeader";
 import CustomSider from "../components/CustomSider";
 
@@ -43,7 +42,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <CustomSider />
                 <Content className="flex-1 flex justify-center relative">
                   <Component {...pageProps} />
-                  <CustomDrawer />
                 </Content>
               </Layout>
             </div>

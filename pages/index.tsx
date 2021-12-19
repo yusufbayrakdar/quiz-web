@@ -14,9 +14,12 @@ const Styled = styled.div`
   .bg-image {
     @media screen and (max-width: 800px) {
       filter: blur(4px);
+      right: 0;
       transition: filter 0.5s ease-in-out;
+      transition: right 0.5s ease-in-out;
     }
     transition: filter 0.5s ease-in-out;
+    transition: right 0.5s ease-in-out;
     display: flex;
     align-items: center;
     height: 100vh;
@@ -59,7 +62,7 @@ const Home: NextPage = () => {
       <main>
         <div className="h-screen w-screen bg-blue-600 relative">
           <Styled>
-            <div className="absolute right-0 bg-image">
+            <div className="absolute right-10 bg-image">
               <Image
                 src={"/varlik.png"}
                 width={729 * rate}
