@@ -69,7 +69,7 @@ class Api {
   };
 
   signupInstructor = (payload: object) => {
-    return this._doPost("/auth/register/instructor", payload);
+    return this._doPost("/instructors", payload);
   };
 
   autoLogin = () => {

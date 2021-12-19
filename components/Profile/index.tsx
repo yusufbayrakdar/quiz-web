@@ -48,7 +48,7 @@ function index() {
           {firstName} {lastName}
         </div>
         <div className="text-gray-100 font-light text-xs">
-          {`@${nickname}` || phone}
+          {(nickname && `@${nickname}`) || phone}
         </div>
       </Col>
     </Row>
