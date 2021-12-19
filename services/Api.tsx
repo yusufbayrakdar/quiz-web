@@ -1,6 +1,13 @@
 import { TOKEN } from "../utils";
 import _fetch from "./CustomHttpService";
 
+class Query {
+  search: string;
+  isActive: boolean;
+  page: string;
+  limit: string;
+}
+
 class Api {
   // GET request
   _doGet = (endpoint: string) => {
@@ -46,17 +53,16 @@ class Api {
     });
   };
 
-  getRendezvous = () => {
-    return this._doGet("/rendezvous");
-  };
+  objectToQueryString(obj: any) {
+    if (typeof obj !== "object") return "";
 
-  getRendezvousAdmin = () => {
-    return this._doGetWithAuth("/rendezvous/admin");
-  };
-
-  takeRendezvous = (payload: object) => {
-    return this._doPostWithAuth("/rendezvous", payload);
-  };
+    var str = [];
+    for (var p in obj)
+      if (obj.hasOwnProperty(p) && obj[p]) {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      }
+    return str.join("&") ? "?" + str.join("&") : "";
+  }
 
   login = (payload: object) => {
     return this._doPost("/auth/login", payload);
@@ -67,11 +73,16 @@ class Api {
   };
 
   autoLogin = () => {
-    return this._doGetWithAuth("/instructors/profile");
+    return this._doGetWithAuth("/auth/profile");
   };
 
-  emailConfirm = (userId: string) => {
-    return this._doGetWithAuth(`/users/${userId}/confirm`);
+  getStudents = (payload: Query) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/students${query}`);
+  };
+
+  createStudent = (payload: object) => {
+    return this._doPostWithAuth(`/students`, payload);
   };
 }
 

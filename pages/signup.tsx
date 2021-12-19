@@ -25,15 +25,15 @@ function SignUp() {
   useEffect(() => {
     if (loggedIn) {
       form.resetFields();
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [loggedIn]);
 
   return (
-    <div className="bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 h-full w-screen flex justify-center items-center">
+    <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 h-full w-screen flex justify-center items-center">
       <Head>
         <title>Kaydol</title>
-        <meta name="description" content="BilsemIQ kayıt sayfası" />
+        <meta name="description" content="BilsemIA kayıt sayfası" />
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Form
@@ -44,12 +44,6 @@ function SignUp() {
         autoComplete="off"
         layout="vertical"
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.25)",
-          boxShadow: "0 8px 32px 0 rgba( 31, 38, 135, 0.37 )",
-          backdropFilter: "blur( 4px )",
-          border: "1px solid rgba( 255, 255, 255, 0.18 )",
-        }}
       >
         <Form.Item
           label="Ad"
@@ -98,9 +92,7 @@ function SignUp() {
         </Form.Item>
 
         <Form.Item name="remember" valuePropName="checked">
-          <Checkbox className="flex justify-end text-white">
-            Beni hatırla
-          </Checkbox>
+          <Checkbox className="flex justify-end">Beni hatırla</Checkbox>
         </Form.Item>
 
         <Form.Item>
@@ -113,8 +105,7 @@ function SignUp() {
           </Button>
         </Form.Item>
         <a
-          // className="text-xs text-blue-500 mr-2 flex justify-end cursor-pointer"
-          className="text-xs text-gray-100 mr-2 flex justify-end cursor-pointer hover:text-white"
+          className="text-xs text-blue-500 mr-2 flex justify-end cursor-pointer"
           onClick={() => router.push("/signin")}
         >
           Zaten bir hesabım var

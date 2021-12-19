@@ -48,19 +48,6 @@ const trySignupInstructorSaga = function* ({ payload }) {
   }
 };
 
-const tryEmailConfirmSaga = function* ({ payload }) {
-  try {
-    const {
-      data: { emailConfirmed },
-    } = yield call(Api.emailConfirm, payload);
-
-    if (emailConfirmed) showSuccessMessage("Emailiniz doğrulandı");
-    else throw new Error();
-  } catch {
-    showErrorMessage("Email doğrulanamadı");
-  }
-};
-
 const tryLogoutSaga = function () {
   try {
     localStorage.setItem(TOKEN, "");
@@ -73,5 +60,4 @@ export default function* authSaga() {
   yield takeEvery($.AUTO_LOGIN_REQUEST, tryAutoLoginSaga);
   yield takeLatest($.LOGOUT_REQUEST, tryLogoutSaga);
   yield takeLatest($.SIGNUP_INSTRUCTOR_REQUEST, trySignupInstructorSaga);
-  yield takeLatest($.EMAIL_CONFIRM, tryEmailConfirmSaga);
 }

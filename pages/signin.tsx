@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Checkbox, Row, Col, Card } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, Checkbox, Row, Col, Card, Radio } from "antd";
 import { useSelector } from "react-redux";
 import NumberFormat from "react-number-format";
 import { useRouter } from "next/router";
@@ -13,9 +13,10 @@ function SignUp() {
   const { dispatchAction, $ } = useRedux();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const [form] = Form.useForm();
+  const [isInstructor, setIsInstructor] = useState(false);
 
   const onFinish = (values: any) => {
-    values.phone = values.phone.replace(/[\(\)]/g, "");
+    if (values.phone) values.phone = values.phone.replace(/[\(\)]/g, "");
     dispatchAction($.LOGIN_REQUEST, values);
   };
 
@@ -26,15 +27,15 @@ function SignUp() {
   useEffect(() => {
     if (loggedIn) {
       form.resetFields();
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [loggedIn]);
 
   return (
-    <div className="bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 h-full w-screen flex justify-center items-center">
+    <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 h-full w-screen flex justify-center items-center">
       <Head>
         <title>Giriş</title>
-        <meta name="description" content="BilsemIQ giriş sayfası" />
+        <meta name="description" content="BilsemIA giriş sayfası" />
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Form
@@ -46,29 +47,51 @@ function SignUp() {
         layout="vertical"
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3"
       >
-        <Form.Item
-          label="Telefon"
-          name="phone"
-          rules={[{ required: true, message: "Lütfen telefonunuzu giriniz!" }]}
-        >
-          <Row>
-            <Col>
-              <Card className="w-12 h-8 flex justify-center items-center  bg-gray-100 border-2">
-                +90
-              </Card>
-            </Col>
-            <Col flex="auto">
-              <NumberFormat
-                customInput={Input}
-                type="tel"
-                format="(###) ### ## ##"
-                mask="_"
-                allowLeadingZeros={false}
-                allowEmptyFormatting
-              />
-            </Col>
-          </Row>
-        </Form.Item>
+        <div className="flex justify-end">
+          <Radio.Group
+            options={["Eğitmen", "Öğrenci"]}
+            onChange={(e) => setIsInstructor(e.target.value === "Eğitmen")}
+            optionType="button"
+            defaultValue={"Öğrenci"}
+          />
+        </div>
+        {isInstructor ? (
+          <Form.Item
+            label="Telefon"
+            name="phone"
+            rules={[
+              { required: true, message: "Lütfen telefonunuzu giriniz!" },
+            ]}
+          >
+            <Row>
+              <Col>
+                <Card className="w-12 h-8 flex justify-center items-center  bg-gray-100 border-2">
+                  +90
+                </Card>
+              </Col>
+              <Col flex="auto">
+                <NumberFormat
+                  customInput={Input}
+                  type="tel"
+                  format="(###) ### ## ##"
+                  mask="_"
+                  allowLeadingZeros={false}
+                  allowEmptyFormatting
+                />
+              </Col>
+            </Row>
+          </Form.Item>
+        ) : (
+          <Form.Item
+            label="Kullanıcı Adı"
+            name="nickname"
+            rules={[
+              { required: true, message: "Lütfen kullanıcı adınızı giriniz!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        )}
 
         <Form.Item
           label="Şifre"

@@ -1,50 +1,57 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/configureStore";
-import { CheckCircleOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Divider, Tooltip } from "antd";
-import useRedux from "../../hooks/useRedux";
+import { Col, Row, Tooltip } from "antd";
+import {
+  CheckCircleOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 
-function index({ closeDrawer = () => {} }) {
-  const { dispatchAction, $ } = useRedux();
+import { RootState } from "../../redux/configureStore";
+
+function index() {
   const instructor = useSelector((state: RootState) => state.auth.instructor);
   const student = useSelector((state: RootState) => state.auth.student);
-  if (!student && !instructor) return null;
 
-  const { firstName, lastName, phone, confirmed } = instructor || student;
+  if (!student && !instructor) return null;
+  const { firstName, lastName, nickname, phone, confirmed } =
+    instructor || student;
+
   const renderIcon = () => {
     return confirmed ? (
       <Tooltip title="Onaylı eğitmen" placement="left">
-        <CheckCircleOutlined className="text-green-500 justify-self-center pt-1 mr-2" />
+        <CheckCircleOutlined className="text-green-500 justify-self-center bg-white rounded-full" />
       </Tooltip>
     ) : (
       <Tooltip title="Yöneticinin onayı bekleniyor" placement="left">
-        <WarningOutlined className="text-yellow-500 justify-self-center pt-1 mr-2" />
+        <WarningOutlined
+          className="text-yellow-500 justify-self-center bg-white"
+          style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)" }}
+        />
       </Tooltip>
     );
   };
 
-  const logout = () => {
-    dispatchAction($.LOGOUT_REQUEST);
-    closeDrawer();
-  };
-
   return (
-    <div>
-      <div>
-        <div className="font-sans mb-4 flex" style={{ marginLeft: 22 }}>
+    <Row
+      className="rounded-lg p-1 cursor-pointer"
+      style={{ borderWidth: 1, borderColor: "rgba(243, 244, 246, 0.3)" }}
+    >
+      <div className="relative rounded-full flex justify-center items-center w-10 h-10 mr-1 bg-gray-300">
+        <UserOutlined style={{ fontSize: 20 }} className="text-white" />
+        <div className="absolute bottom-0 left-0">
           {typeof confirmed === "boolean" && renderIcon()}
-          {`${firstName} ${lastName}`}
-        </div>
-        <div className="text-center">
-          +90 ({phone.slice(0, 3)}) {phone.slice(4)}
         </div>
       </div>
-      <Divider />
-      <Button className="mt-5 w-full" onClick={logout}>
-        Çıkış yap
-      </Button>
-    </div>
+      <Col>
+        <div className="font-bold text-white">
+          {firstName} {lastName}
+        </div>
+        <div className="text-gray-100 font-light text-xs">
+          {`@${nickname}` || phone}
+        </div>
+      </Col>
+    </Row>
   );
 }
 
