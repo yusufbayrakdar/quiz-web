@@ -44,10 +44,10 @@ function index() {
         </div>
       </div>
       <Col>
-        <div className="font-bold text-white">
+        <div className="font-bold text-white gBold">
           {firstName} {lastName}
         </div>
-        <div className="text-gray-100 font-light text-xs">
+        <div className="text-gray-100 font-light text-xs gMed">
           {(nickname && `@${nickname}`) || phone}
         </div>
       </Col>

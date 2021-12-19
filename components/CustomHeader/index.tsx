@@ -15,7 +15,7 @@ function CustomHeader() {
   if (["/signin", "/signup"].includes(router.pathname))
     return (
       <div
-        className="absolute left-16 top-6 z-10 text-3xl font-bold text-white font-serif cursor-pointer"
+        className="absolute left-16 top-6 z-10 text-3xl font-bold text-white font-serif cursor-pointer gBold"
         onClick={() => router.push("/")}
       >
         BilsemIA

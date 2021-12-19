@@ -1,0 +1,16 @@
+@font-face {
+  font-family: Gilroy-Medium;
+  src: url(/assets/fonts/Gilroy-Medium.ttf) format("opentype");
+}
+@font-face {
+  font-family: Gilroy-Bold;
+  src: url(/assets/fonts/Gilroy-Bold.ttf) format("opentype");
+}
+
+.gBold {
+  font-family: Gilroy-Bold;
+}
+
+.gMed {
+  font-family: Gilroy-Medium;
+}

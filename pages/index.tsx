@@ -29,7 +29,7 @@ const Styled = styled.div`
     height: 68px;
     background-color: rgba(255, 255, 255, 0);
     position: absolute;
-    right: 217px;
+    right: 258px;
     top: 49%;
     cursor: pointer;
     z-index: 15;
@@ -82,7 +82,7 @@ const Home: NextPage = () => {
                   paddingTop: 50,
                 }}
               >
-                <Row className="text-5xl">BilsemAI</Row>
+                <Row className="text-5xl gBold cursor-pointer">BilsemAI</Row>
                 <Row className="text-xs ml-5">"Zekanı sonsuzluğua aç"</Row>
               </Col>
               <Col>

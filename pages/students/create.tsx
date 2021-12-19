@@ -93,7 +93,7 @@ function StudentCreate() {
               htmlType="submit"
               className="absolute right-0 top-0 pr-10 pl-10"
             >
-              Giriş Yap
+              Kaydet
             </Button>
           </Form.Item>
         </Form>
