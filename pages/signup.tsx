@@ -30,7 +30,7 @@ function SignUp() {
   }, [loggedIn]);
 
   return (
-    <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 h-full w-screen flex justify-center items-center">
+    <div className="bg-blue-600 h-full w-screen flex justify-center items-center">
       <Head>
         <title>Kaydol</title>
         <meta name="description" content="BilsemIA kayıt sayfası" />
@@ -43,7 +43,7 @@ function SignUp() {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical"
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3"
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3 animate__animated animate__fadeIn animate__faster"
       >
         <Form.Item
           label="Ad"

@@ -12,7 +12,7 @@ import { RootState } from "../redux/configureStore";
 
 const Styled = styled.div`
   .bg-image {
-    @media screen and (max-width: 800px) {
+    @media screen and (max-width: 1050px) {
       filter: blur(4px);
       right: 0;
       transition: filter 0.5s ease-in-out;
@@ -23,6 +23,13 @@ const Styled = styled.div`
     display: flex;
     align-items: center;
     height: 100vh;
+  }
+  .polygon {
+    @media screen and (max-width: 1200px) {
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    transition: opacity 0.5s ease-in-out;
   }
   .login-button {
     width: 60px;
@@ -62,7 +69,15 @@ const Home: NextPage = () => {
       <main>
         <div className="h-screen w-screen bg-blue-600 relative">
           <Styled>
-            <div className="absolute right-10 bg-image">
+            <div
+              className="polygon h-full absolute right-0"
+              style={{
+                width: "58.76%",
+                clipPath: "polygon(28% 0, 100% 0, 100% 100%, 0% 100%)",
+                backgroundColor: "#161E68",
+              }}
+            />
+            <div className="absolute right-10 bg-image animate__animated animate__fadeIn animate__faster">
               <Image
                 src={"/varlik.png"}
                 width={729 * rate}
@@ -74,16 +89,30 @@ const Home: NextPage = () => {
               onClick={() => router.push("/signin")}
             />
           </Styled>
-          <div className="z-10">
+          <div className="z-10 animate__animated animate__fadeIn animate__faster">
             <Col className=" text-white text-center h-screen flex flex-col justify-around">
               <Col
                 style={{
                   marginLeft: "15%",
-                  paddingTop: 50,
+                  paddingTop: 10,
                 }}
               >
-                <Row className="text-5xl gBold cursor-pointer">BilsemAI</Row>
+                <Row className="text-5xl gBold cursor-pointer font-extrabold">
+                  BilsemAI
+                </Row>
                 <Row className="text-xs ml-5">"Zekanı sonsuzluğua aç"</Row>
+              </Col>
+              <Col
+                className="gBold w-96 text-left"
+                style={{ marginLeft: "15%" }}
+              >
+                <div style={{ textIndent: 20 }}>
+                  "Öğrencilerinize bir şey öğretmeyin, onları düşünmelerini
+                  sağlayın. Çünkü onlar düşünmeye başlarsa zaten kendi
+                  çabalarıyla öğrenirler. Ve çaba sonucu öğrenilen bilgi, en
+                  kalıcı bilgi olur. Asla silinmez..!"
+                </div>
+                <div className="mt-4 font-bold">Sokrates</div>
               </Col>
               <Col>
                 <Row style={{ marginLeft: "15%" }}>

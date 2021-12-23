@@ -32,7 +32,7 @@ function SignUp() {
   }, [loggedIn]);
 
   return (
-    <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 h-full w-screen flex justify-center items-center">
+    <div className="bg-blue-600 h-full w-screen flex justify-center items-center">
       <Head>
         <title>Giriş</title>
         <meta name="description" content="BilsemIA giriş sayfası" />
@@ -45,7 +45,7 @@ function SignUp() {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
         layout="vertical"
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3"
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-1/3 animate__animated animate__fadeIn animate__faster"
       >
         <div className="flex justify-end">
           <Radio.Group
@@ -57,6 +57,7 @@ function SignUp() {
         </div>
         {isInstructor ? (
           <Form.Item
+            className="animate__animated animate__fadeIn animate__faster"
             label="Telefon"
             name="phone"
             rules={[
@@ -83,6 +84,7 @@ function SignUp() {
           </Form.Item>
         ) : (
           <Form.Item
+            className="animate__animated animate__fadeIn animate__faster"
             label="Kullanıcı Adı"
             name="nickname"
             rules={[
@@ -114,12 +116,14 @@ function SignUp() {
             Giriş Yap
           </Button>
         </Form.Item>
-        <Row className="text-xs mr-2 flex justify-end cursor-pointer">
-          <p className="text-gray-500 mr-1">Kayıtlı değil misin?</p>
-          <a onClick={() => router.push("/signup")} className="text-blue-500">
-            Kaydol
-          </a>
-        </Row>
+        {isInstructor && (
+          <Row className="text-xs mr-2 flex justify-end cursor-pointer animate__animated animate__fadeIn animate__faster">
+            <p className="text-gray-500 mr-1">Kayıtlı değil misin?</p>
+            <a onClick={() => router.push("/signup")} className="text-blue-500">
+              Kaydol
+            </a>
+          </Row>
+        )}
       </Form>
     </div>
   );

@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "tailwindcss/tailwind.css";
+import "animate.css";
 
 import { store } from "../redux/configureStore";
 import Container from "../components/Container";

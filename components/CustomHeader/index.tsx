@@ -15,7 +15,7 @@ function CustomHeader() {
   if (["/signin", "/signup"].includes(router.pathname))
     return (
       <div
-        className="absolute left-16 top-6 z-10 text-3xl font-bold text-white font-serif cursor-pointer gBold"
+        className="absolute left-16 top-6 z-10 text-3xl font-bold text-white font-serif cursor-pointer gBold animate__animated animate__fadeIn animate__faster"
         onClick={() => router.push("/")}
       >
         BilsemIA
@@ -28,7 +28,7 @@ function CustomHeader() {
     <div className="relative bg-blue-600 h-16 flex items-center">
       <Row className="flex flex-1">
         <Link href="/">
-          <p className="font-bold text-white font-sans text-2xl text-center flex justify-center items-center cursor-pointer ml-6 gBold">
+          <p className="font-bold text-white font-sans text-2xl text-center flex justify-center items-center cursor-pointer ml-6 gBold animate__animated animate__fadeIn animate__faster">
             BilsemIA
           </p>
         </Link>
