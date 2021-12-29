@@ -22,7 +22,7 @@ function CustomHeader() {
       </div>
     );
 
-  if (!loggedIn) return null;
+  if (!loggedIn || "/" === router.pathname) return null;
 
   return (
     <div className="relative bg-blue-600 h-16 flex items-center">

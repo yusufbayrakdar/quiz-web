@@ -84,6 +84,11 @@ class Api {
   createStudent = (payload: object) => {
     return this._doPostWithAuth(`/students`, payload);
   };
+
+  getShapes = (payload: Query) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/shapes${query}`);
+  };
 }
 
 export default new Api();

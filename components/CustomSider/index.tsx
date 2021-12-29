@@ -36,33 +36,24 @@ function CustomSider() {
 
   if (["/signin", "/signup", "/"].includes(router.pathname)) return null;
 
-  let selectedKey = "";
-  const endpointValues = Object.values(BASE_ENDPOINT);
-  for (let i = 0; i < endpointValues.length; i++) {
-    if (router.pathname === endpointValues[i]) {
-      selectedKey = `${i}`;
-      break;
-    }
-  }
-
   return (
     <Sider theme="light">
-      <Menu mode="inline" defaultSelectedKeys={[selectedKey]}>
+      <Menu mode="inline" defaultSelectedKeys={[router.pathname.split("?")[0]]}>
         {instructor && (
           <Menu.SubMenu
-            key="Sub1"
+            key="students-submenu"
             icon={<FontAwesomeIcon icon={faUserGraduate} width={15} />}
             title="Öğrenciler"
           >
             <Menu.Item
-              key="1"
+              key={BASE_ENDPOINT.student}
               icon={<UnorderedListOutlined />}
               onClick={() => router.push(`${BASE_ENDPOINT.student}?page=1`)}
             >
               Liste
             </Menu.Item>
             <Menu.Item
-              key="2"
+              key={`${BASE_ENDPOINT.student}/create`}
               icon={<PlusCircleOutlined />}
               onClick={() => router.push(`${BASE_ENDPOINT.student}/create`)}
             >
@@ -70,15 +61,28 @@ function CustomSider() {
             </Menu.Item>
           </Menu.SubMenu>
         )}
-        <Menu.Item
-          key="3"
+        <Menu.SubMenu
+          key="questions-submenu"
           icon={<QuestionCircleOutlined />}
-          onClick={() => router.push(`${BASE_ENDPOINT.question}?page=1`)}
+          title="Sorular"
         >
-          Sorular
-        </Menu.Item>
+          <Menu.Item
+            key={BASE_ENDPOINT.question}
+            icon={<UnorderedListOutlined />}
+            onClick={() => router.push(`${BASE_ENDPOINT.question}?page=1`)}
+          >
+            Liste
+          </Menu.Item>
+          <Menu.Item
+            key={`${BASE_ENDPOINT.question}/create`}
+            icon={<PlusCircleOutlined />}
+            onClick={() => router.push(`${BASE_ENDPOINT.question}/create`)}
+          >
+            Oluştur
+          </Menu.Item>
+        </Menu.SubMenu>
         <Menu.Item
-          key="4"
+          key={BASE_ENDPOINT.quiz}
           icon={<FormOutlined />}
           onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
         >

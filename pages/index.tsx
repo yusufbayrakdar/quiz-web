@@ -106,12 +106,16 @@ const Home: NextPage = () => {
                 className="gBold w-96 text-left"
                 style={{ marginLeft: "15%" }}
               >
+                <div className="text-4xl absolute left-0" style={{ top: -15 }}>
+                  "
+                </div>
                 <div style={{ textIndent: 20 }}>
-                  "Öğrencilerinize bir şey öğretmeyin, onları düşünmelerini
+                  Öğrencilerinize bir şey öğretmeyin, onları düşünmelerini
                   sağlayın. Çünkü onlar düşünmeye başlarsa zaten kendi
                   çabalarıyla öğrenirler. Ve çaba sonucu öğrenilen bilgi, en
-                  kalıcı bilgi olur. Asla silinmez..!"
+                  kalıcı bilgi olur. Asla silinmez..!
                 </div>
+                <div className="text-4xl absolute bottom-2 left-16">"</div>
                 <div className="mt-4 font-bold">Sokrates</div>
               </Col>
               <Col>
