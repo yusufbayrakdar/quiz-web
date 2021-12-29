@@ -18,7 +18,7 @@ function CustomHeader() {
         className="absolute left-16 top-6 z-10 text-3xl font-bold text-white font-serif cursor-pointer gBold animate__animated animate__fadeIn animate__faster"
         onClick={() => router.push("/")}
       >
-        BilsemIA
+        BilsemAI
       </div>
     );
 
@@ -29,7 +29,7 @@ function CustomHeader() {
       <Row className="flex flex-1">
         <Link href="/">
           <p className="font-bold text-white font-sans text-2xl text-center flex justify-center items-center cursor-pointer ml-6 gBold animate__animated animate__fadeIn animate__faster">
-            BilsemIA
+            BilsemAI
           </p>
         </Link>
         <div className="flex flex-1 justify-end mr-16">

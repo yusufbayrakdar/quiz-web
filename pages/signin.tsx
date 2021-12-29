@@ -35,7 +35,7 @@ function SignUp() {
     <div className="bg-blue-600 h-full w-screen flex justify-center items-center">
       <Head>
         <title>Giriş</title>
-        <meta name="description" content="BilsemIA giriş sayfası" />
+        <meta name="description" content="BilsemAI giriş sayfası" />
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Form

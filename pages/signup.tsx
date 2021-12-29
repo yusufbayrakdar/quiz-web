@@ -33,7 +33,7 @@ function SignUp() {
     <div className="bg-blue-600 h-full w-screen flex justify-center items-center">
       <Head>
         <title>Kaydol</title>
-        <meta name="description" content="BilsemIA kayıt sayfası" />
+        <meta name="description" content="BilsemAI kayıt sayfası" />
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Form
