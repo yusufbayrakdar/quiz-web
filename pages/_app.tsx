@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <CustomHeader />
             <Layout className="flex flex-col h-full">
               <CustomSider />
-              <Content className="flex-1 flex justify-center relative">
+              <Content className="flex-1 flex justify-center relative overflow-scroll">
                 <Component {...pageProps} />
               </Content>
             </Layout>

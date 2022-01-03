@@ -15,6 +15,7 @@ function AiDnD({ children, itemInfo }: any) {
       ref={drag}
       style={{
         opacity: isDragging ? 0.5 : 1,
+        cursor: "pointer",
       }}
     >
       {children}

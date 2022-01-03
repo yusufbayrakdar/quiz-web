@@ -84,3 +84,15 @@ export const updateQueryString = (
     }
   }
 };
+
+export const DURATIONS = { 30: "00:30", 45: "00:45", 60: "01:00", 90: "01:30" };
+
+export const GRADES = {
+  1: "1. Sınıf",
+  2: "2. Sınıf",
+  3: "3. Sınıf",
+  4: "4. Sınıf",
+  5: "5. Sınıf",
+};
+
+export const CATEGORIES = ["Matrix"];
