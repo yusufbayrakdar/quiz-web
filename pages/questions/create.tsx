@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 import useRedux from "../../hooks/useRedux";
 import { RootState } from "../../redux/configureStore";
@@ -122,58 +120,56 @@ function QuestionCreate() {
           Oluştur
         </Button>
       </div>
-      <DndProvider backend={HTML5Backend}>
-        <Row className="mt-5">
-          <Col span={19}>
-            <Info title="Soru" width="50%" largePadding={true}>
-              <Card className="rounded-xl">{renderNests()}</Card>
-            </Info>
-            <Info title="Seçenekler" width="50%" largePadding={true}>
-              <Card className="rounded-xl">
-                {
-                  <Row className="flex justify-around items-center">
-                    {renderRowNests(0, false)}
-                  </Row>
-                }
-              </Card>
-            </Info>
-            <Card className="rounded-xl mt-4 center">
-              <Input />
-              <Row className="overflow-scroll" style={{ height: 150 }}>
-                {shapes.map((shape: any) => (
-                  <AiDnD itemInfo={shape}>
-                    <div className="p-4 center">
-                      <img
-                        src={shape.imageUrl}
-                        className="w-8 h-8 object-contain pointer-events-none"
-                      />
-                    </div>
-                  </AiDnD>
-                ))}
-              </Row>
+      <Row className="mt-5">
+        <Col span={19}>
+          <Info title="Soru" width="50%" largePadding={true}>
+            <Card className="rounded-xl">{renderNests()}</Card>
+          </Info>
+          <Info title="Seçenekler" width="50%" largePadding={true}>
+            <Card className="rounded-xl">
+              {
+                <Row className="flex justify-around items-center">
+                  {renderRowNests(0, false)}
+                </Row>
+              }
             </Card>
-          </Col>
-          <Col offset={1}>
-            <InfoCard title={"Süre"}>
-              <Select value={duration} onChange={setDuration} bordered={false}>
-                {renderSelects(DURATIONS)}
-              </Select>
-            </InfoCard>
-            <InfoCard style={{ marginTop: 30 }} title={"Sınıf"}>
-              <Select value={grade} onChange={setGrade} bordered={false}>
-                {renderSelects(GRADES)}
-              </Select>
-            </InfoCard>
-            <InfoCard style={{ marginTop: 30 }} title={"Kategori"}>
-              <Select value={category} onChange={setCategory} bordered={false}>
-                {CATEGORIES.map((c) => (
-                  <Option value={c}>{c}</Option>
-                ))}
-              </Select>
-            </InfoCard>
-          </Col>
-        </Row>
-      </DndProvider>
+          </Info>
+          <Card className="rounded-xl mt-4 center">
+            <Input />
+            <Row className="overflow-scroll" style={{ height: 150 }}>
+              {shapes.map((shape: any) => (
+                <AiDnD itemInfo={shape}>
+                  <div className="p-4 center">
+                    <img
+                      src={shape.imageUrl}
+                      className="w-8 h-8 object-contain pointer-events-none"
+                    />
+                  </div>
+                </AiDnD>
+              ))}
+            </Row>
+          </Card>
+        </Col>
+        <Col offset={1}>
+          <InfoCard title={"Süre"}>
+            <Select value={duration} onChange={setDuration} bordered={false}>
+              {renderSelects(DURATIONS)}
+            </Select>
+          </InfoCard>
+          <InfoCard style={{ marginTop: 30 }} title={"Sınıf"}>
+            <Select value={grade} onChange={setGrade} bordered={false}>
+              {renderSelects(GRADES)}
+            </Select>
+          </InfoCard>
+          <InfoCard style={{ marginTop: 30 }} title={"Kategori"}>
+            <Select value={category} onChange={setCategory} bordered={false}>
+              {CATEGORIES.map((c) => (
+                <Option value={c}>{c}</Option>
+              ))}
+            </Select>
+          </InfoCard>
+        </Col>
+      </Row>
     </div>
   );
 }
