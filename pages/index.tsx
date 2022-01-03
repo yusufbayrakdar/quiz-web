@@ -64,6 +64,10 @@ const Home: NextPage = () => {
         <title>BilsemAI</title>
         <meta name="description" content="Zekanı sonsuzluğa aç" />
         <link rel="icon" href="/varlik.png" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Secular+One"
+        />
       </Head>
 
       <main>
@@ -106,16 +110,28 @@ const Home: NextPage = () => {
                 className="gBold w-96 text-left"
                 style={{ marginLeft: "15%" }}
               >
-                <div className="text-4xl absolute left-0" style={{ top: -15 }}>
+                <div
+                  className="text-4xl absolute left-0"
+                  style={{
+                    top: -35,
+                    fontFamily: "Secular One",
+                    transform: "rotate(180deg)",
+                  }}
+                >
                   "
                 </div>
-                <div style={{ textIndent: 20 }}>
+                <div style={{ textIndent: 40 }}>
                   Öğrencilerinize bir şey öğretmeyin, onları düşünmelerini
                   sağlayın. Çünkü onlar düşünmeye başlarsa zaten kendi
                   çabalarıyla öğrenirler. Ve çaba sonucu öğrenilen bilgi, en
                   kalıcı bilgi olur. Asla silinmez..!
                 </div>
-                <div className="text-4xl absolute bottom-2 left-16">"</div>
+                <div
+                  className="text-4xl absolute bottom-2 right-0"
+                  style={{ fontFamily: "Secular One" }}
+                >
+                  "
+                </div>
                 <div className="mt-4 font-bold">Sokrates</div>
               </Col>
               <Col>
