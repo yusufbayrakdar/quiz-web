@@ -154,7 +154,7 @@ const Home: NextPage = () => {
                       <FontAwesomeIcon
                         icon={faChevronRight}
                         width={8}
-                        className="ml-2"
+                        className="ml-2 h-auto"
                       />
                     </Row>
                   </Button>
