@@ -1,4 +1,4 @@
-import { put, call, takeEvery, takeLatest } from "redux-saga/effects";
+import { put, call, takeLatest } from "redux-saga/effects";
 import * as $ from "../actionTypes";
 import Api from "../../services/Api";
 import { $A, showErrorMessage, showSuccessMessage, TOKEN } from "../../utils";
@@ -56,8 +56,8 @@ const tryLogoutSaga = function () {
 };
 
 export default function* authSaga() {
-  yield takeEvery($.LOGIN_REQUEST, tryLoginSaga);
-  yield takeEvery($.AUTO_LOGIN_REQUEST, tryAutoLoginSaga);
+  yield takeLatest($.LOGIN_REQUEST, tryLoginSaga);
+  yield takeLatest($.AUTO_LOGIN_REQUEST, tryAutoLoginSaga);
   yield takeLatest($.LOGOUT_REQUEST, tryLogoutSaga);
   yield takeLatest($.SIGNUP_INSTRUCTOR_REQUEST, trySignupInstructorSaga);
 }

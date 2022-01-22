@@ -1,4 +1,4 @@
-import { put, call, takeEvery } from "redux-saga/effects";
+import { put, call, takeLatest } from "redux-saga/effects";
 import * as $ from "../actionTypes";
 import Api from "../../services/Api";
 import { $A, showErrorMessage, showSuccessMessage } from "../../utils";
@@ -27,6 +27,6 @@ const tryCreateStudentSaga = function* ({ payload }) {
 };
 
 export default function* studentSaga() {
-  yield takeEvery($.GET_STUDENTS, tryGetStudentsSaga);
-  yield takeEvery($.CREATE_STUDENT_REQUEST, tryCreateStudentSaga);
+  yield takeLatest($.GET_STUDENTS, tryGetStudentsSaga);
+  yield takeLatest($.CREATE_STUDENT_REQUEST, tryCreateStudentSaga);
 }

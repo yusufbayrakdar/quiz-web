@@ -8,11 +8,11 @@ import authSaga from "./auth/authSaga";
 import studentReducer from "./students/studentReducer";
 import studentSaga from "./students/studentSaga";
 
-import shapeReducer from "./shapes/shapeReducer";
-import shapeSaga from "./shapes/shapeSaga";
+import questionReducer from "./questions/questionReducer";
+import questionSaga from "./questions/questionSaga";
 
 const combinedSagas = function* () {
-  yield all([authSaga(), studentSaga(), shapeSaga()]);
+  yield all([authSaga(), studentSaga(), questionSaga()]);
 };
 
 declare global {
@@ -27,7 +27,7 @@ const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
   auth: authReducer,
   student: studentReducer,
-  shape: shapeReducer,
+  question: questionReducer,
 });
 
 export const store = createStore(

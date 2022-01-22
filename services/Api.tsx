@@ -89,6 +89,19 @@ class Api {
     const query = this.objectToQueryString(payload);
     return this._doGetWithAuth(`/shapes${query}`);
   };
+
+  getQuestionConfigs = () => {
+    return this._doGetWithAuth(`/questions/configs`);
+  };
+
+  getQuestionList = (payload: Query) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/searches${query}`);
+  };
+
+  createQuestion = (question: object) => {
+    return this._doPostWithAuth(`/questions/create`, question);
+  };
 }
 
 export default new Api();

@@ -29,7 +29,7 @@ function CustomSider() {
   const instructor = useSelector((state: RootState) => state.auth.instructor);
 
   useEffect(() => {
-    if (!loggedIn) {
+    if (!loggedIn && !["/signin", "/signup", "/"].includes(router.pathname)) {
       router.push("/");
     }
   }, [loggedIn]);
