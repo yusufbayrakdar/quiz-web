@@ -60,7 +60,7 @@ const BykTableHeaderBar = ({
   };
 
   const onCreate = () => {
-    router.push(`${baseEndpoint}/create`);
+    router.push(`${baseEndpoint}/form/create`);
   };
 
   return (

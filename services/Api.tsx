@@ -45,6 +45,27 @@ class Api {
     });
   };
 
+  // PUT request
+  _doPut = (endpoint: string, body: object, isFormData = false) => {
+    return _fetch({
+      method: "PUT",
+      body,
+      endpoint,
+      isFormData,
+    });
+  };
+
+  _doPutWithAuth = (endpoint: string, body: object, isFormData = false) => {
+    return _fetch({
+      method: "PUT",
+      body,
+      endpoint,
+      headers: { token: localStorage.getItem(TOKEN) },
+      isFormData,
+    });
+  };
+
+  // DELETE request
   _doDeleteWithAuth = (endpoint: string) => {
     return _fetch({
       method: "DELETE",
@@ -100,7 +121,19 @@ class Api {
   };
 
   createQuestion = (question: object) => {
-    return this._doPostWithAuth(`/questions/create`, question);
+    return this._doPostWithAuth(`/questions`, question);
+  };
+
+  updateQuestion = (question: object) => {
+    return this._doPutWithAuth(`/questions`, question);
+  };
+
+  deleteQuestion = (_id: object) => {
+    return this._doDeleteWithAuth(`/questions/${_id}`);
+  };
+
+  getQuestionDetail = (_id: object) => {
+    return this._doGetWithAuth(`/searches/${_id}`);
   };
 }
 

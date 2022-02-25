@@ -74,9 +74,9 @@ function CustomSider() {
             Liste
           </Menu.Item>
           <Menu.Item
-            key={`${BASE_ENDPOINT.question}/create`}
+            key={`${BASE_ENDPOINT.question}/form/create`}
             icon={<PlusCircleOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.question}/create`)}
+            onClick={() => router.push(`${BASE_ENDPOINT.question}/form/create`)}
           >
             Oluştur
           </Menu.Item>

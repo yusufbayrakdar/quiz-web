@@ -2,28 +2,17 @@ import React, { useEffect } from "react";
 import Head from "next/head";
 import useRedux from "../../hooks/useRedux";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/configureStore";
+import { Button, Popconfirm } from "antd";
 import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+
 import Question from "../../components/Question";
+import CustomTable from "../../components/CustomTable";
+import { BASE_ENDPOINT } from "../../utils";
 
 function Questions() {
   const { dispatchAction, $ } = useRedux();
-
-  const questionList = useSelector(
-    (state: RootState) => state.question.questionList
-  );
-
-  const prepareList = (list: Array<object>) => {
-    return list?.reduce((store: any, current: any) => {
-      store[current.coordinate] = current.shape;
-      return store;
-    }, {});
-  };
-
-  // In progress
-  const question = prepareList(questionList[0]?.question);
-  const choices = prepareList(questionList[0]?.choices);
-
   const router = useRouter();
   const query = router.query;
 
@@ -31,9 +20,94 @@ function Questions() {
   const page = query["page"];
   const limit = query["limit"];
 
+  const questionList = useSelector((state: any) => state.question.questionList);
+  const totalQuestions = useSelector(
+    (state: any) => state.question.totalQuestions
+  );
+  const questionsLoading = useSelector(
+    (state: any) => state.question.questionsLoading
+  );
+  const questionDeleteInProgress = useSelector(
+    (state: any) => state.question.questionDeleteInProgress
+  );
+
   useEffect(() => {
     dispatchAction($.GET_QUESTION_LIST_REQUEST, { search, page, limit });
   }, [$, dispatchAction, search, page, limit]);
+
+  const deleteQuestion = (_id: string) => {
+    dispatchAction($.DELETE_QUESTION_REQUEST, _id);
+  };
+
+  const columns = [
+    {
+      title: "Soru",
+      render: (activeQuestion: any) => (
+        <div style={{ marginLeft: 10 }}>
+          <Question questionListItem={activeQuestion} showMode={true} />
+        </div>
+      ),
+    },
+    {
+      title: "Kategori",
+      dataIndex: "category",
+    },
+    {
+      title: "Sınıf",
+      dataIndex: "grade",
+    },
+    {
+      title: "Süre",
+      dataIndex: "duration",
+    },
+    {
+      title: "Oluşturan",
+      dataIndex: "creator",
+    },
+    {
+      title: "",
+      dataIndex: "_id",
+      render: (_id: any) => (
+        <div>
+          <Popconfirm
+            placement="bottomLeft"
+            title="Silmek istediğinizden emin misiniz?"
+            okText="Evet"
+            cancelText="Hayır"
+            onConfirm={() => deleteQuestion(_id)}
+          >
+            <Button
+              danger
+              type="text"
+              className="rounded-full"
+              loading={questionDeleteInProgress}
+            >
+              <div className="absolute top-0 left-0 right-0 bottom-0 center">
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  className="text-red-500"
+                  width={12}
+                />
+              </div>
+            </Button>
+          </Popconfirm>
+          <Button
+            type="text"
+            className="rounded-full ml-1"
+            onClick={() => router.push(`${BASE_ENDPOINT.question}/form/${_id}`)}
+          >
+            <div className="absolute top-0 left-0 right-0 bottom-0 center">
+              <FontAwesomeIcon
+                icon={faEdit}
+                className="text-blue-600"
+                width={13}
+              />
+            </div>
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="w-10/12">
@@ -42,9 +116,14 @@ function Questions() {
         <meta name="questions" content="Sorular" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      Questions list will be ready soon...
-      <div style={{ width: 300, height: 400 }}>
-        <Question data={{ question, choices }} showMode={true} small={true} />
+      <div className="mt-5 mb-5">
+        {/* @ts-ignore */}
+        <CustomTable
+          columns={columns}
+          totalDocuments={totalQuestions}
+          dataSource={questionList}
+          loading={questionsLoading}
+        />
       </div>
     </div>
   );

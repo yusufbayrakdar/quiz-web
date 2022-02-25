@@ -5,7 +5,15 @@ const initialState = {
 
   shapes: [],
   totalShapes: 0,
+  nextPageShapes: null,
+  hasNextPageShapes: false,
   shapesLoading: false,
+
+  activeQuestion: {
+    question: [],
+    choices: [],
+    correctAnswer: "",
+  },
 
   questionList: [],
   totalQuestions: 0,
@@ -16,6 +24,7 @@ const initialState = {
   categories: [],
 
   questionSavingInProgress: false,
+  questionDeleteInProgress: false,
 
   resetForm: false,
 };
@@ -33,8 +42,10 @@ export default function questionReducer(
     case $.SET_SHAPES:
       return {
         ...state,
-        shapes: payload.shapes,
+        shapes: [...state.shapes, ...payload.shapes],
         totalShapes: payload.totalShapes,
+        nextPageShapes: payload.nextPageShapes,
+        hasNextPageShapes: payload.hasNextPageShapes,
         shapesLoading: false,
       };
 
@@ -65,6 +76,61 @@ export default function questionReducer(
         activeShape: payload,
       };
 
+    case $.UPDATE_QUESTION_REQUEST:
+      return {
+        ...state,
+        questionSavingInProgress: true,
+      };
+    case $.UPDATE_QUESTION_FINISHED:
+      return {
+        ...state,
+        questionSavingInProgress: false,
+      };
+
+    case $.ADD_SHAPE_TO_QUESTION:
+      return {
+        ...state,
+        activeQuestion: {
+          ...state.activeQuestion,
+          question: [...state.activeQuestion?.question, payload],
+        },
+      };
+    case $.REMOVE_SHAPE_TO_QUESTION:
+      return {
+        ...state,
+        activeQuestion: {
+          ...state.activeQuestion,
+          question: state.activeQuestion?.question?.filter(
+            (e) => e.coordinate !== payload
+          ),
+        },
+      };
+
+    case $.ADD_SHAPE_TO_CHOICES:
+      return {
+        ...state,
+        activeQuestion: {
+          ...state.activeQuestion,
+          choices: [...state.activeQuestion?.choices, payload],
+        },
+      };
+    case $.REMOVE_SHAPE_TO_CHOICES:
+      return {
+        ...state,
+        activeQuestion: {
+          ...state.activeQuestion,
+          choices: state.activeQuestion?.choices?.filter(
+            (e) => e.coordinate !== payload
+          ),
+        },
+      };
+
+    case $.RESET_ACTIVE_QUESTION:
+      return {
+        ...state,
+        activeQuestion: null,
+      };
+
     case $.CREATE_QUESTION_REQUEST:
       return {
         ...state,
@@ -77,6 +143,38 @@ export default function questionReducer(
         resetForm: true,
         questionSavingInProgress: false,
       };
+    case $.QUESTION_FORM_RESET:
+      return {
+        ...state,
+        activeQuestion: null,
+        questionSavingInProgress: false,
+        questionDeleteInProgress: false,
+        resetForm: false,
+      };
+
+    case $.DELETE_QUESTION_REQUEST:
+      return {
+        ...state,
+        questionDeleteInProgress: true,
+      };
+    case $.DELETE_QUESTION_FINISHED:
+      return {
+        ...state,
+        questionDeleteInProgress: false,
+      };
+
+    case $.GET_QUESTION_DETAIL_FINISHED:
+      return {
+        ...state,
+        activeQuestion: payload,
+      };
+
+    case $.SET_CORRECT_ANSWER:
+      return {
+        ...state,
+        activeQuestion: { ...state.activeQuestion, correctAnswer: payload },
+      };
+
     default:
       return state;
   }

@@ -6,9 +6,21 @@ import { $A, showErrorMessage, showSuccessMessage } from "../../utils";
 const tryGetShapesSaga = function* ({ payload }) {
   try {
     const { data } = yield call(Api.getShapes, payload);
-    const { docs: shapes, totalDocs: totalShapes } = data;
+    const {
+      docs: shapes,
+      totalDocs: totalShapes,
+      nextPage: nextPageShapes,
+      hasNextPage: hasNextPageShapes,
+    } = data;
 
-    yield put($A($.SET_SHAPES, { shapes, totalShapes }));
+    yield put(
+      $A($.SET_SHAPES, {
+        shapes,
+        totalShapes,
+        nextPageShapes,
+        hasNextPageShapes,
+      })
+    );
   } catch (error) {
     yield put($A($.SET_SHAPES, []));
   }
@@ -61,8 +73,43 @@ const tryCreateQuestionSaga = function* ({ payload }) {
     yield call(Api.createQuestion, payload);
 
     yield put($A($.CREATE_QUESTION_FINISHED));
+    showSuccessMessage("Soru başarıyla oluşturuldu");
   } catch (error) {
     yield put($A($.CREATE_QUESTION_FINISHED));
+  }
+};
+
+const tryUpdateQuestionSaga = function* ({ payload }) {
+  try {
+    yield call(Api.updateQuestion, payload);
+
+    yield put($A($.UPDATE_QUESTION_FINISHED));
+    yield put($A($.GET_QUESTION_DETAIL_REQUEST, payload._id));
+  } catch (error) {
+    yield put($A($.UPDATE_QUESTION_FINISHED));
+  }
+};
+
+const tryDeleteQuestionSaga = function* ({ payload }) {
+  try {
+    yield call(Api.deleteQuestion, payload);
+
+    yield put($A($.GET_QUESTION_LIST_REQUEST));
+    yield put($A($.DELETE_QUESTION_FINISHED));
+  } catch (error) {
+    yield put($A($.GET_QUESTION_LIST_REQUEST));
+    yield put($A($.DELETE_QUESTION_FINISHED));
+  }
+};
+
+const tryGetQuestionDetailSaga = function* ({ payload }) {
+  try {
+    const { data } = yield call(Api.getQuestionDetail, payload);
+    yield put($A($.RESET_ACTIVE_QUESTION));
+
+    yield put($A($.GET_QUESTION_DETAIL_FINISHED, data));
+  } catch (error) {
+    yield put($A($.GET_QUESTION_DETAIL_FINISHED, null));
   }
 };
 
@@ -72,4 +119,7 @@ export default function* questionSaga() {
   yield takeLatest($.GET_QUESTION_CONFIGS_REQUEST, tryGetQuestionConfigsSaga);
   yield takeLatest($.CREATE_QUESTION_REQUEST, tryCreateQuestionSaga);
   yield takeLatest($.GET_QUESTION_LIST_REQUEST, tryGetQuestionListSaga);
+  yield takeLatest($.DELETE_QUESTION_REQUEST, tryDeleteQuestionSaga);
+  yield takeLatest($.GET_QUESTION_DETAIL_REQUEST, tryGetQuestionDetailSaga);
+  yield takeLatest($.UPDATE_QUESTION_REQUEST, tryUpdateQuestionSaga);
 }

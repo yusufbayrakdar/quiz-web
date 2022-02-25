@@ -1,61 +1,82 @@
 import { Card, Row } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/configureStore";
+
+import useRedux from "../../hooks/useRedux";
 import Info from "../Info";
 import Nest from "../Nest";
 
-function Question({
-  getData,
-  correctAnswer,
-  setCorrectAnswer,
-  data,
-  showMode,
-  small,
-}: any) {
-  const [question]: [_: any, _: any] = useState(
-    data && data.question ? data.question : {}
-  );
-  const [choices]: [_: any, _: any] = useState(
-    data && data.choices ? data?.choices : {}
-  );
+function Question({ showMode, questionListItem, editMode }: any) {
+  const { dispatchAction, $ } = useRedux();
+  const prepareMap = (list: Array<object>) => {
+    if (!list) return {};
+    return list?.reduce((store: any, current: any) => {
+      store[current.coordinate] = current.shape;
+      return store;
+    }, {});
+  };
 
-  const resetForm = useSelector((state: RootState) => state.question.resetForm);
+  const activeQuestion =
+    questionListItem ||
+    useSelector((state: any) => state.question.activeQuestion);
+  const correctAnswer = activeQuestion?.correctAnswer;
+  const setCorrectAnswer = (value: string) => {
+    dispatchAction($.SET_CORRECT_ANSWER, value);
+  };
+  const preparedQuestion = prepareMap(activeQuestion?.question);
+  const preparedChoices = prepareMap(activeQuestion?.choices);
+  const [showModeConstraints, setShowModeConstraints]: [_: any, _: any] =
+    useState({});
 
-  const renderRowNests = (y: Number, isQuestion = true) => {
+  useEffect(() => {
+    const constraints = {
+      minX: 8,
+      maxX: 0,
+      minY: 8,
+      maxY: 0,
+    };
+    for (const key in preparedQuestion) {
+      const [x, y] = key.split(",");
+
+      constraints.minX = Math.min(constraints.minX, Number(x));
+      constraints.maxX = Math.max(constraints.maxX, Number(x));
+
+      constraints.minY = Math.min(constraints.minY, Number(y));
+      constraints.maxY = Math.max(constraints.maxY, Number(y));
+    }
+    setShowModeConstraints(constraints);
+  }, [activeQuestion]);
+
+  const isInRange = (x: number, y: number) => {
+    const { minX, maxX, minY, maxY } = showModeConstraints;
+    return minX <= x && maxX >= x && minY <= y && maxY >= y;
+  };
+
+  const renderRowNests = (y: number, isQuestion = true) => {
     const nests = [];
-    const map = isQuestion ? question : choices;
-
+    const map = isQuestion ? preparedQuestion : preparedChoices;
     for (let x = 0; x < 8; x++) {
       const nestId = `${x},${y}`;
-      nests.push(
-        <Nest
-          key={nestId}
-          setMap={(droppedItem: string) => {
-            map[nestId] = droppedItem;
-            getData({
-              question,
-              choices,
-            });
-          }}
-          shape={map[nestId]}
-          isQuestion={isQuestion}
-          isCorrectAnswer={correctAnswer === nestId}
-          setCorrectAnswer={() => setCorrectAnswer(nestId)}
-          clear={() => {
-            if (!showMode) {
-              delete map[nestId];
-              setCorrectAnswer("");
-              getData({
-                question,
-                choices,
-              });
-            }
-          }}
-          reset={resetForm}
-          showMode={showMode}
-        />
-      );
+      const isCorrectAnswer = correctAnswer === nestId;
+      if (!showMode || (showMode && isInRange(x, y)))
+        nests.push(
+          <Nest
+            key={nestId}
+            coordinate={nestId}
+            shape={map[nestId]}
+            isQuestion={isQuestion}
+            isCorrectAnswer={isCorrectAnswer}
+            setCorrectAnswer={() => setCorrectAnswer(nestId)}
+            clear={() => {
+              if (!showMode) {
+                delete map[nestId];
+                if (isCorrectAnswer) setCorrectAnswer("");
+              }
+            }}
+            showMode={showMode}
+            editMode={editMode}
+          />
+        );
     }
     return nests;
   };
@@ -74,18 +95,20 @@ function Question({
 
   return (
     <>
-      <Info title="Soru" width="50%" largePadding={true}>
+      <Info title="Soru" width="50%" largePadding={true} showMode={showMode}>
         <Card className="rounded-xl">{renderNests()}</Card>
       </Info>
-      <Info title="Seçenekler" width="50%" largePadding={true}>
-        <Card className="rounded-xl">
-          {
-            <Row className="flex justify-around items-center">
-              {renderRowNests(0, false)}
-            </Row>
-          }
-        </Card>
-      </Info>
+      {!showMode && (
+        <Info title="Seçenekler" width="50%" largePadding={true}>
+          <Card className="rounded-xl">
+            {
+              <Row className="flex justify-around items-center">
+                {renderRowNests(0, false)}
+              </Row>
+            }
+          </Card>
+        </Info>
+      )}
     </>
   );
 }

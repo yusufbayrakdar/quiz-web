@@ -3,22 +3,33 @@ import { useDrop } from "react-dnd";
 import { CloseOutlined } from "@ant-design/icons";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import { Row } from "antd";
+import { useSelector } from "react-redux";
+
+import useRedux from "../../hooks/useRedux";
 
 function Nest({
-  setMap,
+  coordinate,
   shape,
   isQuestion,
-  isCorrectAnswer,
+  isCorrectAnswer = false,
   setCorrectAnswer = () => {},
   clear = () => {},
-  reset,
   showMode,
+  editMode,
 }: any) {
+  const { dispatchAction, $ } = useRedux();
+
   const [bounceInEffect, setBounceInEffect] = useState(false);
   const [bounceOutEffect, setBounceOutEffect] = useState(false);
   const [droppedItem, setDroppedItem]: [_: any, _: any] = useState({
     imageUrl: shape || null,
   });
+
+  const resetForm = useSelector((state: any) => state.question.resetForm);
+
+  useEffect(() => {
+    setDroppedItem({ imageUrl: shape });
+  }, [shape]);
 
   const bounce = () => {
     setBounceInEffect(true);
@@ -28,12 +39,16 @@ function Nest({
   };
 
   useEffect(() => {
-    clearNest();
-  }, [reset]);
+    if (resetForm && !editMode) clearNest();
+  }, [resetForm, editMode]);
 
   const clearNest = () => {
     if (!showMode && droppedItem?.imageUrl) {
       setBounceOutEffect(true);
+      dispatchAction(
+        isQuestion ? $.REMOVE_SHAPE_TO_QUESTION : $.REMOVE_SHAPE_TO_CHOICES,
+        coordinate
+      );
       setTimeout(() => {
         clear();
         setDroppedItem({ imageUrl: null });
@@ -47,7 +62,7 @@ function Nest({
       return (
         <img
           src={droppedItem?.imageUrl}
-          className={`w-8 h-8 object-contain pointer-events-none m-auto select-none ${
+          className={`h-full p-1 object-contain pointer-events-none m-auto select-none ${
             bounceOutEffect
               ? "animate__animated animate__bounceOut animate__faster"
               : ""
@@ -62,8 +77,14 @@ function Nest({
     () => ({
       accept: "shape",
       drop: (item: any) => {
-        setMap(item._id);
         setDroppedItem(item);
+        dispatchAction(
+          isQuestion ? $.ADD_SHAPE_TO_QUESTION : $.ADD_SHAPE_TO_CHOICES,
+          {
+            coordinate,
+            shape: item.imageUrl,
+          }
+        );
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
@@ -75,9 +96,9 @@ function Nest({
   function DeleteButton() {
     return droppedItem?.imageUrl ? (
       <div
-        className={`bg-gray-100 border-2 border-red-300 text-red-600 rounded-full center text-xs w-4 h-4 ${
-          isQuestion && "opacity-0 group-hover:opacity-100"
-        }`}
+        className={`w-4 h-4 bg-gray-100 border-2 border-red-300 text-red-600 rounded-full center text-xs ${
+          !showMode ? "cursor-pointer" : ""
+        } ${isQuestion && "opacity-0 group-hover:opacity-100"}`}
         style={isQuestion ? { right: -4, top: -4, position: "absolute" } : {}}
         onClick={clearNest}
       >
@@ -95,32 +116,40 @@ function Nest({
     ) : null;
   }
 
-  if (showMode && !shape) return null;
   return (
     <div
-      onClick={() => isQuestion && clearNest()}
-      className={`group rounded-xl w-14 mb-2 cursor-pointer relative group-hover:opacity-100 border-solid border-2 
-      ${!isQuestion && isCorrectAnswer ? "border-green-500" : ""}
-      ${isQuestion ? "h-10 center" : "h-16 overflow-hidden"} ${
-        isOver ? "bg-blue-200" : "bg-gray-200"
-      }
+      className={`rounded-xl mb-2 border-solid border-2 group relative group-hover:opacity-100 
+      ${!isQuestion && isCorrectAnswer ? "border-green-500 " : ""}
       ${
         bounceInEffect
           ? "animate__animated animate__bounceIn animate__faster"
           : ""
-      }
-      `}
-      ref={drop}
+      }`}
     >
-      {isQuestion ? (
-        <DeleteButton />
-      ) : (
-        <Row className="bg-gray-300 w-full h-5 mb-1 flex justify-around items-center">
+      {!showMode &&
+        (isQuestion ? (
           <DeleteButton />
-          <MarkAsCorrectAnswerButton />
-        </Row>
-      )}
-      {renderContent()}
+        ) : (
+          <Row className="bg-gray-300 w-full h-5 flex justify-around items-center rounded-t-lg">
+            <DeleteButton />
+            <MarkAsCorrectAnswerButton />
+          </Row>
+        ))}
+      <div
+        onClick={() => isQuestion && clearNest()}
+        className={`
+      ${
+        isQuestion
+          ? `rounded-lg center ${!showMode ? "cursor-pointer" : ""} `
+          : `rounded-b-lg overflow-hidden `
+      } 
+      ${showMode ? "rounded-lg w-10 h-6 " : "w-14 h-10 "}
+      ${isOver ? "bg-blue-200 " : "bg-gray-200 "}
+      `}
+        ref={drop}
+      >
+        {renderContent()}
+      </div>
     </div>
   );
 }
