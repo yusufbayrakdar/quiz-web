@@ -17,7 +17,7 @@ function QuestionCreate() {
   const { dispatchAction, $ } = useRedux();
   const router = useRouter();
   const { id } = router.query;
-  const editMode = id !== "create";
+  const editMode = id && id.length >= 24;
 
   const shapes = useSelector((state: any) => state.question.shapes);
   const shapesLoading = useSelector(
@@ -282,21 +282,35 @@ function QuestionCreate() {
             </div>
           </Col>
           <Col offset={1}>
-            <InfoCard title={"Süre"}>
-              <Select value={duration} onChange={setDuration} bordered={false}>
-                {renderSelects(durations, "duration", displayDuration)}
-              </Select>
-            </InfoCard>
-            <InfoCard style={{ marginTop: 30 }} title={"Sınıf"}>
-              <Select value={grade} onChange={setGrade} bordered={false}>
-                {renderSelects(grades, "grade")}
-              </Select>
-            </InfoCard>
-            <InfoCard style={{ marginTop: 30 }} title={"Kategori"}>
-              <Select value={category} onChange={setCategory} bordered={false}>
-                {renderSelects(categories, "category")}
-              </Select>
-            </InfoCard>
+            {durations && (
+              <InfoCard title={"Süre"}>
+                <Select
+                  value={duration}
+                  onChange={setDuration}
+                  bordered={false}
+                >
+                  {renderSelects(durations, "duration", displayDuration)}
+                </Select>
+              </InfoCard>
+            )}
+            {grades && (
+              <InfoCard style={{ marginTop: 30 }} title={"Sınıf"}>
+                <Select value={grade} onChange={setGrade} bordered={false}>
+                  {renderSelects(grades, "grade")}
+                </Select>
+              </InfoCard>
+            )}
+            {categories && (
+              <InfoCard style={{ marginTop: 30 }} title={"Kategori"}>
+                <Select
+                  value={category}
+                  onChange={setCategory}
+                  bordered={false}
+                >
+                  {renderSelects(categories, "category")}
+                </Select>
+              </InfoCard>
+            )}
           </Col>
         </Row>
       </Form>
