@@ -1,9 +1,22 @@
-/** @type {import('next').NextConfig} */
-module.exports = {
-  reactStrictMode: true,
-  images: {
-    domains: ["https://firebasestorage.googleapis.com"],
+// next.config.js
+
+// You can choose which headers to add to the list
+// after learning more below.
+const securityHeaders = [
+  {
+    key: "Referrer-Policy",
+    value: "origin",
   },
-  source: "/api/:path*",
-  destination: "https://bilsemiq-api.herokuapp.com/:path*",
+];
+
+module.exports = {
+  async headers() {
+    return [
+      {
+        // Apply these headers to all routes in your application.
+        source: "/:path*",
+        headers: securityHeaders,
+      },
+    ];
+  },
 };
