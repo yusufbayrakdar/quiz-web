@@ -69,19 +69,19 @@ function QuestionCreate() {
 
   useEffect(() => {
     if (activeQuestion) {
-      const selectedCategory = categories.find(
+      const selectedCategory = categories?.find(
         (c: any) => c.category === activeQuestion.category
       );
 
       if (selectedCategory) setCategory(selectedCategory?._id);
 
-      const selectedDuration = durations.find(
+      const selectedDuration = durations?.find(
         (d: any) => d.duration === activeQuestion.duration
       );
 
       if (selectedDuration) setDuration(selectedDuration?._id);
 
-      const selectedGrade = grades.find(
+      const selectedGrade = grades?.find(
         (g: any) => g.grade === activeQuestion.grade
       );
 
@@ -158,12 +158,12 @@ function QuestionCreate() {
     const preparedActiveQuestion = {
       ...activeQuestion,
       question: activeQuestion.question.map((e: any) => {
-        const shape = shapes.find((s: any) => s.imageUrl === e.shape);
-        return { ...e, shape: shape._id };
+        const shape = shapes?.find((s: any) => s.imageUrl === e.shape);
+        return { ...e, shape: shape?._id };
       }),
       choices: activeQuestion.choices.map((e: any) => {
-        const shape = shapes.find((s: any) => s.imageUrl === e.shape);
-        return { ...e, shape: shape._id };
+        const shape = shapes?.find((s: any) => s.imageUrl === e.shape);
+        return { ...e, shape: shape?._id };
       }),
     };
 
