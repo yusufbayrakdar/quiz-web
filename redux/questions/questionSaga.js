@@ -50,9 +50,9 @@ const tryGetQuestionConfigsSaga = function* () {
   } catch (error) {}
 };
 
-const tryGetQuestionListSaga = function* () {
+const tryGetQuestionListSaga = function* ({ payload }) {
   try {
-    const { data } = yield call(Api.getQuestionList);
+    const { data } = yield call(Api.getQuestionList, payload);
     const { docs, totalDocs } = data;
 
     yield put(

@@ -68,7 +68,7 @@ function Questions() {
     {
       title: "",
       render: ({ _id, creator }: any) =>
-        creator._id === instructor._id && (
+        creator?._id === instructor?._id && (
           <div>
             <Popconfirm
               placement="bottomLeft"
@@ -126,6 +126,7 @@ function Questions() {
           totalDocuments={totalQuestions}
           dataSource={questionList}
           loading={questionsLoading}
+          baseEndpoint={BASE_ENDPOINT.question}
         />
       </div>
     </div>
