@@ -1,10 +1,11 @@
 import { Button, Card, Divider, Form, Input } from "antd";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import Head from "next/head";
+
 import useRedux from "../../hooks/useRedux";
 import { RootState } from "../../redux/configureStore";
 import { showErrorMessage } from "../../utils";
-import Head from "next/head";
 
 function StudentCreate() {
   const { dispatchAction, $ } = useRedux();

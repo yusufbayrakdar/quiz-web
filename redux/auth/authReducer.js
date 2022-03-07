@@ -18,6 +18,7 @@ export default function authReducer(state = initialState, { type, payload }) {
       return {
         ...state,
         loginInProgress: false,
+        student: null,
         instructor: payload,
         loggedIn: true,
       };
@@ -26,6 +27,7 @@ export default function authReducer(state = initialState, { type, payload }) {
       return {
         ...state,
         loginInProgress: false,
+        instructor: null,
         student: payload,
         loggedIn: true,
       };
@@ -40,8 +42,6 @@ export default function authReducer(state = initialState, { type, payload }) {
       return {
         ...state,
         autoLoginInLoading: false,
-        instructor: payload,
-        loggedIn: true,
       };
 
     case $.AUTO_LOGIN_FAILURE:

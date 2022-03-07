@@ -39,6 +39,7 @@ function QuestionCreate() {
   const questionSavingInProgress = useSelector(
     (state: any) => state.question.questionSavingInProgress
   );
+  const instructor = useSelector((state: any) => state.auth.instructor);
 
   const displayDuration = (duration: string) =>
     moment.utc(Number(duration) * 1000).format("mm:ss");
@@ -167,14 +168,31 @@ function QuestionCreate() {
       }),
     };
 
-    if (preparedActiveQuestion.question?.length === 0)
+    if (!category) {
+      return showWarningMessage(
+        "Yöneticiden kategori seçeneği eklemesini isteyin"
+      );
+    }
+    if (!grade) {
+      return showWarningMessage(
+        "Yöneticiden sınıf seçeneği eklemesini isteyin"
+      );
+    }
+    if (!duration) {
+      return showWarningMessage("Yöneticiden süre seçeneği eklemesini isteyin");
+    }
+
+    if (preparedActiveQuestion.question?.length === 0) {
       return showWarningMessage("Soru için yeterli şekil yüklenmeli");
+    }
 
-    if (preparedActiveQuestion.choices?.length < 2)
+    if (preparedActiveQuestion.choices?.length < 2) {
       return showWarningMessage("En az iki seçenek belirlenmelidir");
+    }
 
-    if (!activeQuestion.correctAnswer.includes(","))
+    if (!activeQuestion.correctAnswer.includes(",")) {
       return showWarningMessage("Lütfen doğru cevabı seçiniz");
+    }
 
     dispatchAction(
       editMode ? $.UPDATE_QUESTION_REQUEST : $.CREATE_QUESTION_REQUEST,
@@ -211,109 +229,113 @@ function QuestionCreate() {
         <meta name="description" content="Soru Oluştur" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      <Form
-        autoComplete="off"
-        layout="vertical"
-        form={form}
-        className="mb-10 h-full"
-        onFinish={onFinish}
-      >
-        <div className="flex justify-end mt-7" style={{ height: "5%" }}>
-          <Button
-            style={{
-              marginRight: 36,
-              width: "10%",
-              height: "100%",
-            }}
-            className="rounded-xl bg-blue-900 border-blue-900"
-            onClick={() => form.submit()}
-            type="primary"
-            loading={questionSavingInProgress}
-          >
-            {editMode ? "Kaydet" : "Oluştur"}
-          </Button>
-        </div>
-        <Row className="mt-5 h-full">
-          <Col span={19}>
-            <Question editMode={editMode} />
-            <Card className="rounded-xl mt-4" style={{ height: "25%" }}>
-              <Input onChange={(e) => setSearchInput(e.target.value)} />
-              <Row
-                className="overflow-scroll hide-scrollbar absolute bottom-0 left-0 right-0"
-                style={{ top: 75 }}
-                onScroll={onScroll}
-              >
-                {(searchInput
-                  ? shapes.filter((e: any) => e.searchTag.includes(searchInput))
-                  : shapes
-                ).map((shape: any, i: number) => (
-                  <Col span={2}>
-                    <AiDnD itemInfo={shape} key={i}>
-                      <div className="p-4 center">
-                        <img
-                          src={shape.imageUrl}
-                          className="object-contain pointer-events-none w-8"
-                          style={{
-                            width: window.screen.width / 45,
-                            height: window.screen.width / 45,
-                          }}
-                        />
-                      </div>
-                    </AiDnD>
-                  </Col>
-                ))}
-              </Row>
-            </Card>
-            <div className="pb-10">
-              <Info title="Açıklama" width="50%" largePadding={true}>
-                <Card className="rounded-xl">
-                  {renderVideo()}
-                  <Form.Item label="Video" name="video">
-                    <Input
-                      placeholder="https..."
-                      onChange={(e) => setVideoUrl(e.target.value)}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Açıklama metni" name="description">
-                    <Input.TextArea rows={4} />
-                  </Form.Item>
-                </Card>
-              </Info>
-            </div>
-          </Col>
-          <Col offset={1}>
-            {durations && (
-              <InfoCard title={"Süre"}>
-                <Select
-                  value={duration}
-                  onChange={setDuration}
-                  bordered={false}
+      {instructor && (
+        <Form
+          autoComplete="off"
+          layout="vertical"
+          form={form}
+          className="mb-10 h-full"
+          onFinish={onFinish}
+        >
+          <div className="flex justify-end mt-7" style={{ height: "5%" }}>
+            <Button
+              style={{
+                marginRight: 36,
+                width: "10%",
+                height: "100%",
+              }}
+              className="rounded-xl bg-blue-900 border-blue-900"
+              onClick={() => form.submit()}
+              type="primary"
+              loading={questionSavingInProgress}
+            >
+              {editMode ? "Kaydet" : "Oluştur"}
+            </Button>
+          </div>
+          <Row className="mt-5 h-full">
+            <Col span={19}>
+              <Question editMode={editMode} />
+              <Card className="rounded-xl mt-4" style={{ height: "25%" }}>
+                <Input onChange={(e) => setSearchInput(e.target.value)} />
+                <Row
+                  className="overflow-scroll hide-scrollbar absolute bottom-0 left-0 right-0"
+                  style={{ top: 75 }}
+                  onScroll={onScroll}
                 >
-                  {renderSelects(durations, "duration", displayDuration)}
-                </Select>
-              </InfoCard>
-            )}
-            {grades && (
-              <InfoCard style={{ marginTop: 30 }} title={"Sınıf"}>
-                <Select value={grade} onChange={setGrade} bordered={false}>
-                  {renderSelects(grades, "grade")}
-                </Select>
-              </InfoCard>
-            )}
-            {categories && (
-              <InfoCard style={{ marginTop: 30 }} title={"Kategori"}>
-                <Select
-                  value={category}
-                  onChange={setCategory}
-                  bordered={false}
-                >
-                  {renderSelects(categories, "category")}
-                </Select>
-              </InfoCard>
-            )}
-          </Col>
-        </Row>
-      </Form>
+                  {(searchInput
+                    ? shapes.filter((e: any) =>
+                        e.searchTag.includes(String(searchInput).toLowerCase())
+                      )
+                    : shapes
+                  ).map((shape: any, i: number) => (
+                    <Col span={2} key={`shape-${i}`}>
+                      <AiDnD itemInfo={shape} key={i}>
+                        <div className="p-4 center">
+                          <img
+                            src={shape.imageUrl}
+                            className="object-contain pointer-events-none w-8"
+                            style={{
+                              width: window.screen.width / 45,
+                              height: window.screen.width / 45,
+                            }}
+                          />
+                        </div>
+                      </AiDnD>
+                    </Col>
+                  ))}
+                </Row>
+              </Card>
+              <div className="pb-10">
+                <Info title="Açıklama" width="50%" largePadding={true}>
+                  <Card className="rounded-xl">
+                    {renderVideo()}
+                    <Form.Item label="Video" name="video">
+                      <Input
+                        placeholder="https..."
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Açıklama metni" name="description">
+                      <Input.TextArea rows={4} />
+                    </Form.Item>
+                  </Card>
+                </Info>
+              </div>
+            </Col>
+            <Col offset={1}>
+              {durations && (
+                <InfoCard title={"Süre"}>
+                  <Select
+                    value={duration}
+                    onChange={setDuration}
+                    bordered={false}
+                  >
+                    {renderSelects(durations, "duration", displayDuration)}
+                  </Select>
+                </InfoCard>
+              )}
+              {grades && (
+                <InfoCard style={{ marginTop: 30 }} title={"Sınıf"}>
+                  <Select value={grade} onChange={setGrade} bordered={false}>
+                    {renderSelects(grades, "grade")}
+                  </Select>
+                </InfoCard>
+              )}
+              {categories && (
+                <InfoCard style={{ marginTop: 30 }} title={"Kategori"}>
+                  <Select
+                    value={category}
+                    onChange={setCategory}
+                    bordered={false}
+                  >
+                    {renderSelects(categories, "category")}
+                  </Select>
+                </InfoCard>
+              )}
+            </Col>
+          </Row>
+        </Form>
+      )}
     </div>
   );
 }

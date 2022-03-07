@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import Head from "next/head";
 
 import CustomTable from "../../components/CustomTable";
+import Copyable from "../../components/Copyable";
 import useRedux from "../../hooks/useRedux";
 import { RootState } from "../../redux/configureStore";
 import BykTableHeaderBar from "../../components/BykTableHeaderBar";
@@ -64,6 +65,7 @@ function students() {
     {
       title: "İlk Şifre",
       dataIndex: "passwordInit",
+      render: (password: string) => <Copyable>{password}</Copyable>,
     },
   ];
 

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
 
-import { BASE_ENDPOINT } from "../../utils";
+import { BASE_ENDPOINT, TOKEN } from "../../utils";
 import {
   QuestionCircleOutlined,
   FormOutlined,
@@ -27,12 +27,28 @@ function CustomSider() {
   const { dispatchAction, $ } = useRedux();
 
   const instructor = useSelector((state: RootState) => state.auth.instructor);
+  const student = useSelector((state: RootState) => state.auth.student);
+  const restrictedPaths = [
+    "/questions",
+    "/questions/form/[id]",
+    "/students",
+    "/students/create",
+  ];
 
   useEffect(() => {
-    if (!loggedIn && !["/signin", "/signup", "/"].includes(router.pathname)) {
+    if (
+      !localStorage.getItem(TOKEN) &&
+      !["/signin", "/signup", "/"].includes(router.pathname)
+    ) {
       router.push("/");
     }
   }, [loggedIn]);
+
+  useEffect(() => {
+    const isStudentInForbiddenPath = restrictedPaths.includes(router.pathname);
+    if (isStudentInForbiddenPath && student && !instructor)
+      router.push("/dashboard");
+  }, [student, instructor, router.pathname]);
 
   if (["/signin", "/signup", "/"].includes(router.pathname)) return null;
 
@@ -61,26 +77,30 @@ function CustomSider() {
             </Menu.Item>
           </Menu.SubMenu>
         )}
-        <Menu.SubMenu
-          key="questions-submenu"
-          icon={<QuestionCircleOutlined />}
-          title="Sorular"
-        >
-          <Menu.Item
-            key={BASE_ENDPOINT.question}
-            icon={<UnorderedListOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.question}?page=1`)}
+        {instructor && (
+          <Menu.SubMenu
+            key="questions-submenu"
+            icon={<QuestionCircleOutlined />}
+            title="Sorular"
           >
-            Liste
-          </Menu.Item>
-          <Menu.Item
-            key={`${BASE_ENDPOINT.question}/form/create`}
-            icon={<PlusCircleOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.question}/form/create`)}
-          >
-            Oluştur
-          </Menu.Item>
-        </Menu.SubMenu>
+            <Menu.Item
+              key={BASE_ENDPOINT.question}
+              icon={<UnorderedListOutlined />}
+              onClick={() => router.push(`${BASE_ENDPOINT.question}?page=1`)}
+            >
+              Liste
+            </Menu.Item>
+            <Menu.Item
+              key={`${BASE_ENDPOINT.question}/form/create`}
+              icon={<PlusCircleOutlined />}
+              onClick={() =>
+                router.push(`${BASE_ENDPOINT.question}/form/create`)
+              }
+            >
+              Oluştur
+            </Menu.Item>
+          </Menu.SubMenu>
+        )}
         <Menu.Item
           key={BASE_ENDPOINT.quiz}
           icon={<FormOutlined />}

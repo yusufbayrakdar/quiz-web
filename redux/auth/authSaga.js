@@ -24,7 +24,11 @@ const tryAutoLoginSaga = function* () {
     const token = localStorage.getItem(TOKEN);
     if (token) {
       const { data } = yield call(Api.autoLogin);
-      yield put($A($.AUTO_LOGIN_SUCCESS, data));
+      const { student, instructor } = data;
+
+      if (instructor) yield put($A($.INSTRUCTOR_LOGIN_SUCCESS, instructor));
+      else if (student) yield put($A($.STUDENT_LOGIN_SUCCESS, student));
+      put($A($.AUTO_LOGIN_SUCCESS));
     } else {
       yield put($A($.AUTO_LOGIN_FAILURE));
     }

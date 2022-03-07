@@ -87,6 +87,7 @@ const tryUpdateQuestionSaga = function* ({ payload }) {
     yield put($A($.GET_QUESTION_DETAIL_REQUEST, payload._id));
   } catch (error) {
     yield put($A($.UPDATE_QUESTION_FINISHED));
+    showErrorMessage(error);
   }
 };
 

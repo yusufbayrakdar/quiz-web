@@ -10,8 +10,6 @@ import Profile from "../Profile";
 function CustomHeader() {
   const router = useRouter();
 
-  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-
   if (["/signin", "/signup"].includes(router.pathname))
     return (
       <div
@@ -22,7 +20,7 @@ function CustomHeader() {
       </div>
     );
 
-  if (!loggedIn || "/" === router.pathname) return null;
+  if ("/" === router.pathname) return null;
 
   return (
     <div className="relative bg-blue-600 h-16 flex items-center">
@@ -32,9 +30,7 @@ function CustomHeader() {
             BilsemAI
           </p>
         </Link>
-        <div className="flex flex-1 justify-end mr-16">
-          {loggedIn && <Profile />}
-        </div>
+        <div className="flex flex-1 justify-end mr-16">{<Profile />}</div>
       </Row>
     </div>
   );
