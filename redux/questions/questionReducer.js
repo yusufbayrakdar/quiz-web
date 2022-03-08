@@ -107,8 +107,14 @@ export default function questionReducer(
         activeQuestion: {
           ...state.activeQuestion,
           question: [
-            ...state.activeQuestion?.question,
-            { coordinate: payload, shape: state.dragItem?.imageUrl },
+            ...(state.activeQuestion?.question || []),
+            {
+              coordinate: payload,
+              shape: {
+                _id: state.dragItem?._id,
+                imageUrl: state.dragItem?.imageUrl,
+              },
+            },
           ],
         },
       };
@@ -129,8 +135,14 @@ export default function questionReducer(
         activeQuestion: {
           ...state.activeQuestion,
           choices: [
-            ...state.activeQuestion?.choices,
-            { coordinate: payload, shape: state.dragItem?.imageUrl },
+            ...(state.activeQuestion?.choices || []),
+            {
+              coordinate: payload,
+              shape: {
+                _id: state.dragItem?._id,
+                imageUrl: state.dragItem?.imageUrl,
+              },
+            },
           ],
         },
       };

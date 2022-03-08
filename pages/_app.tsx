@@ -26,7 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <CustomHeader />
               <Layout className="flex flex-col h-full">
                 <CustomSider />
-                <Content className="flex-1 flex justify-center relative overflow-scroll">
+                <Content className="flex-1 flex justify-center relative overflow-x-hidden overflow-y-scroll">
                   <Component {...pageProps} />
                 </Content>
               </Layout>

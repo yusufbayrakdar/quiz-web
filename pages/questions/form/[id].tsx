@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Button, Card, Col, Select, Input, Row, Form } from "antd";
+import { Button, Card, Col, Select, Input, Row, Form, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
@@ -65,7 +65,7 @@ function QuestionCreate() {
 
   useEffect(() => {
     // @ts-ignore
-    scrollRef.current.scrollTop = 0;
+    if (scrollRef?.current?.scrollTop) scrollRef.current.scrollTop = 0;
     dispatchAction($.GET_SHAPES, { search: searchInput, action: $.SET_SHAPES });
   }, [searchInput]);
 
@@ -94,8 +94,20 @@ function QuestionCreate() {
       );
 
       if (selectedGrade) setGrade(selectedGrade?._id);
+
+      form.setFieldsValue({
+        videoUrl: activeQuestion?.videoUrl,
+        description: activeQuestion?.description,
+      });
+      setVideoUrl(activeQuestion?.videoUrl ?? "");
     }
-  }, [activeQuestion]);
+  }, [
+    activeQuestion?.category,
+    activeQuestion?.duration,
+    activeQuestion?.grade,
+    activeQuestion?.videoUrl,
+    activeQuestion?.description,
+  ]);
 
   useEffect(() => {
     resetOptions();
@@ -113,6 +125,7 @@ function QuestionCreate() {
   useEffect(() => {
     if (resetForm) {
       resetOptions();
+      dispatchAction($.QUESTION_FORM_RESET);
     }
   }, [resetForm]);
 
@@ -131,9 +144,16 @@ function QuestionCreate() {
   ) => {
     const options = [];
     for (const option of OPTIONS) {
+      const selectName = render ? render(option[key]) : option[key];
       options.push(
         <Option value={option._id} className="pl-2 pr-2" key={option._id}>
-          {render ? render(option[key]) : option[key]}
+          {selectName.length > 10 ? (
+            <Tooltip title={selectName} placement="left">
+              {selectName.substring(0, 10) + "..."}
+            </Tooltip>
+          ) : (
+            selectName
+          )}
         </Option>
       );
     }
@@ -163,18 +183,6 @@ function QuestionCreate() {
   };
 
   const onFinish = (values: any) => {
-    const preparedActiveQuestion = {
-      ...activeQuestion,
-      question: activeQuestion.question.map((e: any) => {
-        const shape = shapes?.find((s: any) => s.imageUrl === e.shape);
-        return { ...e, shape: shape?._id };
-      }),
-      choices: activeQuestion.choices.map((e: any) => {
-        const shape = shapes?.find((s: any) => s.imageUrl === e.shape);
-        return { ...e, shape: shape?._id };
-      }),
-    };
-
     if (!category) {
       return showWarningMessage(
         "Yöneticiden kategori seçeneği eklemesini isteyin"
@@ -189,11 +197,11 @@ function QuestionCreate() {
       return showWarningMessage("Yöneticiden süre seçeneği eklemesini isteyin");
     }
 
-    if (preparedActiveQuestion.question?.length === 0) {
+    if (activeQuestion.question?.length === 0) {
       return showWarningMessage("Soru için yeterli şekil yüklenmeli");
     }
 
-    if (preparedActiveQuestion.choices?.length < 2) {
+    if (activeQuestion.choices?.length < 2) {
       return showWarningMessage("En az iki seçenek belirlenmelidir");
     }
 
@@ -204,7 +212,7 @@ function QuestionCreate() {
     dispatchAction(
       editMode ? $.UPDATE_QUESTION_REQUEST : $.CREATE_QUESTION_REQUEST,
       {
-        ...preparedActiveQuestion,
+        ...activeQuestion,
         ...values,
         duration,
         grade,
@@ -302,7 +310,7 @@ function QuestionCreate() {
                 <Info title="Açıklama" width="50%" largePadding={true}>
                   <Card className="rounded-xl">
                     {renderVideo()}
-                    <Form.Item label="Video" name="video">
+                    <Form.Item label="Video" name="videoUrl" className="mt-4">
                       <Input
                         placeholder="https..."
                         onChange={(e) => setVideoUrl(e.target.value)}
@@ -315,7 +323,7 @@ function QuestionCreate() {
                 </Info>
               </div>
             </Col>
-            <Col offset={1}>
+            <Col offset={1} flex="auto">
               {durations && (
                 <InfoCard title={"Süre"}>
                   <Select

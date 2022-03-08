@@ -63,7 +63,7 @@ function Question({ showMode, questionListItem, editMode }: any) {
           <Nest
             key={nestId}
             coordinate={nestId}
-            shape={map[nestId]}
+            shape={map[nestId]?.imageUrl}
             isQuestion={isQuestion}
             isCorrectAnswer={isCorrectAnswer}
             setCorrectAnswer={() => setCorrectAnswer(nestId)}

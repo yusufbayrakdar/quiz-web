@@ -44,9 +44,10 @@ function CustomSider() {
     }
   }, [loggedIn]);
 
+  const isInForbiddenPath = restrictedPaths.includes(router.pathname);
+  const unauthorizedInstructor = instructor && !instructor.confirmed;
   useEffect(() => {
-    const isStudentInForbiddenPath = restrictedPaths.includes(router.pathname);
-    if (isStudentInForbiddenPath && student && !instructor)
+    if ((isInForbiddenPath && student && !instructor) || unauthorizedInstructor)
       router.push("/dashboard");
   }, [student, instructor, router.pathname]);
 
@@ -60,6 +61,7 @@ function CustomSider() {
             key="students-submenu"
             icon={<FontAwesomeIcon icon={faUserGraduate} width={15} />}
             title="Öğrenciler"
+            disabled={unauthorizedInstructor}
           >
             <Menu.Item
               key={BASE_ENDPOINT.student}
@@ -82,6 +84,7 @@ function CustomSider() {
             key="questions-submenu"
             icon={<QuestionCircleOutlined />}
             title="Sorular"
+            disabled={unauthorizedInstructor}
           >
             <Menu.Item
               key={BASE_ENDPOINT.question}
@@ -105,6 +108,7 @@ function CustomSider() {
           key={BASE_ENDPOINT.quiz}
           icon={<FormOutlined />}
           onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
+          disabled={unauthorizedInstructor}
         >
           Denemeler
         </Menu.Item>
