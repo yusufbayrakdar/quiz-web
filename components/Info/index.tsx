@@ -2,7 +2,7 @@ import React from "react";
 
 function Info({ children, title, width, largePadding, showMode }: any) {
   const widthStyle = width ? { width } : {};
-  const paddingConstant = largePadding ? 8 : 4;
+  const paddingConstant = largePadding ? 32 : 16;
   const containerStyle = showMode
     ? { marginBottom: 10, marginRight: 10 }
     : { marginTop: largePadding ? 44 : 36 };
@@ -15,10 +15,15 @@ function Info({ children, title, width, largePadding, showMode }: any) {
         />
       ) : (
         <div
-          className={`absolute text-white pl-${paddingConstant} pr-${paddingConstant} pb-${paddingConstant} pt-${
-            paddingConstant / 4
-          } gBold rounded-xl`}
+          className="gBold"
           style={{
+            position: "absolute",
+            color: "white",
+            paddingLeft: paddingConstant,
+            paddingRight: paddingConstant,
+            paddingBottom: paddingConstant,
+            paddingTop: paddingConstant / 4,
+            borderRadius: 12,
             top: largePadding ? -30 : -22,
             left: -16,
             backgroundColor: "#161E68",
