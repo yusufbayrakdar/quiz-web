@@ -8,6 +8,8 @@ const initialState = {
   nextPageShapes: null,
   hasNextPageShapes: false,
   shapesLoading: false,
+  searchShapes: false,
+  dragItem: null,
 
   activeQuestion: {
     question: [],
@@ -42,11 +44,23 @@ export default function questionReducer(
     case $.SET_SHAPES:
       return {
         ...state,
+        shapes: payload.shapes,
+        totalShapes: payload.totalShapes,
+        nextPageShapes: payload.nextPageShapes,
+        hasNextPageShapes: payload.hasNextPageShapes,
+        shapesLoading: false,
+        searchShapes: true,
+      };
+
+    case $.ADD_SHAPES:
+      return {
+        ...state,
         shapes: [...state.shapes, ...payload.shapes],
         totalShapes: payload.totalShapes,
         nextPageShapes: payload.nextPageShapes,
         hasNextPageShapes: payload.hasNextPageShapes,
         shapesLoading: false,
+        searchShapes: false,
       };
 
     case $.GET_QUESTION_LIST_REQUEST:
@@ -92,7 +106,10 @@ export default function questionReducer(
         ...state,
         activeQuestion: {
           ...state.activeQuestion,
-          question: [...state.activeQuestion?.question, payload],
+          question: [
+            ...state.activeQuestion?.question,
+            { coordinate: payload, shape: state.dragItem?.imageUrl },
+          ],
         },
       };
     case $.REMOVE_SHAPE_TO_QUESTION:
@@ -111,7 +128,10 @@ export default function questionReducer(
         ...state,
         activeQuestion: {
           ...state.activeQuestion,
-          choices: [...state.activeQuestion?.choices, payload],
+          choices: [
+            ...state.activeQuestion?.choices,
+            { coordinate: payload, shape: state.dragItem?.imageUrl },
+          ],
         },
       };
     case $.REMOVE_SHAPE_TO_CHOICES:
@@ -173,6 +193,12 @@ export default function questionReducer(
       return {
         ...state,
         activeQuestion: { ...state.activeQuestion, correctAnswer: payload },
+      };
+
+    case $.SET_DRAG_ITEM:
+      return {
+        ...state,
+        dragItem: payload,
       };
 
     default:

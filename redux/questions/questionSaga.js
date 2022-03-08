@@ -5,6 +5,8 @@ import { $A, showErrorMessage, showSuccessMessage } from "../../utils";
 
 const tryGetShapesSaga = function* ({ payload }) {
   try {
+    const putAction = payload.action;
+    delete payload.action;
     const { data } = yield call(Api.getShapes, payload);
     const {
       docs: shapes,
@@ -14,7 +16,7 @@ const tryGetShapesSaga = function* ({ payload }) {
     } = data;
 
     yield put(
-      $A($.SET_SHAPES, {
+      $A(putAction, {
         shapes,
         totalShapes,
         nextPageShapes,
@@ -22,7 +24,7 @@ const tryGetShapesSaga = function* ({ payload }) {
       })
     );
   } catch (error) {
-    yield put($A($.SET_SHAPES, []));
+    yield put($A($.ADD_SHAPES, []));
   }
 };
 

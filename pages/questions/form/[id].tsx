@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Button, Card, Col, Select, Input, Row, Form } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 
@@ -19,6 +19,7 @@ function QuestionCreate() {
   const { id } = router.query;
   const editMode = id && id.length >= 24;
 
+  const scrollRef = useRef(null);
   const shapes = useSelector((state: any) => state.question.shapes);
   const shapesLoading = useSelector(
     (state: any) => state.question.shapesLoading
@@ -63,6 +64,12 @@ function QuestionCreate() {
   };
 
   useEffect(() => {
+    // @ts-ignore
+    scrollRef.current.scrollTop = 0;
+    dispatchAction($.GET_SHAPES, { search: searchInput, action: $.SET_SHAPES });
+  }, [searchInput]);
+
+  useEffect(() => {
     if (editMode && !questionSavingInProgress)
       dispatchAction($.GET_QUESTION_DETAIL_REQUEST, id);
     else dispatchAction($.CREATE_QUESTION_FINISHED);
@@ -98,7 +105,7 @@ function QuestionCreate() {
 
   useEffect(() => {
     if (!shapes.length) {
-      dispatchAction($.GET_SHAPES);
+      dispatchAction($.GET_SHAPES, { action: $.SET_SHAPES });
       dispatchAction($.GET_QUESTION_CONFIGS_REQUEST);
     }
   }, [$, dispatchAction]);
@@ -217,7 +224,11 @@ function QuestionCreate() {
       !shapesLoading &&
       hasNextPageShapes
     ) {
-      dispatchAction($.GET_SHAPES, { page: nextPageShapes });
+      dispatchAction($.GET_SHAPES, {
+        page: nextPageShapes,
+        search: searchInput,
+        action: $.ADD_SHAPES,
+      });
     }
     scrollPrevPercent = percent;
   };
@@ -261,14 +272,16 @@ function QuestionCreate() {
                   className="overflow-scroll hide-scrollbar absolute bottom-0 left-0 right-0"
                   style={{ top: 75 }}
                   onScroll={onScroll}
+                  ref={scrollRef}
                 >
-                  {(searchInput
-                    ? shapes.filter((e: any) =>
-                        e.searchTag.includes(String(searchInput).toLowerCase())
-                      )
-                    : shapes
-                  ).map((shape: any, i: number) => (
-                    <Col span={2} key={`shape-${i}`}>
+                  {shapes.map((shape: any, i: number) => (
+                    <Col
+                      span={2}
+                      key={`shape-${i}`}
+                      onDragStart={() => {
+                        dispatchAction($.SET_DRAG_ITEM, shapes[i]);
+                      }}
+                    >
                       <AiDnD itemInfo={shape} key={i}>
                         <div className="p-4 center">
                           <img

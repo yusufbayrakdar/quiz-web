@@ -21,11 +21,20 @@ function Nest({
 
   const [bounceInEffect, setBounceInEffect] = useState(false);
   const [bounceOutEffect, setBounceOutEffect] = useState(false);
+  const [isDropped, setIsDropped] = useState(false);
   const [droppedItem, setDroppedItem]: [_: any, _: any] = useState({
     imageUrl: shape || null,
   });
 
   const resetForm = useSelector((state: any) => state.question.resetForm);
+  const dragItem = useSelector((state: any) => state.question.dragItem);
+
+  useEffect(() => {
+    if (isDropped) {
+      setDroppedItem(dragItem);
+      setIsDropped(false);
+    }
+  }, [isDropped]);
 
   useEffect(() => {
     setDroppedItem({ imageUrl: shape });
@@ -76,14 +85,11 @@ function Nest({
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "shape",
-      drop: (item: any) => {
-        setDroppedItem(item);
+      drop: () => {
+        setIsDropped(true);
         dispatchAction(
           isQuestion ? $.ADD_SHAPE_TO_QUESTION : $.ADD_SHAPE_TO_CHOICES,
-          {
-            coordinate,
-            shape: item.imageUrl,
-          }
+          coordinate
         );
       },
       collect: (monitor) => ({
