@@ -6,6 +6,7 @@ import { BASE_ENDPOINT, TOKEN } from "../../utils";
 import {
   QuestionCircleOutlined,
   FormOutlined,
+  UserOutlined,
   PlusCircleOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
@@ -47,7 +48,7 @@ function CustomSider() {
   const isInForbiddenPath = restrictedPaths.includes(router.pathname);
   const unauthorizedInstructor = instructor && !instructor.confirmed;
   useEffect(() => {
-    if ((isInForbiddenPath && student && !instructor) || unauthorizedInstructor)
+    if (isInForbiddenPath && (student || unauthorizedInstructor))
       router.push("/dashboard");
   }, [student, instructor, router.pathname]);
 
@@ -111,6 +112,13 @@ function CustomSider() {
           disabled={unauthorizedInstructor}
         >
           Denemeler
+        </Menu.Item>
+        <Menu.Item
+          key={BASE_ENDPOINT.profile}
+          icon={<UserOutlined />}
+          onClick={() => router.push(BASE_ENDPOINT.profile)}
+        >
+          Profil
         </Menu.Item>
         <Menu.Item
           key="5"

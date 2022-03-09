@@ -48,6 +48,7 @@ export const BASE_ENDPOINT = {
   student: "/students",
   question: "/questions",
   quiz: "/quizzes",
+  profile: "/profile",
 };
 
 export const updateQueryString = (
@@ -84,3 +85,8 @@ export const updateQueryString = (
     }
   }
 };
+
+export const displayFullName = (item: any) =>
+  item
+    ? `${item.firstName || ""}${item.lastName ? " " + item.lastName : ""}`
+    : "";

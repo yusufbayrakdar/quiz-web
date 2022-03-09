@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { Col, Row, Tooltip } from "antd";
 import {
@@ -8,8 +9,11 @@ import {
 } from "@ant-design/icons";
 
 import { RootState } from "../../redux/configureStore";
+import { BASE_ENDPOINT } from "../../utils";
 
 function index() {
+  const router = useRouter();
+
   const instructor = useSelector((state: RootState) => state.auth.instructor);
   const student = useSelector((state: RootState) => state.auth.student);
 
@@ -36,6 +40,7 @@ function index() {
     <Row
       className="rounded-lg p-1 cursor-pointer"
       style={{ borderWidth: 1, borderColor: "rgba(243, 244, 246, 0.3)" }}
+      onClick={() => router.push(BASE_ENDPOINT.profile)}
     >
       <div className="relative rounded-full flex justify-center items-center w-10 h-10 mr-1 bg-gray-300">
         <UserOutlined style={{ fontSize: 20 }} className="text-white" />
