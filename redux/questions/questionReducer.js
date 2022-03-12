@@ -154,6 +154,10 @@ export default function questionReducer(
           choices: state.activeQuestion?.choices?.filter(
             (e) => e.coordinate !== payload
           ),
+          correctAnswer:
+            state.activeQuestion?.correctAnswer === payload
+              ? ""
+              : state.activeQuestion?.correctAnswer,
         },
       };
 

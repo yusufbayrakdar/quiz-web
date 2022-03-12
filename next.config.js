@@ -1,3 +1,5 @@
+/** @type {import('next').NextConfig} */
+
 // next.config.js
 
 // You can choose which headers to add to the list
@@ -9,7 +11,11 @@ const securityHeaders = [
   },
 ];
 
-module.exports = {
+const nextConfig = {
+  reactStrictMode: true,
+  compiler: {
+    styledComponents: true,
+  },
   async headers() {
     return [
       {
@@ -20,3 +26,5 @@ module.exports = {
     ];
   },
 };
+
+module.exports = nextConfig;

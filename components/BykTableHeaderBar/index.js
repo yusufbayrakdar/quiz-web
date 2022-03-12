@@ -89,23 +89,25 @@ const BykTableHeaderBar = ({
             <Divider type={"vertical"}></Divider>
           )}
           {showPhoneFilter && (
-            <Button
-              onClick={() => setPhone()}
-              className="flex justify-center items-center"
-            >
+            <Button onClick={() => setPhone()} className="center">
               <FontAwesomeIcon icon={faPhone} width={20} />
 
-              {hasPhone % 3 === 0 ? "" : hasPhone % 3 === 1 ? "(+)" : "(-)"}
+              {hasPhone !== 0 && (
+                <div style={{ marginLeft: 2 }}>
+                  {hasPhone === 1 ? "(+)" : "(-)"}
+                </div>
+              )}
             </Button>
           )}
           {showConfirmedFilter && (
-            <Button
-              onClick={() => setNewConfirmed()}
-              className="flex justify-center items-center"
-            >
+            <Button onClick={() => setNewConfirmed()} className="center">
               <FontAwesomeIcon icon={faCheck} width={20} />
 
-              {confirmed % 3 === 0 ? "" : confirmed % 3 === 1 ? "(+)" : "(-)"}
+              {confirmed !== 0 && (
+                <div style={{ marginLeft: 2 }}>
+                  {confirmed === 1 ? "(+)" : "(-)"}
+                </div>
+              )}
             </Button>
           )}
         </Row>

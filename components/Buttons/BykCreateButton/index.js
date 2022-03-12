@@ -19,8 +19,8 @@ function BykCreateButton({
       type="primary"
       onClick={onClick}
     >
-      <Row className="flex items-center">
-        <PlusCircleOutlined className="mr-2" />
+      <Row style={{ display: "flex", alignItems: "center" }}>
+        <PlusCircleOutlined style={{ marginRight: 8 }} />
         {children || "Oluştur"}
       </Row>
     </Button>

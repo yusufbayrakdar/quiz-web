@@ -6,6 +6,7 @@ import { Button, Card, Col, Row } from "antd";
 import { UserOutlined, CheckOutlined, EditOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChild } from "@fortawesome/free-solid-svg-icons";
+import styled from "styled-components";
 
 import { displayFullName } from "../utils/index";
 
@@ -18,118 +19,51 @@ function Profile() {
     instructor || student;
 
   const RoleBadge = () => (
-    <Row
-      style={{
-        backgroundColor: instructor ? "#0070f3" : "purple",
-        marginLeft: 16,
-        marginTop: 16,
-        borderRadius: 6,
-        padding: "0px 6px",
-        color: "white",
-        paddingRight: 15,
-        cursor: "pointer",
-      }}
-    >
-      <div
-        style={{ marginLeft: 8, marginRight: 8, marginBottom: 2 }}
-        className="center"
-      >
+    <Row className="badge role-badge">
+      <div className="badge-icon center">
         {instructor ? (
           <Image src="/graduation.svg" alt="Eğitmen" width={15} height={15} />
         ) : (
           <FontAwesomeIcon icon={faChild} />
         )}
       </div>
-      <div style={{ paddingTop: 2, marginRight: 8 }} className="gMed">
+      <div className="badge-info gMed">
         {instructor ? "Eğitmen" : "Öğrenci"}
       </div>
     </Row>
   );
 
   const ConfirmBadge = () => (
-    <div
-      className="center"
-      style={{
-        backgroundColor: instructor?.confirmed ? "#51D256" : "#F5A623",
-        marginLeft: 16,
-        marginTop: 16,
-        borderRadius: 6,
-        padding: "0px 6px",
-        color: "white",
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ marginLeft: 8, marginRight: 8 }} className="center">
+    <Row className="badge confirm-badge" style={{ marginLeft: 16 }}>
+      <div className="badge-icon center">
         <CheckOutlined />
       </div>
-      <div style={{ marginTop: 2, paddingRight: 16 }} className="gMed center">
-        {instructor?.confirmed ? "Onaylı" : "Onay Bekliyor"}
+      <div className="badge-info gMed">
+        {confirmed ? "Onaylı" : "Onay Bekliyor"}
       </div>
-    </div>
+    </Row>
   );
 
   return (
-    <Card
-      style={{
-        width: "85%",
-        marginTop: 50,
-        borderRadius: 12,
-        position: "absolute",
-        overflow: "hidden",
-      }}
-    >
+    <Styled instructor={instructor}>
       <Head>
         <title>Profil</title>
         <meta name="questions" content="Profil" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      <div
-        style={{
-          width: "100%",
-          height: 8,
-          backgroundColor: "#161E68",
-          position: "absolute",
-          top: 0,
-          left: 0,
-        }}
-      />
-      <Row
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="top-line" />
+      <Row className="container-1">
         <Col>
           <Row>
-            <Col className="relative rounded-full flex justify-center items-center w-28 h-28 mr-1 bg-gray-300">
-              <UserOutlined style={{ fontSize: 45 }} className="text-white" />
+            <Col className="avatar center">
+              <UserOutlined />
             </Col>
-            <Col
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-              }}
-            >
-              <div
-                className="gBold"
-                style={{
-                  fontSize: 24,
-                  marginLeft: 16,
-                  color: "#161E68",
-                  position: "relative",
-                }}
-              >
-                {displayFullName({ firstName, lastName })}
-                <div
-                  className="gMed"
-                  style={{
-                    position: "absolute",
-                    top: 29,
-                    fontSize: 12,
-                    color: "#0070f3",
-                  }}
-                >
+            <Col className="container-2">
+              <div>
+                <div className="user-name gBold">
+                  {displayFullName({ firstName, lastName })}
+                </div>
+                <div className="user-unique-id gMed">
                   {instructor ? phone : `@${nickname}`}
                 </div>
               </div>
@@ -141,16 +75,91 @@ function Profile() {
           </Row>
         </Col>
         <Col>
-          <Button
-            style={{ borderRadius: 4, display: "flex", alignItems: "center" }}
-          >
-            <EditOutlined style={{ marginBottom: 2 }} />
+          <Button className="edit-button">
+            <EditOutlined />
             Düzenle
           </Button>
         </Col>
       </Row>
-    </Card>
+    </Styled>
   );
 }
+
+const Styled = styled(Card)`
+  width: 73%;
+  margin-top: 50px;
+  border-radius: 12px;
+  position: absolute;
+  overflow: hidden;
+
+  .top-line {
+    width: 100%;
+    height: 8px;
+    background-color: ${({ theme }) => theme.colors.darkPrimary};
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .container-1 {
+    display: flex;
+    justify-content: space-between;
+  }
+  .avatar {
+    position: relative;
+    border-radius: 50%;
+    width: 112px;
+    height: 112px;
+    margin-right: 4px;
+    background-color: ${({ theme }) => theme.colors.darkGray};
+    color: ${({ theme }) => theme.colors.white};
+    font-size: 45px;
+  }
+  .container-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-left: 16px;
+  }
+  .user-name {
+    font-size: 24px;
+    color: ${({ theme }) => theme.colors.darkPrimary};
+  }
+  .user-unique-id {
+    font-size: 12px;
+    line-height: 1px;
+    color: ${({ theme }) => theme.colors.primary};
+  }
+  .badge {
+    border-radius: 6px;
+    padding: 0px 6px;
+    color: ${({ theme }) => theme.colors.white};
+    padding-right: 15;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+  }
+  .role-badge {
+    background-color: ${({ theme, instructor }) =>
+      theme.colors[instructor ? "primary" : "purple"]};
+  }
+  .confirm-badge {
+    background-color: ${({ theme, instructor }) =>
+      theme.colors[instructor?.confirmed ? "green" : "yellow"]};
+  }
+  .badge-icon {
+    margin-right: 8px;
+    margin-left: 8px;
+  }
+  .badge-info {
+    padding-top: 2px;
+    margin-right: 8px;
+  }
+  .edit-button {
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+  }
+`;
 
 export default Profile;
