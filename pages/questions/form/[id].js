@@ -188,7 +188,7 @@ function QuestionCreate() {
       return showWarningMessage("En az iki seçenek belirlenmelidir");
     }
 
-    if (!activeQuestion.correctAnswer.includes(",")) {
+    if (!activeQuestion.correctAnswer?.includes(",")) {
       return showWarningMessage("Lütfen doğru cevabı seçiniz");
     }
 

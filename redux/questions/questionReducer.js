@@ -164,7 +164,11 @@ export default function questionReducer(
     case $.RESET_ACTIVE_QUESTION:
       return {
         ...state,
-        activeQuestion: null,
+        activeQuestion: {
+          question: [],
+          choices: [],
+          correctAnswer: "",
+        },
       };
 
     case $.CREATE_QUESTION_REQUEST:
@@ -182,7 +186,11 @@ export default function questionReducer(
     case $.QUESTION_FORM_RESET:
       return {
         ...state,
-        activeQuestion: null,
+        activeQuestion: {
+          question: [],
+          choices: [],
+          correctAnswer: "",
+        },
         questionSavingInProgress: false,
         questionDeleteInProgress: false,
         resetForm: false,
