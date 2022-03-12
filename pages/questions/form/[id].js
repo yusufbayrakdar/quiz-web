@@ -155,13 +155,15 @@ function QuestionCreate() {
     const videoId = getVideoId(videoUrl);
     if (!videoId) return null;
     return (
-      <iframe
-        width="560"
-        height="315"
-        src={`https://www.youtube.com/embed/${videoId}`}
-        title="YouTube video player"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      />
+      <div className="iframe-container">
+        <iframe
+          width="560"
+          height="315"
+          src={`https://www.youtube.com/embed/${videoId}`}
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        />
+      </div>
     );
   };
 
@@ -354,6 +356,13 @@ function QuestionCreate() {
 
 const Styled = styled.div`
   width: 83%;
+  .iframe-container {
+    display: flex;
+    justify-content: flex-start;
+    iframe {
+      border: none;
+    }
+  }
   .form {
     margin: 40px 0;
   }
