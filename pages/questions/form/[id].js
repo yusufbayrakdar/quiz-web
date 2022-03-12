@@ -292,7 +292,11 @@ function QuestionCreate() {
                   largePadding={true}
                 >
                   {renderVideo()}
-                  <Form.Item label="Video" name="videoUrl" className="mt-4">
+                  <Form.Item
+                    label="Video"
+                    name="videoUrl"
+                    style={{ marginTop: 16 }}
+                  >
                     <Input
                       placeholder="https..."
                       onChange={(e) => setVideoUrl(e.target.value)}
