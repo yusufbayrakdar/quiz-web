@@ -1,8 +1,6 @@
 import * as $ from "../actionTypes";
 
 const initialState = {
-  activeShape: null,
-
   shapes: [],
   totalShapes: 0,
   nextPageShapes: null,
@@ -84,12 +82,6 @@ export default function questionReducer(
         grades: payload.grades,
       };
 
-    case $.GET_SHAPE_DETAIL_FINISHED:
-      return {
-        ...state,
-        activeShape: payload,
-      };
-
     case $.UPDATE_QUESTION_REQUEST:
       return {
         ...state,
@@ -118,7 +110,7 @@ export default function questionReducer(
           ],
         },
       };
-    case $.REMOVE_SHAPE_TO_QUESTION:
+    case $.REMOVE_SHAPE_FROM_QUESTION:
       return {
         ...state,
         activeQuestion: {

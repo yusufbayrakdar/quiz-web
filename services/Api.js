@@ -128,6 +128,28 @@ class Api {
   getQuestionDetail = (_id) => {
     return this._doGetWithAuth(`/searches/${_id}`);
   };
+
+  createQuiz = (quiz) => {
+    return this._doPostWithAuth(`/quizzes`, quiz);
+  };
+
+  updateQuiz = (quiz) => {
+    return this._doPutWithAuth(`/quizzes`, quiz);
+  };
+
+  deleteQuiz = (_id) => {
+    return this._doDeleteWithAuth(`/quizzes/${_id}`);
+  };
+
+  getQuizList = (payload) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/quizzes${query}`);
+  };
+
+  getQuizDetail = ({ _id, ...queryPayload }) => {
+    const query = this.objectToQueryString(queryPayload);
+    return this._doGetWithAuth(`/quizzes/${_id}${query}`);
+  };
 }
 
 export default new Api();

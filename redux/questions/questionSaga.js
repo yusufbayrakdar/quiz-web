@@ -28,17 +28,6 @@ const tryGetShapesSaga = function* ({ payload }) {
   }
 };
 
-const tryGetShapeDetailSaga = function* ({ payload }) {
-  try {
-    const { data } = yield call(Api.getShapeDetail, payload);
-
-    yield put($A($.GET_SHAPE_DETAIL_FINISHED, data));
-  } catch (error) {
-    yield put($A($.GET_SHAPE_DETAIL_FINISHED, null));
-    showErrorMessage(error);
-  }
-};
-
 const tryGetQuestionConfigsSaga = function* () {
   try {
     const { data } = yield call(Api.getQuestionConfigs);
@@ -118,7 +107,6 @@ const tryGetQuestionDetailSaga = function* ({ payload }) {
 
 export default function* questionSaga() {
   yield takeLatest($.GET_SHAPES, tryGetShapesSaga);
-  yield takeLatest($.GET_SHAPE_DETAIL_REQUEST, tryGetShapeDetailSaga);
   yield takeLatest($.GET_QUESTION_CONFIGS_REQUEST, tryGetQuestionConfigsSaga);
   yield takeLatest($.CREATE_QUESTION_REQUEST, tryCreateQuestionSaga);
   yield takeLatest($.GET_QUESTION_LIST_REQUEST, tryGetQuestionListSaga);

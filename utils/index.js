@@ -1,4 +1,5 @@
 import { message } from "antd";
+import moment from "moment";
 
 export const BRAND_NAME = "BilsemAI";
 
@@ -83,3 +84,13 @@ export const displayFullName = (item) =>
   item
     ? `${item.firstName || ""}${item.lastName ? " " + item.lastName : ""}`
     : "";
+
+export const displayDuration = (duration) => {
+  const date = moment.utc(Number(duration) * 1000);
+  return date?.isValid() ? date.format("mm:ss") : duration;
+};
+
+export const displayDate = (date) => {
+  const momentDate = moment.utc(date);
+  return momentDate?.isValid() ? momentDate.format("DD/MM/YYYY") : date;
+};

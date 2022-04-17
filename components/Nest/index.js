@@ -40,7 +40,7 @@ function Nest({
       setBounceOutEffect(true);
       setTimeout(() => {
         dispatchAction(
-          isQuestion ? $.REMOVE_SHAPE_TO_QUESTION : $.REMOVE_SHAPE_TO_CHOICES,
+          isQuestion ? $.REMOVE_SHAPE_FROM_QUESTION : $.REMOVE_SHAPE_TO_CHOICES,
           coordinate
         );
         setDroppedItem({ imageUrl: null });

@@ -1,4 +1,3 @@
-import moment from "moment";
 import { Button, Card, Col, Select, Input, Row, Form, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,7 +9,7 @@ import useRedux from "../../../hooks/useRedux";
 import AiDnD from "../../../components/AIDnD";
 import Info from "../../../components/Info";
 import Question from "../../../components/Question";
-import { showWarningMessage } from "../../../utils";
+import { displayDuration, showWarningMessage } from "../../../utils";
 
 const { Option } = Select;
 
@@ -36,9 +35,6 @@ function QuestionCreate() {
     (state) => state.question.questionSavingInProgress
   );
   const instructor = useSelector((state) => state.auth.instructor);
-
-  const displayDuration = (duration) =>
-    moment.utc(Number(duration) * 1000).format("mm:ss");
 
   const [duration, setDuration] = useState("");
   const [grade, setGrade] = useState("");

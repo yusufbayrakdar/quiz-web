@@ -63,7 +63,6 @@ const Styled = styled.div`
   }
   .card {
     border-radius: 12px;
-    pointer-events: ${({ showMode }) => (showMode ? "none" : "auto")};
   }
 `;
 

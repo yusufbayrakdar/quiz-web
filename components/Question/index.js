@@ -7,7 +7,12 @@ import useRedux from "../../hooks/useRedux";
 import Info from "../Info";
 import Nest from "../Nest";
 
-function Question({ showMode, questionListItem, editMode }) {
+function Question({
+  showMode,
+  questionListItem,
+  editMode,
+  withoutCard = false,
+}) {
   const { dispatchAction, $ } = useRedux();
   const prepareMap = (list) => {
     if (!list) return {};
@@ -89,9 +94,13 @@ function Question({ showMode, questionListItem, editMode }) {
 
   return (
     <Styled showMode={showMode}>
-      <Info title="Soru" largePadding={true} showMode={showMode}>
-        {renderNests()}
-      </Info>
+      {withoutCard ? (
+        renderNests()
+      ) : (
+        <Info title="Soru" largePadding={true} showMode={showMode}>
+          {renderNests()}
+        </Info>
+      )}
       {!showMode && (
         <Info title="Seçenekler" titleWidthPercent={50} largePadding={true}>
           {<Row className="justify-around">{renderRowNests(0, false)}</Row>}
@@ -102,6 +111,7 @@ function Question({ showMode, questionListItem, editMode }) {
 }
 
 const Styled = styled.div`
+  pointer-events: ${({ showMode }) => (showMode ? "none" : "auto")};
   .justify-around {
     display: flex;
     justify-content: space-around;

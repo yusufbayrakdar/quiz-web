@@ -104,14 +104,26 @@ function CustomSider() {
             </Menu.Item>
           </Menu.SubMenu>
         )}
-        <Menu.Item
+        <Menu.SubMenu
           key={BASE_ENDPOINT.quiz}
+          title="Denemeler"
           icon={<FormOutlined />}
-          onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
-          disabled={unauthorizedInstructor}
         >
-          Denemeler
-        </Menu.Item>
+          <Menu.Item
+            key={BASE_ENDPOINT.quiz}
+            icon={<UnorderedListOutlined />}
+            onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
+          >
+            Liste
+          </Menu.Item>
+          <Menu.Item
+            key={`${BASE_ENDPOINT.quiz}/form/create`}
+            icon={<PlusCircleOutlined />}
+            onClick={() => router.push(`${BASE_ENDPOINT.quiz}/form/create`)}
+          >
+            Oluştur
+          </Menu.Item>
+        </Menu.SubMenu>
         <Menu.Item
           key={BASE_ENDPOINT.profile}
           icon={<UserOutlined />}

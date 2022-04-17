@@ -10,7 +10,7 @@ import styled from "styled-components";
 
 import Question from "../../components/Question";
 import CustomTable from "../../components/CustomTable";
-import { BASE_ENDPOINT } from "../../utils";
+import { BASE_ENDPOINT, displayDuration } from "../../utils";
 
 function Questions() {
   const { dispatchAction, $ } = useRedux();
@@ -59,15 +59,16 @@ function Questions() {
     {
       title: "Süre (sn)",
       dataIndex: "duration",
+      render: (duration) => duration && displayDuration(duration),
     },
     {
       title: "Oluşturan",
-      dataIndex: ["creator", "name"],
+      dataIndex: "creatorName",
     },
     {
       title: "",
-      render: ({ _id, creator }) =>
-        creator?._id === instructor?._id && (
+      render: ({ _id, creatorId }) =>
+        creatorId === instructor?._id && (
           <Row className="center">
             <Popconfirm
               placement="bottomLeft"
@@ -119,8 +120,8 @@ function Questions() {
       {/* @ts-ignore */}
       <CustomTable
         columns={columns}
-        totalDocuments={totalQuestions}
         dataSource={questionList}
+        totalDocuments={totalQuestions}
         loading={questionsLoading}
         baseEndpoint={BASE_ENDPOINT.question}
       />
