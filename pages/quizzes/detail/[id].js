@@ -45,7 +45,7 @@ function QuizDetail() {
 
   const HeaderInfo = ({ icon, color, children }) => (
     <HeaderInfoStyled color={color}>
-      <FontAwesomeIcon icon={icon} />
+      <FontAwesomeIcon icon={icon} width={16} height={16} />
       {children}
     </HeaderInfoStyled>
   );
@@ -110,6 +110,8 @@ const HeaderInfoStyled = styled.div`
   color: ${({ theme }) => theme.colors.white};
   border-radius: 3px;
   width: fit-content;
+  display: flex;
+  align-items: center;
   padding: 3px 7px;
   margin: 3px 5px;
   * {
