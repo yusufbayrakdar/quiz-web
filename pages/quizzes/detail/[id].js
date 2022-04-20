@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import {
@@ -52,6 +53,11 @@ function QuizDetail() {
 
   return (
     <Styled>
+      <Head>
+        <title>Deneme Detayı</title>
+        <meta name="quizzes" content="Deneme Detayı" />
+        <link rel="icon" href="/ideas.png" />
+      </Head>
       <Card>
         <Row>
           <HeaderInfo icon={faSignature} color={theme.colors.primary}>
