@@ -96,7 +96,10 @@ export default function quizReducer(state = initialState, { type, payload }) {
     case $.GET_QUIZ_DETAIL_FINISHED:
       return {
         ...state,
-        activeQuiz: payload,
+        activeQuiz: {
+          ...payload,
+          questionSet: new Set(payload.questionList),
+        },
       };
 
     case $.GET_QUIZ_LIST_REQUEST:

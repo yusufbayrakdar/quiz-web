@@ -146,9 +146,8 @@ class Api {
     return this._doGetWithAuth(`/quizzes${query}`);
   };
 
-  getQuizDetail = ({ _id, ...queryPayload }) => {
-    const query = this.objectToQueryString(queryPayload);
-    return this._doGetWithAuth(`/quizzes/${_id}${query}`);
+  getQuizDetail = (_id) => {
+    return this._doGetWithAuth(`/quizzes/${_id}`);
   };
 }
 
