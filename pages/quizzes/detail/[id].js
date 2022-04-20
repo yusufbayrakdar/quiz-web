@@ -37,6 +37,7 @@ function QuizDetail() {
     if (query?.id)
       dispatchAction($.GET_QUIZ_DETAIL_REQUEST, {
         _id: query?.id,
+        populateQuestions: true,
         page,
         limit,
       });

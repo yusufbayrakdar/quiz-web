@@ -52,7 +52,7 @@ function Quizzes() {
   const [selectedIds, setSelectedIds] = useState([]);
 
   useEffect(() => {
-    if (editMode) dispatchAction($.GET_QUIZ_DETAIL_REQUEST, query?.id);
+    if (editMode) dispatchAction($.GET_QUIZ_DETAIL_REQUEST, { _id: query?.id });
     else dispatchAction($.CREATE_QUIZ_FINISHED);
   }, [$, dispatchAction, editMode]);
 
