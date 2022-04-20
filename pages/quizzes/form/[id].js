@@ -231,7 +231,10 @@ function Quizzes() {
             showQuickJumper
             onChange={(page) =>
               router.push(
-                BASE_ENDPOINT.quiz + `/form/create?page=${page}&limit=${limit}`
+                BASE_ENDPOINT.quiz +
+                  `/form/${
+                    editMode ? activeQuiz?._id : "create"
+                  }?page=${page}&limit=${limit}`
               )
             }
           />
