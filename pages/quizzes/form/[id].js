@@ -21,7 +21,7 @@ import styled from "styled-components";
 import useRedux from "../../../hooks/useRedux";
 import { BASE_ENDPOINT, displayDuration } from "../../../utils";
 import QuestionCard from "../../../components/QuestionCard";
-import BykCreateButton from "../../../components/Buttons/BykCreateButton";
+import CreateButton from "../../../components/Buttons/CreateButton";
 import { displayFullName } from "../../../utils";
 
 const { Option } = Select;
@@ -145,9 +145,9 @@ function Quizzes() {
       </Head>
       <Form form={form} onFinish={onFinish}>
         <div style={{ marginBottom: 15 }} className="end">
-          <BykCreateButton onClick={() => form.submit()}>
+          <CreateButton onClick={() => form.submit()}>
             {editMode ? "Güncelle" : "Oluştur"}
-          </BykCreateButton>
+          </CreateButton>
         </div>
         <Row>
           <Col flex="auto">

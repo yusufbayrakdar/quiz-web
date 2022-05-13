@@ -33,6 +33,8 @@ function CustomSider() {
     "/questions/form/[id]",
     "/students",
     "/students/create",
+    "/quizzes/form/[id]",
+    "/quizzes/detail/[id]",
   ];
 
   useEffect(() => {

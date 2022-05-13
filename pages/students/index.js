@@ -6,7 +6,7 @@ import Head from "next/head";
 import CustomTable from "../../components/CustomTable";
 import Copyable from "../../components/Copyable";
 import useRedux from "../../hooks/useRedux";
-import BykTableHeaderBar from "../../components/BykTableHeaderBar";
+import TableHeaderBar from "../../components/TableHeaderBar";
 import { BASE_ENDPOINT, capitalizeFirstLetter } from "../../utils";
 import theme from "../../utils/theme";
 
@@ -76,7 +76,7 @@ function students() {
         <meta name="description" content="Öğrenciler" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      <BykTableHeaderBar
+      <TableHeaderBar
         baseEndpoint={BASE_ENDPOINT.student}
         hideCreate={false}
         showPhoneFilter={true}

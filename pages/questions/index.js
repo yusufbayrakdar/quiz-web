@@ -40,6 +40,7 @@ function Questions() {
   };
 
   const columns = [
+    { title: "#", dataIndex: "questionNumber" },
     {
       title: "Soru",
       render: (activeQuestion) => (

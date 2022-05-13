@@ -36,6 +36,11 @@ function QuestionCard({ question, selectable = true }) {
               <div className="check-icon" />
             </div>
           )}
+          {question?.questionNumber && (
+            <div className="question-number gBold">
+              {question?.questionNumber}
+            </div>
+          )}
           <Question
             questionListItem={question}
             showMode={true}
@@ -98,6 +103,20 @@ const Styled = styled(Card)`
     background-color: ${({ theme }) => theme.colors.gray};
     width: 100%;
     height: 100%;
+  }
+  .question-number {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    font-weight: 700;
+    height: 16px;
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.white};
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 

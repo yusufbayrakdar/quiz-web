@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Row } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 
-function BykCreateButton({
+function CreateButton({
   style = {},
   onClick,
   shape,
@@ -27,4 +27,4 @@ function BykCreateButton({
   );
 }
 
-export default BykCreateButton;
+export default CreateButton;
