@@ -74,6 +74,7 @@ function Quizzes() {
     {
       title: "",
       render: ({ _id, creator }) =>
+        creator._id &&
         creator._id === instructor?._id && (
           <ActionButtons className="center">
             <Popconfirm

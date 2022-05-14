@@ -34,7 +34,7 @@ function QuizDetail() {
   const limit = query["limit"] || 12;
 
   const activeQuiz = useSelector((state) => state.quiz.activeQuiz);
-  const instuctor = useSelector((state) => state.auth.instuctor);
+  const instructor = useSelector((state) => state.auth.instructor);
 
   useEffect(() => {
     if (query?.id)
@@ -83,7 +83,7 @@ function QuizDetail() {
             Güncelleme Tarihi: {displayDate(activeQuiz?.updatedAt)}
           </HeaderInfo>
         </Row>
-        {activeQuiz?.creatorId === instuctor?._id && (
+        {activeQuiz?.creator?._id === instructor?._id && instructor?._id && (
           <EditButton
             style={{ position: "absolute", top: 20, right: 20 }}
             baseEndpoint={BASE_ENDPOINT.quiz}
