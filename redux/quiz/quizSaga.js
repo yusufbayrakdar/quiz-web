@@ -20,13 +20,17 @@ const tryCreateQuizSaga = function* ({ payload }) {
 
 const tryUpdateQuizSaga = function* ({ payload }) {
   try {
+    const refreshAction = payload.refreshAction;
+    delete payload.refreshAction;
     yield call(Api.updateQuiz, payload);
 
-    showSuccessMessage("Soru başarıyla güncellendi");
+    showSuccessMessage("Soru başarıyla güncellendi", 1.5);
+    if (refreshAction) yield put(refreshAction);
   } catch (error) {
     showErrorMessage("Güncellerken bir hata oluştu");
     console.log(error);
   }
+  yield put($A($.UPDATE_QUIZ_FINISHED));
 };
 
 const tryDeleteQuizSaga = function* ({ payload }) {

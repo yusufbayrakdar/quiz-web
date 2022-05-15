@@ -161,6 +161,7 @@ const StyledAnimated = styled(Animated)`
     height: 2.79vw;
     background-color: ${({ theme, isOver }) =>
       isOver ? theme.colors.lightPrimary : theme.colors.nestGray};
+    user-select: none;
   }
   #action-buttons {
     background-color: ${({ theme }) => theme.colors.darkGray};

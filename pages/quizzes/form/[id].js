@@ -23,6 +23,7 @@ import { BASE_ENDPOINT, displayDuration } from "../../../utils";
 import QuestionCard from "../../../components/QuestionCard";
 import CreateButton from "../../../components/Buttons/CreateButton";
 import { displayFullName } from "../../../utils";
+import SelectStudentModal from "../../../components/Modals/SelectStudentModal";
 
 const { Option } = Select;
 
@@ -41,6 +42,9 @@ function Quizzes() {
   const questionList = useSelector((state) => state.question.questionList);
   const totalQuestions = useSelector((state) => state.question.totalQuestions);
   const activeQuiz = useSelector((state) => state.quiz.activeQuiz);
+  const quizSavingInProgress = useSelector(
+    (state) => state.quiz.quizSavingInProgress
+  );
   const categories = useSelector((state) => state.question.categories);
   const durations = useSelector((state) => state.question.durations);
   const grades = useSelector((state) => state.question.grades);
@@ -50,6 +54,8 @@ function Quizzes() {
   const [category, setCategory] = useState();
   const [owner, setOwner] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [selectStudentModalVisible, setSelectStudentModalVisible] =
+    useState(false);
 
   useEffect(() => {
     if (editMode) dispatchAction($.GET_QUIZ_DETAIL_REQUEST, { _id: query?.id });
@@ -110,6 +116,7 @@ function Quizzes() {
       name,
       duration,
       questionList: Array.from(activeQuiz.questionSet),
+      assignedStudents: [],
       reset: () => {
         form.resetFields();
         router.push(BASE_ENDPOINT.quiz + `/form/create?page=${1}&limit=${12}`);
@@ -144,8 +151,29 @@ function Quizzes() {
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Form form={form} onFinish={onFinish}>
+        <SelectStudentModal
+          visible={selectStudentModalVisible}
+          onClose={() => setSelectStudentModalVisible(false)}
+          quizId={activeQuiz?._id}
+          selecteds={activeQuiz?.assignedStudents?.map((s) => s._id)}
+          refreshAction={{
+            type: $.GET_QUIZ_DETAIL_REQUEST,
+            payload: { _id: activeQuiz?._id },
+          }}
+        />
         <div style={{ marginBottom: 15 }} className="end">
-          <CreateButton onClick={() => form.submit()}>
+          <Button
+            type="primary"
+            style={{ marginRight: 5 }}
+            onClick={() => setSelectStudentModalVisible(true)}
+            disabled={quizSavingInProgress}
+          >
+            Öğrenciler ({activeQuiz?.assignedStudents?.length || 0})
+          </Button>
+          <CreateButton
+            onClick={() => form.submit()}
+            disabled={quizSavingInProgress}
+          >
             {editMode ? "Güncelle" : "Oluştur"}
           </CreateButton>
         </div>

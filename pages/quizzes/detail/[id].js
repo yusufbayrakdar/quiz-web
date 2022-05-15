@@ -9,6 +9,7 @@ import {
   faHashtag,
   faSignature,
   faUser,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, Col, Pagination, Row } from "antd";
@@ -70,6 +71,9 @@ function QuizDetail() {
           </HeaderInfo>
           <HeaderInfo color={theme.colors.red} icon={faClock}>
             Süre: {displayDuration(activeQuiz?.duration)}
+          </HeaderInfo>
+          <HeaderInfo color={theme.colors.turquoise} icon={faUsers}>
+            Öğrenci: {activeQuiz.assignedStudents?.length || 0}
           </HeaderInfo>
         </Row>
         <Row>

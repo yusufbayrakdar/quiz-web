@@ -4,6 +4,8 @@ const initialState = {
   students: [],
   totalStudents: 0,
   studentsLoading: false,
+  hasNextPage: false,
+  nextPage: 0,
   resetForm: false,
 };
 
@@ -22,6 +24,17 @@ export default function studentReducer(
         ...state,
         students: payload.students,
         totalStudents: payload.totalStudents,
+        hasNextPage: payload.hasNextPage,
+        nextPage: payload.nextPage,
+        studentsLoading: false,
+      };
+    case $.ADD_STUDENTS:
+      return {
+        ...state,
+        students: [...state.students, ...payload.students],
+        totalStudents: payload.totalStudents,
+        hasNextPage: payload.hasNextPage,
+        nextPage: payload.nextPage,
         studentsLoading: false,
       };
     case $.CREATE_STUDENT_REQUEST:

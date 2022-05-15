@@ -68,6 +68,16 @@ export default function quizReducer(state = initialState, { type, payload }) {
           duration: 0,
         },
       };
+    case $.UPDATE_QUIZ_REQUEST:
+      return {
+        ...state,
+        quizSavingInProgress: true,
+      };
+    case $.UPDATE_QUIZ_FINISHED:
+      return {
+        ...state,
+        quizSavingInProgress: false,
+      };
     case $.QUIZ_FORM_RESET:
       return {
         ...state,

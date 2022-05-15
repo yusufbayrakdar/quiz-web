@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useSelector } from "react-redux";
@@ -6,12 +6,12 @@ import { useRouter } from "next/router";
 import { Button, Card, Popconfirm, Row } from "antd";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styled from "styled-components";
 
 import useRedux from "../../hooks/useRedux";
 import CustomTable from "../../components/CustomTable";
 import { BASE_ENDPOINT, displayDuration, displayFullName } from "../../utils";
-
-import styled from "styled-components";
+import SelectStudentModal from "../../components/Modals/SelectStudentModal";
 
 function Quizzes() {
   const { dispatchAction, $ } = useRedux();
@@ -29,6 +29,11 @@ function Quizzes() {
   const quizDeleteInProgress = useSelector(
     (state) => state.quiz.quizDeleteInProgress
   );
+
+  const [selectStudentModalVisible, setSelectStudentModalVisible] =
+    useState(false);
+  const [selectedQuizForStudentModal, setSelectedQuizForStudentModal] =
+    useState();
 
   useEffect(() => {
     dispatchAction($.GET_QUIZ_LIST_REQUEST, {
@@ -59,6 +64,14 @@ function Quizzes() {
       dataIndex: "questionList",
       render: (questionList) =>
         Array.isArray(questionList) && <Info>{questionList.length}</Info>,
+    },
+    {
+      title: "Öğrenci",
+      dataIndex: "assignedStudents",
+      render: (assignedStudents) =>
+        Array.isArray(assignedStudents) && (
+          <Info>{assignedStudents.length}</Info>
+        ),
     },
     {
       title: "Süre",
@@ -110,7 +123,14 @@ function Quizzes() {
                 width={13}
               />
             </Button>
-            <Button type="text" className="action-button center">
+            <Button
+              type="text"
+              className="action-button center"
+              onClick={() => {
+                setSelectedQuizForStudentModal(_id);
+                setSelectStudentModalVisible(true);
+              }}
+            >
               <div className="icon center" id="send-icon">
                 <Image src="/telegram.svg" width={13} height={13} />
               </div>
@@ -128,6 +148,23 @@ function Quizzes() {
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Container>
+        <SelectStudentModal
+          visible={selectStudentModalVisible}
+          onClose={() => setSelectStudentModalVisible(false)}
+          quizId={selectedQuizForStudentModal}
+          selecteds={
+            quizList?.find((quiz) => quiz?._id === selectedQuizForStudentModal)
+              ?.assignedStudents
+          }
+          refreshAction={{
+            type: $.GET_QUIZ_LIST_REQUEST,
+            payload: {
+              search,
+              page,
+              limit,
+            },
+          }}
+        />
         <CustomTable
           columns={columns}
           dataSource={quizList}

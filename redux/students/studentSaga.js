@@ -5,10 +5,19 @@ import { $A, showErrorMessage, showSuccessMessage } from "../../utils";
 
 const tryGetStudentsSaga = function* ({ payload }) {
   try {
+    const putAction = payload.action || $.SET_STUDENTS;
+    delete payload.action;
     const { data } = yield call(Api.getStudents, payload);
-    const { docs: students, totalDocs: totalStudents } = data;
+    const {
+      docs: students,
+      totalDocs: totalStudents,
+      hasNextPage,
+      nextPage,
+    } = data;
 
-    yield put($A($.SET_STUDENTS, { students, totalStudents }));
+    yield put(
+      $A(putAction, { students, totalStudents, hasNextPage, nextPage })
+    );
   } catch (error) {
     yield put($A($.SET_STUDENTS, []));
     showErrorMessage("Could not get students");

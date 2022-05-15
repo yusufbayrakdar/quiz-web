@@ -16,5 +16,6 @@ export default {
     lightRed: "#fca5a5",
     red: "#ef4444",
     purple: "purple",
+    turquoise: "#4ecdc4",
   },
 };
