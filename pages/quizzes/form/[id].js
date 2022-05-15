@@ -116,7 +116,8 @@ function Quizzes() {
       name,
       duration,
       questionList: Array.from(activeQuiz.questionSet),
-      assignedStudents: [],
+      assignedStudents:
+        activeQuiz?.assignedStudents?.map((student) => student?._id) || [],
       reset: () => {
         form.resetFields();
         router.push(BASE_ENDPOINT.quiz + `/form/create?page=${1}&limit=${12}`);
@@ -162,14 +163,16 @@ function Quizzes() {
           }}
         />
         <div style={{ marginBottom: 15 }} className="end">
-          <Button
-            type="primary"
-            style={{ marginRight: 5 }}
-            onClick={() => setSelectStudentModalVisible(true)}
-            disabled={quizSavingInProgress}
-          >
-            Öğrenciler ({activeQuiz?.assignedStudents?.length || 0})
-          </Button>
+          {editMode && (
+            <Button
+              type="primary"
+              style={{ marginRight: 5 }}
+              onClick={() => setSelectStudentModalVisible(true)}
+              disabled={quizSavingInProgress}
+            >
+              Öğrenciler ({activeQuiz?.assignedStudents?.length || 0})
+            </Button>
+          )}
           <CreateButton
             onClick={() => form.submit()}
             disabled={quizSavingInProgress}

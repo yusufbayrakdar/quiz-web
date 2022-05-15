@@ -67,7 +67,6 @@ function SelectStudentModal({
   };
 
   const onCancel = () => {
-    setStudentSet(new Set());
     onClose?.();
   };
 
