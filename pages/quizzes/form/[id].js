@@ -60,7 +60,7 @@ function QuizForm() {
   useEffect(() => {
     if (editMode) dispatchAction($.GET_QUIZ_DETAIL_REQUEST, { _id: query?.id });
     else dispatchAction($.CREATE_QUIZ_FINISHED);
-  }, [$, dispatchAction, editMode]);
+  }, [$, dispatchAction, editMode, query?.id]);
 
   useEffect(() => {
     const ownerQuery = owner ? { creatorId: instructor._id } : {};
@@ -86,6 +86,7 @@ function QuizForm() {
     category,
     duration,
     grade,
+    instructor?._id,
   ]);
 
   useEffect(() => {
@@ -248,7 +249,7 @@ function QuizForm() {
           className="questions"
         >
           {questionList?.map((question) => (
-            <Col span={8}>
+            <Col span={8} key={question?._id}>
               <QuestionCard question={question} />
             </Col>
           ))}

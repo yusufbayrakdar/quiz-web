@@ -16,7 +16,12 @@ function NotFound() {
         <meta name="description" content="Sayfa bulunamadı" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      <Image src="/404.svg" height={400} width={400} />
+      <Image
+        src="/404.svg"
+        height={400}
+        width={400}
+        alt="404-not-found-image"
+      />
     </div>
   );
 }

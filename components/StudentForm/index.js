@@ -13,11 +13,11 @@ function StudentForm({ student, refreshAction }) {
 
   useEffect(() => {
     if (resetForm) form.resetFields();
-  }, [resetForm]);
+  }, [resetForm, form]);
 
   useEffect(() => {
     form.setFieldsValue(student);
-  }, [student]);
+  }, [student, form]);
 
   const onFinish = (values) => {
     if (!instructor?.confirmed) {

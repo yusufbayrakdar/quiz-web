@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDrop } from "react-dnd";
 import { Row } from "antd";
 import { useSelector } from "react-redux";
@@ -35,7 +35,7 @@ function Nest({
     }, 600);
   };
 
-  const clearNest = () => {
+  const clearNest = useCallback(() => {
     if (droppedItem?.imageUrl) {
       setBounceOutEffect(true);
       setTimeout(() => {
@@ -47,14 +47,14 @@ function Nest({
         setBounceOutEffect(false);
       }, 600);
     }
-  };
+  }, [$, dispatchAction, coordinate, droppedItem?.imageUrl, isQuestion]);
 
   useEffect(() => {
     if (isDropped) {
       setDroppedItem(dragItem);
       setIsDropped(false);
     }
-  }, [isDropped]);
+  }, [isDropped, dragItem]);
 
   useEffect(() => {
     setDroppedItem({ imageUrl: shape });
@@ -62,7 +62,7 @@ function Nest({
 
   useEffect(() => {
     if (resetForm && !editMode) clearNest();
-  }, [resetForm, editMode]);
+  }, [resetForm, editMode, clearNest]);
 
   const renderContent = () => {
     if (droppedItem?.imageUrl) {

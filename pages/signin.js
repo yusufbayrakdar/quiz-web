@@ -31,7 +31,7 @@ function SignUp() {
       form.resetFields();
       router.push("/dashboard");
     }
-  }, [loggedIn]);
+  }, [loggedIn, form, router]);
 
   return (
     <Styled>

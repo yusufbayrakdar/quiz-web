@@ -2,7 +2,7 @@ import { ConfigProvider } from "antd";
 import React, { useEffect } from "react";
 import useRedux from "../../hooks/useRedux";
 
-function index(props) {
+function Container(props) {
   const { dispatchAction, $ } = useRedux();
 
   useEffect(() => {
@@ -11,4 +11,4 @@ function index(props) {
   return <ConfigProvider {...props}></ConfigProvider>;
 }
 
-export default index;
+export default Container;

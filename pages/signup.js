@@ -30,7 +30,7 @@ function SignUp() {
       form.resetFields();
       router.push(BASE_ENDPOINT.dashboard);
     }
-  }, [loggedIn]);
+  }, [loggedIn, form, router]);
 
   return (
     <Styled className="center">

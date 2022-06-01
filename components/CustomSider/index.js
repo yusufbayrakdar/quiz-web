@@ -44,14 +44,21 @@ function CustomSider() {
     ) {
       router.push("/");
     }
-  }, [loggedIn]);
+  }, [router, loggedIn]);
 
   const isInForbiddenPath = restrictedPaths.includes(router.pathname);
   const unauthorizedInstructor = instructor && !instructor.confirmed;
   useEffect(() => {
     if (isInForbiddenPath && (student || unauthorizedInstructor))
       router.push("/dashboard");
-  }, [student, instructor, router.pathname]);
+  }, [
+    student,
+    instructor,
+    router.pathname,
+    isInForbiddenPath,
+    router,
+    unauthorizedInstructor,
+  ]);
 
   if (["/signin", "/signup", "/"].includes(router.pathname)) return null;
 

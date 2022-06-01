@@ -15,7 +15,7 @@ import EditStudentModal from "../../components/Modals/EditStudentModal";
 
 const defaultPageSize = 10;
 
-function students() {
+function Students() {
   const router = useRouter();
   const query = router.query;
   const { dispatchAction, $ } = useRedux();
@@ -145,4 +145,4 @@ function students() {
   );
 }
 
-export default students;
+export default Students;

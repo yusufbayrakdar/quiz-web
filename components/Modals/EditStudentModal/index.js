@@ -14,7 +14,7 @@ function EditStudentModal({ visible, onClose, student, refreshAction }) {
       onClose?.();
       dispatchAction($.RESET_STUDENT_RESET);
     }
-  }, [resetForm]);
+  }, [$, dispatchAction, resetForm, onClose]);
 
   return (
     <Modal

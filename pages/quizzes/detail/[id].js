@@ -100,7 +100,7 @@ function QuizDetail() {
         className="questions"
       >
         {activeQuiz?.questionList?.docs?.map((question) => (
-          <Col span={8}>
+          <Col span={8} key={question?._id}>
             <QuestionCard question={question} selectable={false} />
           </Col>
         ))}

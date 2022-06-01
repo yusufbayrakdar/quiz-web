@@ -1,5 +1,5 @@
 import { Button, Card, Col, Select, Input, Row, Form, Tooltip } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -42,7 +42,9 @@ function QuestionCreate() {
   const [searchInput, setSearchInput] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
 
-  const resetOptions = () => {
+  const [form] = Form.useForm();
+
+  const resetOptions = useCallback(() => {
     if (durations) {
       setDuration(durations[0]?._id);
     }
@@ -52,19 +54,19 @@ function QuestionCreate() {
     if (categories) {
       setCategory(categories[0]?._id);
     }
-  };
+  }, [categories, grades, durations]);
 
   useEffect(() => {
     // @ts-ignore
     if (scrollRef?.current?.scrollTop) scrollRef.current.scrollTop = 0;
     dispatchAction($.GET_SHAPES, { search: searchInput, action: $.SET_SHAPES });
-  }, [searchInput]);
+  }, [$, dispatchAction, searchInput]);
 
   useEffect(() => {
     if (editMode && !questionSavingInProgress)
       dispatchAction($.GET_QUESTION_DETAIL_REQUEST, id);
     else dispatchAction($.CREATE_QUESTION_FINISHED);
-  }, [editMode, questionSavingInProgress]);
+  }, [$, dispatchAction, editMode, questionSavingInProgress, id]);
 
   useEffect(() => {
     if (activeQuestion) {
@@ -92,33 +94,25 @@ function QuestionCreate() {
       });
       setVideoUrl(activeQuestion?.videoUrl ?? "");
     }
-  }, [
-    activeQuestion?.category,
-    activeQuestion?.duration,
-    activeQuestion?.grade,
-    activeQuestion?.videoUrl,
-    activeQuestion?.description,
-  ]);
+  }, [activeQuestion, categories, durations, form, grades]);
 
   useEffect(() => {
     resetOptions();
-  }, [durations, grades, categories]);
-
-  const [form] = Form.useForm();
+  }, [durations, grades, categories, resetOptions]);
 
   useEffect(() => {
     if (!shapes.length) {
       dispatchAction($.GET_SHAPES, { action: $.SET_SHAPES });
       dispatchAction($.GET_QUESTION_CONFIGS_REQUEST);
     }
-  }, [$, dispatchAction]);
+  }, [$, dispatchAction, shapes?.length]);
 
   useEffect(() => {
     if (resetForm) {
       resetOptions();
       dispatchAction($.QUESTION_FORM_RESET);
     }
-  }, [resetForm]);
+  }, [$, dispatchAction, resetOptions, resetForm]);
 
   const renderSelects = (OPTIONS, key, render) => {
     const options = [];
@@ -274,7 +268,7 @@ function QuestionCreate() {
                     >
                       <AiDnD itemInfo={shape} key={i}>
                         <div className="image-container center">
-                          <img src={shape.imageUrl} />
+                          <img src={shape.imageUrl} alt="shape" />
                         </div>
                       </AiDnD>
                     </Col>

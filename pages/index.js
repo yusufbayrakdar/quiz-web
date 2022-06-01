@@ -44,7 +44,7 @@ function Index() {
             <Row>
               <Col>
                 <div className="brand-name gExtraBold">{BRAND_NAME}</div>
-                <div className="motto">"Zekanı sonsuzluğua aç"</div>
+                <div className="motto">&ldquo;Zekanı sonsuzluğua aç&rdquo;</div>
               </Col>
             </Row>
 

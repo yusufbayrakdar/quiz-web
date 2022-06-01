@@ -105,7 +105,12 @@ function Quizzes() {
               }}
             >
               <div className="icon center" id="send-icon">
-                <Image src="/telegram.svg" width={13} height={13} />
+                <Image
+                  src="/telegram.svg"
+                  width={13}
+                  height={13}
+                  alt="telegram-send-icon"
+                />
               </div>
             </Button>
             <EditItemButton baseEndpoint={BASE_ENDPOINT.quiz} _id={_id} />

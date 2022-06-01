@@ -22,8 +22,9 @@ function Question({
     }, {});
   };
 
-  const activeQuestion =
-    questionListItem || useSelector((state) => state.question.activeQuestion);
+  const activeQuestion = useSelector(
+    (state) => questionListItem || state.question.activeQuestion
+  );
   const correctAnswer = activeQuestion?.correctAnswer;
   const setCorrectAnswer = (value) => {
     dispatchAction($.SET_CORRECT_ANSWER, value);
@@ -49,7 +50,7 @@ function Question({
       constraints.maxY = Math.max(constraints.maxY, Number(y));
     }
     setShowModeConstraints(constraints);
-  }, [activeQuestion]);
+  }, [activeQuestion, preparedQuestion]);
 
   const isInRange = (x, y) => {
     const { minX, maxX, minY, maxY } = showModeConstraints;

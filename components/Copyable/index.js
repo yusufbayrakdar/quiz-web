@@ -20,8 +20,8 @@ export default function Copyable({
       style={{ margin: "auto", ...style }}
       copyable={{
         icon: [
-          <CopyOutlined style={iconStyle} />,
-          <CheckOutlined style={iconStyle} />,
+          <CopyOutlined style={iconStyle} key="copy-outlined-icon" />,
+          <CheckOutlined style={iconStyle} key="check-outlined-icon" />,
         ],
         tooltips: ["copy", "copied"],
         text: text || (typeof children === "string" && children),

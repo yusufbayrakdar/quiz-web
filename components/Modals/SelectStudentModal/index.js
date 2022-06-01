@@ -108,7 +108,7 @@ function SelectStudentModal({
       />
       <StudentList ref={scrollRef} onScroll={onScroll}>
         {students.map((student) => (
-          <StudentItem>
+          <StudentItem key={student?._id}>
             <Checkbox
               onChange={() => addStudent(student._id)}
               checked={studentSet.has(student._id)}
