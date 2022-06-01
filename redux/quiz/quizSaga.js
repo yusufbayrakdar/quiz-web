@@ -39,8 +39,9 @@ const tryDeleteQuizSaga = function* ({ payload }) {
 
     yield put($A($.GET_QUIZ_LIST_REQUEST));
   } catch (error) {
-    yield put($A($.GET_QUIZ_LIST_REQUEST));
+    console.log(error);
   }
+  yield put($A($.DELETE_QUIZ_FINISHED));
 };
 
 const tryGetQuizListSaga = function* ({ payload }) {

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 
@@ -9,6 +9,9 @@ import useRedux from "../../hooks/useRedux";
 import TableHeaderBar from "../../components/TableHeaderBar";
 import { BASE_ENDPOINT, capitalizeFirstLetter } from "../../utils";
 import theme from "../../utils/theme";
+import DeleteButton from "../../components/Buttons/DeleteButton";
+import EditItemButton from "../../components/Buttons/EditItemButton";
+import EditStudentModal from "../../components/Modals/EditStudentModal";
 
 const defaultPageSize = 10;
 
@@ -21,6 +24,11 @@ function students() {
   const students = useSelector((state) => state.student.students);
   const studentsLoading = useSelector((state) => state.student.studentsLoading);
   const totalstudents = useSelector((state) => state.student.totalStudents);
+
+  const [
+    editStudentFormVisibleWithStudent,
+    setEditStudentFormVisibleWithStudent,
+  ] = useState();
 
   const search = query["search"];
   const page = query["page"];
@@ -45,6 +53,22 @@ function students() {
     fontWeight: 300,
     color: theme.colors.deepDarkGray,
   };
+
+  const deleteStudent = (studentId) => {
+    dispatchAction($.DELETE_STUDENT_REQUEST, {
+      _id: studentId,
+      refreshAction: {
+        type: $.GET_STUDENTS,
+        payload: {
+          page,
+          limit,
+          search,
+          instructor: instructor?._id,
+        },
+      },
+    });
+  };
+
   const columns = [
     {
       title: "Öğrenci",
@@ -67,6 +91,19 @@ function students() {
       dataIndex: "passwordInit",
       render: (password) => <Copyable>{password}</Copyable>,
     },
+    {
+      title: "",
+      render: (student) => (
+        <div style={{ display: "flex" }}>
+          <EditItemButton
+            baseEndpoint={BASE_ENDPOINT.student}
+            _id={student?._id}
+            customOnclick={() => setEditStudentFormVisibleWithStudent(student)}
+          />
+          <DeleteButton onConfirm={() => deleteStudent(student?._id)} />
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -76,6 +113,20 @@ function students() {
         <meta name="description" content="Öğrenciler" />
         <link rel="icon" href="/ideas.png" />
       </Head>
+      <EditStudentModal
+        student={editStudentFormVisibleWithStudent}
+        visible={editStudentFormVisibleWithStudent}
+        onClose={() => setEditStudentFormVisibleWithStudent(null)}
+        refreshAction={{
+          type: $.GET_STUDENTS,
+          payload: {
+            page,
+            limit,
+            search,
+            instructor: instructor?._id,
+          },
+        }}
+      />
       <TableHeaderBar
         baseEndpoint={BASE_ENDPOINT.student}
         hideCreate={false}

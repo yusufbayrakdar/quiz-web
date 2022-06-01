@@ -47,6 +47,16 @@ export default function studentReducer(
         ...state,
         resetForm: true,
       };
+    case $.UPDATE_STUDENT_FINISHED:
+      return {
+        ...state,
+        resetForm: true,
+      };
+    case $.RESET_STUDENT_RESET:
+      return {
+        ...state,
+        resetForm: false,
+      };
     default:
       return state;
   }

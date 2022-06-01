@@ -99,6 +99,14 @@ class Api {
     return this._doPostWithAuth(`/students`, payload);
   };
 
+  updateStudent = (payload) => {
+    return this._doPutWithAuth(`/students`, payload);
+  };
+
+  deleteStudent = (_id) => {
+    return this._doDeleteWithAuth(`/students/${_id}`);
+  };
+
   getShapes = (payload) => {
     const query = this.objectToQueryString(payload);
     return this._doGetWithAuth(`/shapes${query}`);

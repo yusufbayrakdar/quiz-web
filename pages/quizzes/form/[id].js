@@ -27,7 +27,7 @@ import SelectStudentModal from "../../../components/Modals/SelectStudentModal";
 
 const { Option } = Select;
 
-function Quizzes() {
+function QuizForm() {
   const { dispatchAction, $ } = useRedux();
   const router = useRouter();
   const query = router.query;
@@ -332,4 +332,4 @@ const Styled = styled.div`
   }
 `;
 
-export default Quizzes;
+export default QuizForm;

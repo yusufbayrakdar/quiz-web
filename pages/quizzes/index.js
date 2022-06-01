@@ -3,15 +3,16 @@ import Head from "next/head";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { Button, Card, Popconfirm, Row } from "antd";
-import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Card, Row } from "antd";
 import styled from "styled-components";
 
 import useRedux from "../../hooks/useRedux";
 import CustomTable from "../../components/CustomTable";
 import { BASE_ENDPOINT, displayDuration, displayFullName } from "../../utils";
 import SelectStudentModal from "../../components/Modals/SelectStudentModal";
+import DeleteButton from "../../components/Buttons/DeleteButton";
+import EditItemButton from "../../components/Buttons/EditItemButton";
+import StartButton from "../../components/Buttons/StartButton";
 
 function Quizzes() {
   const { dispatchAction, $ } = useRedux();
@@ -23,9 +24,13 @@ function Quizzes() {
   const limit = query["limit"] || 12;
 
   const instructor = useSelector((state) => state.auth.instructor);
+  const student = useSelector((state) => state.auth.student);
   const quizList = useSelector((state) => state.quiz.quizList);
   const totalQuizzes = useSelector((state) => state.quiz.totalQuizzes);
   const quizListLoading = useSelector((state) => state.quiz.quizListLoading);
+  const quizSavingInProgress = useSelector(
+    (state) => state.quiz.quizSavingInProgress
+  );
   const quizDeleteInProgress = useSelector(
     (state) => state.quiz.quizDeleteInProgress
   );
@@ -36,12 +41,14 @@ function Quizzes() {
     useState();
 
   useEffect(() => {
+    const studentFilter = student ? { assignedStudents: student?._id } : {};
     dispatchAction($.GET_QUIZ_LIST_REQUEST, {
       search,
       page,
       limit,
+      ...studentFilter,
     });
-  }, [$, dispatchAction, search, page, limit]);
+  }, [$, dispatchAction, search, page, limit, student]);
 
   const deleteQuiz = (_id) => {
     dispatchAction($.DELETE_QUIZ_REQUEST, _id);
@@ -87,42 +94,8 @@ function Quizzes() {
     {
       title: "",
       render: ({ _id, creator }) =>
-        creator._id &&
-        creator._id === instructor?._id && (
+        creator._id && creator._id === instructor?._id ? (
           <ActionButtons className="center">
-            <Popconfirm
-              placement="bottomLeft"
-              title="Silmek istediğinizden emin misiniz?"
-              okText="Evet"
-              cancelText="Hayır"
-              onConfirm={() => deleteQuiz(_id)}
-            >
-              <Button
-                danger
-                type="text"
-                className="action-button center"
-                loading={quizDeleteInProgress}
-              >
-                <FontAwesomeIcon
-                  icon={faTrashAlt}
-                  className="icon"
-                  id="delete-icon"
-                  width={12}
-                />
-              </Button>
-            </Popconfirm>
-            <Button
-              type="text"
-              className="action-button center"
-              onClick={() => router.push(`${BASE_ENDPOINT.quiz}/form/${_id}`)}
-            >
-              <FontAwesomeIcon
-                icon={faEdit}
-                className="icon"
-                id="edit-icon"
-                width={13}
-              />
-            </Button>
             <Button
               type="text"
               className="action-button center"
@@ -135,8 +108,15 @@ function Quizzes() {
                 <Image src="/telegram.svg" width={13} height={13} />
               </div>
             </Button>
+            <EditItemButton baseEndpoint={BASE_ENDPOINT.quiz} _id={_id} />
+            <DeleteButton
+              onConfirm={() => deleteQuiz(_id)}
+              loading={quizDeleteInProgress}
+            />
           </ActionButtons>
-        ),
+        ) : student ? (
+          <StartButton _id={_id} />
+        ) : null,
     },
   ];
 
@@ -169,7 +149,7 @@ function Quizzes() {
           columns={columns}
           dataSource={quizList}
           totalDocuments={totalQuizzes}
-          loading={quizListLoading}
+          loading={quizListLoading || quizSavingInProgress}
           baseEndpoint={BASE_ENDPOINT.quiz}
         />
       </Container>
