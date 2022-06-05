@@ -46,7 +46,7 @@ function Scores() {
       dataIndex: "totalQuestions",
     },
     {
-      title: "Yüzde Skor",
+      title: "Skor %",
       dataIndex: "totalQuestions",
       render: (totalQuestions, { score }) =>
         Math.round((score / totalQuestions) * 100),

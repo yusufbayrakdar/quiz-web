@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { useSelector } from "react-redux";
 import { Chart, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
@@ -41,8 +42,20 @@ function ScoreDetail() {
       },
     ],
   };
+  if (!quizResult)
+    return (
+      <Container style={{ margin: 90 }}>
+        <Image
+          src="/progress.svg"
+          width={200}
+          height={200}
+          alt="quiz-score-calculation-progress"
+        />
+      </Container>
+    );
+
   return (
-    <Container style={{ padding: 50 }}>
+    <Container>
       <Doughnut data={data} options={options} />
       <span className="resultInfo gBold">
         <Animated>
@@ -88,6 +101,9 @@ function ScoreDetail() {
 const Container = styled(Animated)`
   padding: 50px;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .resultInfo {
     top: 50%;

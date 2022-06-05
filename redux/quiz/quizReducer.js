@@ -110,6 +110,7 @@ export default function quizReducer(state = initialState, { type, payload }) {
           quiz: null,
           answerList: [],
         },
+        quizResult: null,
       };
 
     case $.DELETE_QUIZ_REQUEST:
