@@ -7,10 +7,13 @@ function Animated({
   type = "fadeIn",
   animation = true,
   original = false,
+  delay = 0,
   ...props
 }) {
   const animationClasses = animation
-    ? `animate__animated animate__${type} animate__faster `
+    ? `animate__animated animate__${type} animate__faster ${
+        delay ? `animate__delay-${delay}s` : ""
+      }`
     : "";
   if (original) {
     return {

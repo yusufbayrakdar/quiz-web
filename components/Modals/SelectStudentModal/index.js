@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, forwardRef, useState } from "react";
 import { Checkbox, Input, Modal, Spin } from "antd";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -13,7 +13,7 @@ function SelectStudentModal({
   selecteds,
   refreshAction,
 }) {
-  const scrollRef = useRef(null);
+  const scrollRef = forwardRef(null);
   const { dispatchAction, $ } = useRedux();
 
   const instructor = useSelector((state) => state.auth.instructor);

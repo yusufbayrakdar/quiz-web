@@ -99,6 +99,7 @@ function Index() {
                 src={"/varlik.png"}
                 width={729 * rate}
                 height={1045 * rate}
+                alt="splash-screen-brain-image"
               />
               <div
                 className="signin-button"

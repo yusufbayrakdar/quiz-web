@@ -104,12 +104,12 @@ function QuizForm() {
   }, [form, activeQuiz]);
 
   const onFinish = (values) => {
-    const pickedDate = values.duration.toDate();
+    const pickedDate = values.duration?.toDate();
     const name = values.name;
     const [hours, minutes, seconds] = [
-      pickedDate.getHours(),
-      pickedDate.getMinutes(),
-      pickedDate.getSeconds(),
+      pickedDate?.getHours(),
+      pickedDate?.getMinutes(),
+      pickedDate?.getSeconds(),
     ];
     const duration = hours * 3600 + minutes * 60 + seconds;
     dispatchAction(editMode ? $.UPDATE_QUIZ_REQUEST : $.CREATE_QUIZ_REQUEST, {
@@ -188,10 +188,7 @@ function QuizForm() {
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item
-              name={"duration"}
-              rules={[{ required: true, message: "Lütfen süreyi seçiniz" }]}
-            >
+            <Form.Item name={"duration"}>
               <TimePicker
                 style={{ width: "100%" }}
                 placeholder="Süre"

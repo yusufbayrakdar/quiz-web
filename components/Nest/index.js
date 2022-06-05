@@ -25,6 +25,7 @@ function Nest({
     imageUrl: shape || null,
   });
 
+  const examMode = useSelector((state) => Boolean(state.auth.student));
   const resetForm = useSelector((state) => state.question.resetForm);
   const dragItem = useSelector((state) => state.question.dragItem);
 
@@ -110,36 +111,52 @@ function Nest({
     ) : null;
   }
 
+  const Wrapper = useCallback(
+    ({ children }) => {
+      if (examMode) return children;
+      return (
+        <div
+          className={
+            !isQuestion && isCorrectAnswer ? "correct-answer-shadow" : ""
+          }
+        >
+          {isQuestion ? (
+            <DeleteButton className={"absolute-delete-button"} />
+          ) : (
+            <Row id="action-buttons">
+              <DeleteButton />
+              <MarkAsCorrectAnswerButton />
+            </Row>
+          )}
+          {children}
+        </div>
+      );
+    },
+    [isCorrectAnswer, isQuestion, examMode]
+  );
+
+  const onNestClicked = () => {
+    if (!isQuestion && examMode) {
+      return dispatchAction($.SIGN_QUESTION, coordinate);
+    }
+    if (isQuestion && !examMode) clearNest();
+  };
+
   return (
     <StyledAnimated
       type="bounceIn"
       animation={bounceInEffect}
       isQuestion={isQuestion}
+      examMode={examMode}
       isCorrectAnswer={isCorrectAnswer}
       isOver={isOver}
       widthRate={widthRate}
     >
-      <div
-        className={
-          !isQuestion && isCorrectAnswer ? "correct-answer-shadow" : ""
-        }
-      >
-        {isQuestion ? (
-          <DeleteButton className={"absolute-delete-button"} />
-        ) : (
-          <Row id="action-buttons">
-            <DeleteButton />
-            <MarkAsCorrectAnswerButton />
-          </Row>
-        )}
-        <div
-          onClick={() => isQuestion && clearNest()}
-          className={`nest center`}
-          ref={drop}
-        >
+      <Wrapper>
+        <div onClick={onNestClicked} className="nest center" ref={drop}>
           {renderContent()}
         </div>
-      </div>
+      </Wrapper>
     </StyledAnimated>
   );
 }
@@ -153,10 +170,11 @@ const StyledAnimated = styled(Animated)`
   }
 
   .nest {
-    border-radius: ${({ isQuestion }) => (isQuestion ? "0.7vw 0.7vw" : "0 0")}
+    border-radius: ${({ isQuestion, examMode }) =>
+        isQuestion || examMode ? "0.7vw 0.7vw" : "0 0"}
       0.7vw 0.7vw;
-    ${({ isQuestion }) =>
-      isQuestion ? "cursor: pointer;" : "overflow: hidden;"}
+    ${({ isQuestion, examMode }) =>
+      isQuestion || examMode ? "cursor: pointer;" : "overflow: hidden;"}
     width: ${({ widthRate }) => widthRate * 3.9}vw;
     height: 2.79vw;
     background-color: ${({ theme, isOver }) =>

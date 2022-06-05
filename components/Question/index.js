@@ -12,6 +12,7 @@ function Question({
   questionListItem,
   editMode,
   withoutCard = false,
+  style,
 }) {
   const { dispatchAction, $ } = useRedux();
   const prepareMap = (list) => {
@@ -25,22 +26,27 @@ function Question({
   const activeQuestion = useSelector(
     (state) => questionListItem || state.question.activeQuestion
   );
+  const examMode = useSelector((state) => Boolean(state.auth.student));
   const correctAnswer = activeQuestion?.correctAnswer;
   const setCorrectAnswer = (value) => {
     dispatchAction($.SET_CORRECT_ANSWER, value);
   };
   const preparedQuestion = prepareMap(activeQuestion?.question);
   const preparedChoices = prepareMap(activeQuestion?.choices);
-  const [showModeConstraints, setShowModeConstraints] = useState({});
+  const [showModeQuestionConstraints, setShowModeQuestionConstraints] =
+    useState({});
+  const [showModeChoicesConstraints, setShowModeChoicesConstraints] = useState(
+    {}
+  );
 
-  useEffect(() => {
+  const calculateConstraints = (map, setter) => {
     const constraints = {
       minX: 8,
       maxX: 0,
       minY: 8,
       maxY: 0,
     };
-    for (const key in preparedQuestion) {
+    for (const key in map) {
       const [x, y] = key.split(",");
 
       constraints.minX = Math.min(constraints.minX, Number(x));
@@ -49,21 +55,31 @@ function Question({
       constraints.minY = Math.min(constraints.minY, Number(y));
       constraints.maxY = Math.max(constraints.maxY, Number(y));
     }
-    setShowModeConstraints(constraints);
-  }, [activeQuestion, preparedQuestion]);
+    setter(constraints);
+  };
 
-  const isInRange = (x, y) => {
-    const { minX, maxX, minY, maxY } = showModeConstraints;
+  useEffect(() => () => dispatchAction($.QUESTION_FORM_RESET), []);
+
+  useEffect(() => {
+    calculateConstraints(preparedQuestion, setShowModeQuestionConstraints);
+    calculateConstraints(preparedChoices, setShowModeChoicesConstraints);
+  }, [activeQuestion]);
+
+  const isInRange = (x, y, constraints) => {
+    const { minX, maxX, minY, maxY } = constraints;
     return minX <= x && maxX >= x && minY <= y && maxY >= y;
   };
 
   const renderRowNests = (y, isQuestion = true) => {
     const nests = [];
     const map = isQuestion ? preparedQuestion : preparedChoices;
+    const constraints = isQuestion
+      ? showModeQuestionConstraints
+      : showModeChoicesConstraints;
     for (let x = 0; x < 8; x++) {
       const nestId = `${x},${y}`;
       const isCorrectAnswer = correctAnswer === nestId;
-      if (!showMode || (showMode && isInRange(x, y)))
+      if (!showMode || ((showMode || examMode) && isInRange(x, y, constraints)))
         nests.push(
           <Nest
             key={nestId}
@@ -94,7 +110,7 @@ function Question({
   };
 
   return (
-    <Styled showMode={showMode}>
+    <Styled showMode={showMode} examMode={examMode} style={style}>
       {withoutCard ? (
         renderNests()
       ) : (
@@ -102,8 +118,14 @@ function Question({
           {renderNests()}
         </Info>
       )}
-      {!showMode && (
-        <Info title="Seçenekler" titleWidthPercent={50} largePadding={true}>
+      {(!showMode || examMode) && (
+        <Info
+          title="Seçenekler"
+          titleWidthPercent={50}
+          largePadding={true}
+          showMode={showMode}
+          style={showMode ? { marginTop: 15 } : {}}
+        >
           {<Row className="justify-around">{renderRowNests(0, false)}</Row>}
         </Info>
       )}
@@ -112,7 +134,8 @@ function Question({
 }
 
 const Styled = styled.div`
-  pointer-events: ${({ showMode }) => (showMode ? "none" : "auto")};
+  pointer-events: ${({ showMode, examMode }) =>
+    !showMode || examMode ? "auto" : "none"};
   .justify-around {
     display: flex;
     justify-content: space-around;

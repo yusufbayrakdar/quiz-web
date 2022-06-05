@@ -43,6 +43,7 @@ export const BASE_ENDPOINT = {
   student: "/students",
   question: "/questions",
   quiz: "/quizzes",
+  score: "/scores",
   dashboard: "/dashboard",
   signin: "/signin",
   signup: "/signup",

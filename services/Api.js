@@ -158,6 +158,19 @@ class Api {
     const query = this.objectToQueryString(queryObject);
     return this._doGetWithAuth(`/quizzes/${_id}${query}`);
   };
+
+  finishQuiz = (payload) => {
+    return this._doPostWithAuth("/quizzes/finish", payload);
+  };
+
+  getScoreList = (payload) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/scores${query}`);
+  };
+
+  getScoreDetail = (_id) => {
+    return this._doGetWithAuth(`/scores/${_id}`);
+  };
 }
 
 export default new Api();

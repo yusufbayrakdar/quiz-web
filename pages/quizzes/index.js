@@ -60,7 +60,13 @@ function Quizzes() {
       dataIndex: "name",
       render: (name, { _id }) => (
         <NameWithLink
-          onClick={() => router.push(BASE_ENDPOINT.quiz + "/detail/" + _id)}
+          onClick={() =>
+            router.push(
+              student
+                ? BASE_ENDPOINT.quiz + "/" + _id
+                : BASE_ENDPOINT.quiz + "/detail/" + _id
+            )
+          }
         >
           {name || "-"}
         </NameWithLink>
@@ -83,8 +89,19 @@ function Quizzes() {
     {
       title: "Süre",
       dataIndex: "duration",
-      render: (duration) =>
-        duration && <Info>{displayDuration(duration)}</Info>,
+      render: (duration, { questionList }) => {
+        return (
+          <Info>
+            {displayDuration(
+              duration ||
+                questionList?.reduce((total, current) => {
+                  total += current?.duration?.duration;
+                  return total;
+                }, 0)
+            )}
+          </Info>
+        );
+      },
     },
     {
       title: "Eğitmen",

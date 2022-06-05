@@ -14,8 +14,19 @@ import questionSaga from "./questions/questionSaga";
 import quizReducer from "./quiz/quizReducer";
 import quizSaga from "./quiz/quizSaga";
 
+import scoreReducer from "./score/scoreReducer";
+import scoreSaga from "./score/scoreSaga";
+
+import globalReducer from "./global/globalReducer";
+
 const combinedSagas = function* () {
-  yield all([authSaga(), studentSaga(), questionSaga(), quizSaga()]);
+  yield all([
+    authSaga(),
+    studentSaga(),
+    questionSaga(),
+    quizSaga(),
+    scoreSaga(),
+  ]);
 };
 
 const composeEnhancers = compose;
@@ -26,6 +37,8 @@ const rootReducer = combineReducers({
   student: studentReducer,
   question: questionReducer,
   quiz: quizReducer,
+  score: scoreReducer,
+  global: globalReducer,
 });
 
 export const store = createStore(

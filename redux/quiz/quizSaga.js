@@ -1,4 +1,4 @@
-import { put, call, takeLatest } from "redux-saga/effects";
+import { put, call, takeLatest, select } from "redux-saga/effects";
 import * as $ from "../actionTypes";
 import Api from "../../services/Api";
 import { $A, showErrorMessage, showSuccessMessage } from "../../utils";
@@ -69,10 +69,24 @@ const tryGetQuizDetailSaga = function* ({ payload }) {
   }
 };
 
+const tryFinishQuizSaga = function* ({ payload: finishedAt }) {
+  try {
+    const payload = yield select((state) => state.quiz.quizSubmission);
+    if (!payload?.quiz) return;
+    const { data } = yield call(Api.finishQuiz, { ...payload, finishedAt });
+
+    yield put($A($.FINISH_QUIZ_FINISHED, data));
+  } catch (error) {
+    yield put($A($.FINISH_QUIZ_FINISHED));
+    console.log("🤯 error", error);
+  }
+};
+
 export default function* quizSaga() {
   yield takeLatest($.CREATE_QUIZ_REQUEST, tryCreateQuizSaga);
   yield takeLatest($.UPDATE_QUIZ_REQUEST, tryUpdateQuizSaga);
   yield takeLatest($.GET_QUIZ_LIST_REQUEST, tryGetQuizListSaga);
   yield takeLatest($.DELETE_QUIZ_REQUEST, tryDeleteQuizSaga);
   yield takeLatest($.GET_QUIZ_DETAIL_REQUEST, tryGetQuizDetailSaga);
+  yield takeLatest($.FINISH_QUIZ_REQUEST, tryFinishQuizSaga);
 }

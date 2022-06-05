@@ -1,5 +1,5 @@
 import { Button, Card, Col, Select, Input, Row, Form, Tooltip } from "antd";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, forwardRef, useState } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -19,7 +19,7 @@ function QuestionCreate() {
   const { id } = router.query;
   const editMode = id && id.length >= 24;
 
-  const scrollRef = useRef(null);
+  const scrollRef = forwardRef(null);
   const shapes = useSelector((state) => state.question.shapes);
   const shapesLoading = useSelector((state) => state.question.shapesLoading);
   const nextPageShapes = useSelector((state) => state.question.nextPageShapes);

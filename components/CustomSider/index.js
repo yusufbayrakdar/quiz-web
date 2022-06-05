@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserGraduate,
   faSignOutAlt,
+  faPoll,
 } from "@fortawesome/free-solid-svg-icons";
 import useRedux from "../../hooks/useRedux";
 import { useSelector } from "react-redux";
@@ -23,6 +24,7 @@ const { Sider } = Layout;
 function CustomSider() {
   const router = useRouter();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const siderCollapsed = useSelector((state) => state.global.siderCollapsed);
 
   const { dispatchAction, $ } = useRedux();
 
@@ -63,7 +65,14 @@ function CustomSider() {
   if (["/signin", "/signup", "/"].includes(router.pathname)) return null;
 
   return (
-    <Sider theme="light">
+    <Sider
+      theme="light"
+      collapsible
+      collapsed={siderCollapsed}
+      onCollapse={(value) =>
+        dispatchAction(value ? $.COLLAPSE_SIDER : $.DECOLLAPSE_SIDER)
+      }
+    >
       <Menu mode="inline" defaultSelectedKeys={[router.pathname.split("?")[0]]}>
         {instructor && (
           <Menu.SubMenu
@@ -113,26 +122,45 @@ function CustomSider() {
             </Menu.Item>
           </Menu.SubMenu>
         )}
-        <Menu.SubMenu
-          key={BASE_ENDPOINT.quiz}
-          title="Denemeler"
-          icon={<FormOutlined />}
-        >
+        {instructor ? (
+          <Menu.SubMenu
+            key="quizzes-submenu"
+            title="Denemeler"
+            icon={<FormOutlined />}
+          >
+            <Menu.Item
+              key={BASE_ENDPOINT.quiz}
+              icon={<UnorderedListOutlined />}
+              onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
+            >
+              Liste
+            </Menu.Item>
+            <Menu.Item
+              key={`${BASE_ENDPOINT.quiz}/form/create`}
+              icon={<PlusCircleOutlined />}
+              onClick={() => router.push(`${BASE_ENDPOINT.quiz}/form/create`)}
+            >
+              Oluştur
+            </Menu.Item>
+          </Menu.SubMenu>
+        ) : (
           <Menu.Item
             key={BASE_ENDPOINT.quiz}
-            icon={<UnorderedListOutlined />}
+            icon={<FormOutlined />}
             onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
           >
-            Liste
+            Denemeler
           </Menu.Item>
+        )}
+        {student && (
           <Menu.Item
-            key={`${BASE_ENDPOINT.quiz}/form/create`}
-            icon={<PlusCircleOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.quiz}/form/create`)}
+            key={BASE_ENDPOINT.quiz + "/results"}
+            icon={<FontAwesomeIcon icon={faPoll} width={8} />}
+            onClick={() => router.push(`${BASE_ENDPOINT.score}?page=1`)}
           >
-            Oluştur
+            Sonuçlar
           </Menu.Item>
-        </Menu.SubMenu>
+        )}
         <Menu.Item
           key={BASE_ENDPOINT.profile}
           icon={<UserOutlined />}

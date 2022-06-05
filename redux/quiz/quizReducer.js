@@ -16,6 +16,21 @@ const initialState = {
   quizDeleteInProgress: false,
 
   resetForm: false,
+
+  currentQuestion: null,
+  finishQuizInProgress: false,
+  quizSubmission: {
+    quiz: null,
+    answerList: [
+      /*
+        {
+          questionId,
+          answer
+        }
+      */
+    ],
+  },
+  quizResult: null,
 };
 
 export default function quizReducer(state = initialState, { type, payload }) {
@@ -90,6 +105,11 @@ export default function quizReducer(state = initialState, { type, payload }) {
         quizSavingInProgress: false,
         quizDeleteInProgress: false,
         resetForm: false,
+        currentQuestion: null,
+        quizSubmission: {
+          quiz: null,
+          answerList: [],
+        },
       };
 
     case $.DELETE_QUIZ_REQUEST:
@@ -103,6 +123,14 @@ export default function quizReducer(state = initialState, { type, payload }) {
         quizDeleteInProgress: false,
       };
 
+    case $.GET_QUIZ_DETAIL_REQUEST:
+      return {
+        ...state,
+        quizSubmission: {
+          ...state.quizSubmission,
+          quiz: payload?._id,
+        },
+      };
     case $.GET_QUIZ_DETAIL_FINISHED:
       const questionSet = payload.questionList?.docs
         ? new Set()
@@ -127,6 +155,40 @@ export default function quizReducer(state = initialState, { type, payload }) {
         quizList: payload.quizList,
         totalQuizzes: payload.totalQuizzes,
         quizListLoading: false,
+      };
+
+    case $.ASSIGN_QUESTION_ID:
+      return {
+        ...state,
+        currentQuestion: payload,
+      };
+    case $.SIGN_QUESTION:
+      if (
+        state.quizSubmission?.answerList?.length >=
+        state.activeQuiz?.questionList?.totalDocs
+      )
+        return state;
+      return {
+        ...state,
+        quizSubmission: {
+          ...state.quizSubmission,
+          answerList: [
+            ...state.quizSubmission.answerList,
+            { questionId: state.currentQuestion, answer: payload },
+          ],
+        },
+      };
+
+    case $.FINISH_QUIZ_REQUEST:
+      return {
+        ...state,
+        finishQuizInProgress: true,
+      };
+    case $.FINISH_QUIZ_FINISHED:
+      return {
+        ...state,
+        finishQuizInProgress: false,
+        quizResult: payload,
       };
 
     default:

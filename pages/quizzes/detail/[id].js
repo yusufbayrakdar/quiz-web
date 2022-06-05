@@ -38,13 +38,14 @@ function QuizDetail() {
   const instructor = useSelector((state) => state.auth.instructor);
 
   useEffect(() => {
-    if (query?.id)
+    if (query?.id) {
       dispatchAction($.GET_QUIZ_DETAIL_REQUEST, {
         _id: query?.id,
         populateQuestions: true,
         page,
         limit,
       });
+    }
   }, [$, dispatchAction, query?.id, page, limit]);
 
   const HeaderInfo = ({ icon, color, children }) => (
