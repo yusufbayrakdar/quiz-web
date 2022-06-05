@@ -17,7 +17,8 @@ function Quiz() {
   const quizId = router?.query?.id;
 
   const activeQuiz = useSelector((state) => state.quiz.activeQuiz);
-  const questionList = activeQuiz?.questionList?.docs;
+  const { docs: questionList, ...questionListPaginateInfo } =
+    activeQuiz?.questionList || {};
   const totalQuestions = activeQuiz?.questionList?.totalDocs;
   const quizSubmission = useSelector((state) => state.quiz.quizSubmission);
   const [questionTurn, setQuestionTurn] = useState(0);
@@ -51,6 +52,19 @@ function Quiz() {
 
   useEffect(() => {
     if (quizId !== activeQuiz?._id) return;
+
+    if (
+      questionTurn === questionList?.length - 1 &&
+      questionList.length < totalQuestions &&
+      questionListPaginateInfo?.hasNextPage
+    ) {
+      dispatchAction($.GET_QUIZ_DETAIL_REQUEST, {
+        _id: activeQuiz?._id,
+        populateQuestions: true,
+        page: questionListPaginateInfo.nextPage,
+        add: true,
+      });
+    }
 
     if (
       !duration ||

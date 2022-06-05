@@ -79,7 +79,10 @@ function Question({
     for (let x = 0; x < 8; x++) {
       const nestId = `${x},${y}`;
       const isCorrectAnswer = correctAnswer === nestId;
-      if (!showMode || ((showMode || examMode) && isInRange(x, y, constraints)))
+      if (
+        !showMode ||
+        ((showMode || examMode) && isInRange(x, y, constraints))
+      ) {
         nests.push(
           <Nest
             key={nestId}
@@ -93,6 +96,7 @@ function Question({
             widthRate={showMode ? 0.7 : 1}
           />
         );
+      }
     }
     return nests;
   };

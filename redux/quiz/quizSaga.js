@@ -59,11 +59,13 @@ const tryGetQuizListSaga = function* ({ payload }) {
   }
 };
 
-const tryGetQuizDetailSaga = function* ({ payload }) {
+const tryGetQuizDetailSaga = function* ({
+  payload: { add = false, ...payload },
+}) {
   try {
     const { data } = yield call(Api.getQuizDetail, payload);
 
-    yield put($A($.GET_QUIZ_DETAIL_FINISHED, data));
+    yield put($A($.GET_QUIZ_DETAIL_FINISHED, { ...data, add }));
   } catch (error) {
     console.log("🤯 error", error);
   }
