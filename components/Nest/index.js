@@ -12,17 +12,19 @@ function Nest({
   shape,
   isQuestion,
   isCorrectAnswer = false,
-  setCorrectAnswer = () => {},
   editMode,
   widthRate = 1,
 }) {
   const { dispatchAction, $ } = useRedux();
 
+  const imageUrl = shape?.imageUrl;
+  const _id = shape?._id;
+
   const [bounceInEffect, setBounceInEffect] = useState(false);
   const [bounceOutEffect, setBounceOutEffect] = useState(false);
   const [isDropped, setIsDropped] = useState(false);
   const [droppedItem, setDroppedItem] = useState({
-    imageUrl: shape || null,
+    imageUrl,
   });
 
   const examMode = useSelector((state) => Boolean(state.auth.student));
@@ -50,16 +52,20 @@ function Nest({
     }
   }, [$, dispatchAction, coordinate, droppedItem?.imageUrl, isQuestion]);
 
+  const setCorrectAnswer = () => {
+    dispatchAction($.SET_CORRECT_ANSWER, _id);
+  };
+
   useEffect(() => {
     if (isDropped) {
-      setDroppedItem(dragItem);
+      setDroppedItem({ imageUrl: dragItem.imageUrl });
       setIsDropped(false);
     }
   }, [isDropped, dragItem]);
 
   useEffect(() => {
-    setDroppedItem({ imageUrl: shape });
-  }, [shape]);
+    setDroppedItem({ imageUrl });
+  }, [imageUrl]);
 
   useEffect(() => {
     if (resetForm && !editMode) clearNest();
@@ -142,7 +148,7 @@ function Nest({
 
   const onNestClicked = () => {
     if (!isQuestion && examMode) {
-      return dispatchAction($.SIGN_QUESTION, coordinate);
+      return dispatchAction($.SIGN_QUESTION, _id);
     }
     if (isQuestion && !examMode) clearNest();
   };

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import useRedux from "../../hooks/useRedux";
+import { shuffle } from "../../utils";
 import Info from "../Info";
 import Nest from "../Nest";
 
@@ -28,9 +29,6 @@ function Question({
   );
   const examMode = useSelector((state) => Boolean(state.auth.student));
   const correctAnswer = activeQuestion?.correctAnswer;
-  const setCorrectAnswer = (value) => {
-    dispatchAction($.SET_CORRECT_ANSWER, value);
-  };
   const preparedQuestion = prepareMap(activeQuestion?.question);
   const preparedChoices = prepareMap(activeQuestion?.choices);
   const [showModeQuestionConstraints, setShowModeQuestionConstraints] =
@@ -78,7 +76,7 @@ function Question({
       : showModeChoicesConstraints;
     for (let x = 0; x < 8; x++) {
       const nestId = `${x},${y}`;
-      const isCorrectAnswer = correctAnswer === nestId;
+      const isCorrectAnswer = correctAnswer === map[nestId]?._id;
       if (
         !showMode ||
         ((showMode || examMode) && isInRange(x, y, constraints))
@@ -87,10 +85,9 @@ function Question({
           <Nest
             key={nestId}
             coordinate={nestId}
-            shape={map[nestId]?.imageUrl}
+            shape={map[nestId]}
             isQuestion={isQuestion}
             isCorrectAnswer={isCorrectAnswer}
-            setCorrectAnswer={() => setCorrectAnswer(nestId)}
             showMode={showMode}
             editMode={editMode}
             widthRate={showMode ? 0.7 : 1}
@@ -98,7 +95,7 @@ function Question({
         );
       }
     }
-    return nests;
+    return isQuestion || !showMode ? nests : shuffle(nests);
   };
 
   const renderNests = () => {

@@ -1,3 +1,4 @@
+import { shuffle } from "../../utils";
 import * as $ from "../actionTypes";
 
 const initialState = {
@@ -137,19 +138,25 @@ export default function quizReducer(state = initialState, { type, payload }) {
       delete payload.add;
       const docs = add
         ? [
-            ...(state?.activeQuiz?.questionList?.docs || []),
-            ...payload.questionList?.docs,
+            ...(state?.activeQuiz?.questionList?.docs ||
+              state?.activeQuiz?.questionList ||
+              []),
+            ...shuffle(payload.questionList?.docs || payload.questionList),
           ]
-        : payload.questionList?.docs;
+        : shuffle(payload.questionList?.docs || payload.questionList);
+
+      const questionList = payload.questionList?.docs
+        ? {
+            ...payload.questionList,
+            docs,
+          }
+        : docs;
       return {
         ...state,
         activeQuiz: {
           ...payload,
-          questionList: {
-            ...payload.questionList,
-            docs,
-          },
-          questionSet: new Set(),
+          questionList,
+          questionSet: new Set(questionList?.docs || questionList),
         },
       };
 
