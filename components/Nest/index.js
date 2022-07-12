@@ -69,7 +69,12 @@ function Nest({
     if (droppedItem?.imageUrl) {
       return (
         <Animated original={true} animation={bounceOutEffect} type="bounceOut">
-          <img src={droppedItem?.imageUrl} className="shape" onLoad={bounce} />
+          <img
+            src={droppedItem?.imageUrl}
+            className="shape"
+            onLoad={bounce}
+            alt="shape"
+          />
         </Animated>
       );
     }
@@ -132,7 +137,7 @@ function Nest({
         </div>
       );
     },
-    [isCorrectAnswer, isQuestion, examMode]
+    [isCorrectAnswer, isQuestion, examMode, droppedItem]
   );
 
   const onNestClicked = () => {
