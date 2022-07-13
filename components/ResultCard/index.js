@@ -8,7 +8,15 @@ import Animated from "../Animated";
 
 Chart.register(ArcElement);
 
-function ResultCard({ title, value, fullPoint, style, useFailColor = false }) {
+function ResultCard({
+  title,
+  value,
+  fullPoint,
+  label,
+  unit,
+  style,
+  useFailColor = false,
+}) {
   if (!value) return null;
 
   let successColor;
@@ -38,7 +46,7 @@ function ResultCard({ title, value, fullPoint, style, useFailColor = false }) {
     labels: ["Doğru", "Yanlış"],
     datasets: [
       {
-        data: [value, fullPoint - value || 1],
+        data: [value, fullPoint - value || 0],
         backgroundColor: chartColors,
         hoverBackgroundColor: chartColors,
       },
@@ -49,7 +57,8 @@ function ResultCard({ title, value, fullPoint, style, useFailColor = false }) {
     <AnimatedStyled style={style}>
       <div style={{ position: "relative" }}>
         <Doughnut data={data} options={options} />
-        <Content className="center gMed">{value || 0}</Content>
+        <Content className="center gMed">{label || value || 0}</Content>
+        {unit && <Unit>{unit}</Unit>}
       </div>
       <Title className="gMed">{title}</Title>
     </AnimatedStyled>
@@ -74,6 +83,22 @@ export const Title = styled.div`
   @media only screen and (min-width: 1360px) {
     font-size: 24px;
   }
+`;
+
+export const Unit = styled.div`
+  color: ${({ theme }) => theme.colors.darkGray};
+  font-size: 1.5vw;
+  text-align: center;
+  @media only screen and (max-width: 720px) {
+    font-size: 14px;
+  }
+  @media only screen and (min-width: 1360px) {
+    font-size: 18px;
+  }
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
 `;
 
 export const Content = styled.div`

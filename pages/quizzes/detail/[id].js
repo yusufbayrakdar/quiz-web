@@ -148,18 +148,27 @@ function QuizDetail() {
             >
               <ResultCard
                 title="Ortalama Başarı"
-                value={activeQuiz?.general?.scoreAvg / 2}
+                value={activeQuiz?.general?.scoreAvg}
                 fullPoint={activeQuiz?.questionList?.totalDocs}
+                label={`${
+                  (activeQuiz?.general?.scoreAvg /
+                    activeQuiz?.questionList?.totalDocs) *
+                  100
+                }%`}
                 useFailColor
               />
               <ResultCard
                 title="Ortalama Bitirme Süresi"
-                value={displayDuration(activeQuiz?.general?.finishedAtAvg)}
+                unit="sn"
+                value={
+                  Math.round(activeQuiz?.general?.finishedAtAvg / 10) / 100
+                }
               />
               <ResultCard
                 title="Tamamlanma"
                 value={activeQuiz?.general?.completedStudents}
                 fullPoint={activeQuiz?.assignedStudents?.length}
+                label={`${activeQuiz?.general?.completedStudents}/${activeQuiz?.assignedStudents?.length}`}
               />
             </Row>
           </Tabs.TabPane>
