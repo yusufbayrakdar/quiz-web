@@ -30,12 +30,24 @@ function Index() {
     <div>
       <Head>
         <title>BilsemAI</title>
-        <meta name="description" content="Zekanı sonsuzluğa aç" />
-        <link rel="icon" href="/varlik.png" />
+
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Secular+One"
         />
+        <link rel="icon" href="/ideas.png" />
+
+        <meta charSet="utf-8" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, shrink-to-fit=no"
+        />
+        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
+        <meta name="author" content="Yusuf Sabri Bayrakdar" />
+        <meta name="copyright" content="QuizAI" />
+
+        <meta name="description" content="Bilsem sınavı hazırlık platformu." />
+        <meta name="keywords" content="bilsem, bilsemai, zeka, çocuk, cocuk" />
       </Head>
 
       <main>

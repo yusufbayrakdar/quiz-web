@@ -12,20 +12,8 @@ function Dashboard() {
     <Styled>
       <Head>
         <title>Dashboard</title>
-
-        <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=0, shrink-to-fit=no"
-        />
-        <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
-        <meta name="author" content="Yusuf Sabri Bayrakdar" />
-        <meta name="copyright" content="QuizAI" />
-
-        <meta name="description" content="Bilsem sınavı hazırlık platformu." />
-        <meta name="keywords" content="bilsem, bilsemai" />
-
-        <link rel="icon" href="/varlik.png" />
+        <meta name="description" content="Genel bakış" />
+        <link rel="icon" href="/ideas.png" />
       </Head>
       {instructor && !instructor.confirmed && (
         <Card>

@@ -14,7 +14,16 @@ Chart.register(ArcElement);
 function ScoreDetail() {
   const quizResult = useSelector((state) => state.quiz.quizResult);
 
-  const chartColors = [theme.colors.limeGreen, theme.colors.pureRed];
+  const score = quizResult?.score;
+  const fullPoint = quizResult?.totalQuestions;
+  let successColor;
+  if (score / fullPoint >= 0.7)
+    successColor = theme.colors.doughnutColors.success;
+  else if (score / fullPoint >= 0.4)
+    successColor = theme.colors.doughnutColors.average;
+  else successColor = theme.colors.doughnutColors.fail;
+
+  const chartColors = [successColor, theme.colors.darkGray];
 
   const options = {
     responsive: true,
@@ -33,10 +42,7 @@ function ScoreDetail() {
     labels: ["Doğru", "Yanlış"],
     datasets: [
       {
-        data: [
-          quizResult?.score,
-          quizResult?.totalQuestions - quizResult?.score,
-        ],
+        data: [score, fullPoint - score],
         backgroundColor: chartColors,
         hoverBackgroundColor: chartColors,
       },
@@ -61,14 +67,14 @@ function ScoreDetail() {
         <Animated>
           <div>
             <AnimatedNumber
-              value={quizResult?.score}
+              value={score}
               duration={1000}
               delay={1000}
               formatValue={(n) => n.toFixed(0)}
             />{" "}
             D{" "}
             <AnimatedNumber
-              value={quizResult?.totalQuestions - quizResult?.score}
+              value={fullPoint - score}
               duration={1000}
               delay={1000}
               formatValue={(n) => n.toFixed(0)}
@@ -78,7 +84,7 @@ function ScoreDetail() {
         </Animated>
         <Animated delay={1}>
           <AnimatedNumber
-            value={(quizResult?.score / quizResult?.totalQuestions) * 100}
+            value={(score / fullPoint) * 100}
             duration={1000}
             delay={1000}
             formatValue={(n) => n.toFixed(0)}

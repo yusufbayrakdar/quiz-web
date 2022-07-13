@@ -7,6 +7,7 @@ const initialState = {
   hasNextPage: false,
   nextPage: 0,
   resetForm: false,
+  activeStudent: null,
 };
 
 export default function studentReducer(
@@ -56,6 +57,12 @@ export default function studentReducer(
       return {
         ...state,
         resetForm: false,
+      };
+
+    case $.GET_STUDENT_DETAIL_FINISHED:
+      return {
+        ...state,
+        activeStudent: payload,
       };
     default:
       return state;

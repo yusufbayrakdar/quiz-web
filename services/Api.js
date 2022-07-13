@@ -107,6 +107,11 @@ class Api {
     return this._doDeleteWithAuth(`/students/${_id}`);
   };
 
+  getStudentDetail = ({ _id, ...payload }) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/students/${_id}${query}`);
+  };
+
   getShapes = (payload) => {
     const query = this.objectToQueryString(payload);
     return this._doGetWithAuth(`/shapes${query}`);

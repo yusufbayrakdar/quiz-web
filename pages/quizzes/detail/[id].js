@@ -12,11 +12,12 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Col, Pagination, Row } from "antd";
+import { Card, Col, Pagination, Row, Tabs } from "antd";
 import styled from "styled-components";
 
 import useRedux from "../../../hooks/useRedux";
 import QuestionCard from "../../../components/QuestionCard";
+import CustomTable from "../../../components/CustomTable";
 import {
   BASE_ENDPOINT,
   displayDate,
@@ -25,6 +26,7 @@ import {
 } from "../../../utils";
 import theme from "../../../utils/theme";
 import EditButton from "../../../components/Buttons/EditButton";
+import ResultCard from "../../../components/ResultCard";
 
 function QuizDetail() {
   const { dispatchAction, $ } = useRedux();
@@ -42,6 +44,7 @@ function QuizDetail() {
       dispatchAction($.GET_QUIZ_DETAIL_REQUEST, {
         _id: query?.id,
         populateQuestions: true,
+        results: true,
         page,
         limit,
       });
@@ -54,6 +57,46 @@ function QuizDetail() {
       {children}
     </HeaderInfoStyled>
   );
+
+  const columns = [
+    {
+      title: "Öğrenci",
+      dataIndex: "student",
+      render: (student) => (
+        <NameWithLink
+          onClick={() =>
+            router.push(BASE_ENDPOINT.student + "/" + student?._id)
+          }
+        >
+          {displayFullName(student)}
+        </NameWithLink>
+      ),
+    },
+    {
+      title: "Skor",
+      dataIndex: "score",
+    },
+    {
+      title: "Toplam Soru",
+      dataIndex: "totalQuestions",
+    },
+    {
+      title: "Skor %",
+      dataIndex: "totalQuestions",
+      render: (totalQuestions, { score }) =>
+        Math.round((score / totalQuestions) * 100),
+    },
+    {
+      title: "Süre (sn)",
+      dataIndex: "finishedAt",
+      render: (finishedAt) => Math.round(finishedAt / 10) / 100,
+    },
+    {
+      title: "Tarih",
+      dataIndex: "createdAt",
+      render: (createdAt) => displayDate(createdAt),
+    },
+  ];
 
   return (
     <Styled>
@@ -96,34 +139,70 @@ function QuizDetail() {
           />
         )}
       </Card>
-      <Row
-        gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
-        className="questions"
-      >
-        {activeQuiz?.questionList?.docs?.map((question) => (
-          <Col span={8} key={question?._id}>
-            <QuestionCard question={question} selectable={false} />
-          </Col>
-        ))}
-      </Row>
-      <div className="center pagination">
-        <Pagination
-          size="small"
-          total={activeQuiz?.questionList?.totalDocs}
-          pageSize={limit}
-          showSizeChanger
-          showQuickJumper
-          onChange={(page) =>
-            router.push(
-              BASE_ENDPOINT.quiz +
-                `/detail/${activeQuiz?._id}?page=${page}&limit=${limit}`
-            )
-          }
-        />
-      </div>
+      <Card style={{ marginTop: 10 }}>
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="Genel" key="1">
+            <Row
+              gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
+              style={{ display: "flex", justifyContent: "space-around" }}
+            >
+              <ResultCard
+                title="Ortalama Başarı"
+                value={activeQuiz?.general?.scoreAvg / 2}
+                fullPoint={activeQuiz?.questionList?.totalDocs}
+                useFailColor
+              />
+              <ResultCard
+                title="Ortalama Bitirme Süresi"
+                value={displayDuration(activeQuiz?.general?.finishedAtAvg)}
+              />
+              <ResultCard
+                title="Tamamlanma"
+                value={activeQuiz?.general?.completedStudents}
+                fullPoint={activeQuiz?.assignedStudents?.length}
+              />
+            </Row>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Sonuçlar" key="2">
+            <CustomTable dataSource={activeQuiz?.scores} columns={columns} />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Sorular" key="3">
+            <Row
+              gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
+              className="questions"
+            >
+              {activeQuiz?.questionList?.docs?.map((question) => (
+                <Col span={8} key={question?._id}>
+                  <QuestionCard question={question} selectable={false} />
+                </Col>
+              ))}
+            </Row>
+            <div className="center pagination">
+              <Pagination
+                size="small"
+                total={activeQuiz?.questionList?.totalDocs}
+                pageSize={limit}
+                showSizeChanger
+                showQuickJumper
+                onChange={(page) =>
+                  router.push(
+                    BASE_ENDPOINT.quiz +
+                      `/detail/${activeQuiz?._id}?page=${page}&limit=${limit}`
+                  )
+                }
+              />
+            </div>
+          </Tabs.TabPane>
+        </Tabs>
+      </Card>
     </Styled>
   );
 }
+
+const NameWithLink = styled.div`
+  color: ${({ theme }) => theme.colors.primary};
+  cursor: pointer;
+`;
 
 const HeaderInfoStyled = styled.div`
   background-color: ${({ color }) => color};

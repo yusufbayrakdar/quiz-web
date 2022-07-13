@@ -14,6 +14,11 @@ const theme = {
     green: "#22c55e",
     limeGreen: "#00FF00",
     transparentGreen: "rgb(34, 197, 94, 0.7)",
+    doughnutColors: {
+      success: "#34B73A",
+      average: "#fd9d38",
+      fail: "#f05a64",
+    },
     yellow: "#eab208",
     lightRed: "#fca5a5",
     red: "#ef4444",

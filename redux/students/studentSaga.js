@@ -62,9 +62,20 @@ const tryDeleteStudentSaga = function* ({ payload }) {
   }
 };
 
+const tryGetStudentDetailSaga = function* ({ payload }) {
+  try {
+    const { data } = yield call(Api.getStudentDetail, payload);
+
+    yield put($A($.GET_STUDENT_DETAIL_FINISHED, data));
+  } catch (error) {
+    showErrorMessage(error);
+  }
+};
+
 export default function* studentSaga() {
   yield takeLatest($.GET_STUDENTS, tryGetStudentsSaga);
   yield takeLatest($.CREATE_STUDENT_REQUEST, tryCreateStudentSaga);
   yield takeLatest($.UPDATE_STUDENT_REQUEST, tryUpdateStudentSaga);
   yield takeLatest($.DELETE_STUDENT_REQUEST, tryDeleteStudentSaga);
+  yield takeLatest($.GET_STUDENT_DETAIL_REQUEST, tryGetStudentDetailSaga);
 }

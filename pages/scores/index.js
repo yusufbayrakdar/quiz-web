@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 import CustomTable from "../../components/CustomTable";
 import useRedux from "../../hooks/useRedux";
-import { BASE_ENDPOINT } from "../../utils";
+import { BASE_ENDPOINT, displayDate } from "../../utils";
 
 const defaultPageSize = 12;
 
@@ -55,6 +55,11 @@ function Scores() {
       title: "Süre (sn)",
       dataIndex: "finishedAt",
       render: (finishedAt) => Math.round(finishedAt / 10) / 100,
+    },
+    {
+      title: "Tarih",
+      dataIndex: "createdAt",
+      render: (createdAt) => displayDate(createdAt),
     },
   ];
 
