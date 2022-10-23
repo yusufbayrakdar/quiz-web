@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useSelector } from "react-redux";
 import {
@@ -22,8 +22,7 @@ import useRedux from "../../../hooks/useRedux";
 import { BASE_ENDPOINT, displayDuration } from "../../../utils";
 import QuestionCard from "../../../components/QuestionCard";
 import CreateButton from "../../../components/Buttons/CreateButton";
-import { displayFullName } from "../../../utils";
-import SelectStudentModal from "../../../components/Modals/SelectStudentModal";
+import SelectStudentModalForQuiz from "../../../components/Modals/SelectStudentModalForQuiz";
 
 const { Option } = Select;
 
@@ -38,12 +37,15 @@ function QuizForm() {
   const page = query["page"] || 1;
   const limit = query["limit"] || 12;
 
-  const instructor = useSelector((state) => state.auth.instructor);
+  const user = useSelector((state) => state.auth.user);
   const questionList = useSelector((state) => state.question.questionList);
   const totalQuestions = useSelector((state) => state.question.totalQuestions);
   const activeQuiz = useSelector((state) => state.quiz.activeQuiz);
   const quizSavingInProgress = useSelector(
     (state) => state.quiz.quizSavingInProgress
+  );
+  const activeQuizStudents = useSelector(
+    (state) => state.quiz.activeQuizStudents
   );
   const categories = useSelector((state) => state.question.categories);
   const durations = useSelector((state) => state.question.durations);
@@ -53,9 +55,10 @@ function QuizForm() {
   const [grade, setGrade] = useState();
   const [category, setCategory] = useState();
   const [owner, setOwner] = useState(false);
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [selectStudentModalVisible, setSelectStudentModalVisible] =
-    useState(false);
+  const [
+    selectStudentModalForQSelectStudentModalForQuizOpen,
+    setSelectStudentModalForQuizOpen,
+  ] = useState(false);
 
   useEffect(() => {
     if (editMode) dispatchAction($.GET_QUIZ_DETAIL_REQUEST, { _id: query?.id });
@@ -63,8 +66,7 @@ function QuizForm() {
   }, [$, dispatchAction, editMode, query?.id]);
 
   useEffect(() => {
-    const ownerQuery = owner ? { creatorId: instructor._id } : {};
-    const selectedQuery = selectedIds ? { ids: selectedIds } : {};
+    const ownerQuery = owner ? { creatorId: user._id } : {};
     dispatchAction($.GET_QUESTION_LIST_REQUEST, {
       search,
       page,
@@ -73,7 +75,6 @@ function QuizForm() {
       duration: duration?.duration,
       grade: grade?.grade,
       ...ownerQuery,
-      ...selectedQuery,
     });
   }, [
     $,
@@ -82,11 +83,10 @@ function QuizForm() {
     page,
     limit,
     owner,
-    selectedIds,
     category,
     duration,
     grade,
-    instructor?._id,
+    user?._id,
   ]);
 
   useEffect(() => {
@@ -103,6 +103,23 @@ function QuizForm() {
       });
   }, [form, activeQuiz]);
 
+  const Header = () => (
+    <Head>
+      <title>BilsemAI | Sorular</title>
+      <meta name="quizzes" content="Sorular" />
+      <link rel="icon" href="/ideas.png" />
+    </Head>
+  );
+
+  if (!user?.confirmed) {
+    return (
+      <div className="center">
+        <Header />
+        Yönetici onayı bekleniyor
+      </div>
+    );
+  }
+
   const onFinish = (values) => {
     const pickedDate = values.duration?.toDate();
     const name = values.name;
@@ -117,8 +134,6 @@ function QuizForm() {
       name,
       duration,
       questionList: Array.from(activeQuiz.questionSet),
-      assignedStudents:
-        activeQuiz?.assignedStudents?.map((student) => student?._id) || [],
       reset: () => {
         form.resetFields();
         router.push(BASE_ENDPOINT.quiz + `/form/create?page=${1}&limit=${12}`);
@@ -147,20 +162,15 @@ function QuizForm() {
 
   return (
     <Styled>
-      <Head>
-        <title>Sorular</title>
-        <meta name="quizzes" content="Sorular" />
-        <link rel="icon" href="/ideas.png" />
-      </Head>
+      <Header />
       <Form form={form} onFinish={onFinish}>
-        <SelectStudentModal
-          visible={selectStudentModalVisible}
-          onClose={() => setSelectStudentModalVisible(false)}
+        <SelectStudentModalForQuiz
+          open={selectStudentModalForQSelectStudentModalForQuizOpen}
+          onClose={() => setSelectStudentModalForQuizOpen(false)}
           quizId={activeQuiz?._id}
-          selecteds={activeQuiz?.assignedStudents?.map((s) => s._id)}
           refreshAction={{
-            type: $.GET_QUIZ_DETAIL_REQUEST,
-            payload: { _id: activeQuiz?._id },
+            type: $.GET_STUDENTS_OF_QUIZ_BY_INSTRUCTOR_REQUEST,
+            payload: activeQuiz?._id,
           }}
         />
         <div style={{ marginBottom: 15 }} className="end">
@@ -168,10 +178,11 @@ function QuizForm() {
             <Button
               type="primary"
               style={{ marginRight: 5 }}
-              onClick={() => setSelectStudentModalVisible(true)}
+              onClick={() => setSelectStudentModalForQuizOpen(true)}
               disabled={quizSavingInProgress}
             >
-              Öğrenciler ({activeQuiz?.assignedStudents?.length || 0})
+              Öğrenciler (
+              {activeQuizStudents?.filter((s) => s.assigned)?.length || 0})
             </Button>
           )}
           <CreateButton
@@ -197,7 +208,7 @@ function QuizForm() {
             </Form.Item>
           </Col>
         </Row>
-        <Row className="filter-section">
+        <Row className="end">
           <Select
             value={category?.category || "Kategori"}
             onChange={(e) => {
@@ -237,7 +248,7 @@ function QuizForm() {
               className={`${!owner && "filter-button-text-unchecked"}`}
             />
             <div className={`${!owner && "filter-button-text-unchecked"} gMed`}>
-              {displayFullName(instructor)}
+              {user?.fullName}
             </div>
           </Button>
         </Row>
@@ -273,15 +284,6 @@ function QuizForm() {
   );
 }
 
-const CheckIconFilter = styled.div`
-  clip-path: polygon(19% 39%, 11% 49%, 46% 80%, 85% 21%, 74% 15%, 44% 55%);
-  background-color: ${({ theme, selectedIds }) =>
-    selectedIds ? theme.colors.white : theme.colors.deepDarkGray};
-  width: 24px;
-  height: 24px;
-  margin-right: 5px;
-`;
-
 const Styled = styled.div`
   width: 83%;
   margin-top: 30px;
@@ -314,10 +316,6 @@ const Styled = styled.div`
     display: flex;
     align-items: center;
     color: ${({ theme }) => theme.colors.deepDarkGray};
-  }
-  .filter-section {
-    display: flex;
-    justify-content: flex-end;
   }
   .filter-button-text {
     display: flex;

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import Head from "next/head";
-import useRedux from "../../hooks/useRedux";
 import { useSelector } from "react-redux";
 import { Button, Popconfirm, Row } from "antd";
 import { useRouter } from "next/router";
@@ -8,9 +7,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 
+import useRedux from "../../hooks/useRedux";
 import Question from "../../components/Question";
 import CustomTable from "../../components/CustomTable";
 import { BASE_ENDPOINT, displayDuration } from "../../utils";
+import PermitContainer from "../../components/PermitContainer";
+import { CAN, D as DOMAINS } from "../../config/permission";
 
 function Questions() {
   const { dispatchAction, $ } = useRedux();
@@ -21,7 +23,7 @@ function Questions() {
   const page = query["page"];
   const limit = query["limit"];
 
-  const instructor = useSelector((state) => state.auth.instructor);
+  const user = useSelector((state) => state.auth.user);
   const questionList = useSelector((state) => state.question.questionList);
   const totalQuestions = useSelector((state) => state.question.totalQuestions);
   const questionsLoading = useSelector(
@@ -68,46 +70,64 @@ function Questions() {
     },
     {
       title: "",
-      render: ({ _id, creatorId }) =>
-        creatorId === instructor?._id && (
+      render: ({ _id, creatorId }) => {
+        const isOwnerInstructor = creatorId === user?._id;
+        return (
           <Row className="center">
-            <Popconfirm
-              placement="bottomLeft"
-              title="Silmek istediğinizden emin misiniz?"
-              okText="Evet"
-              cancelText="Hayır"
-              onConfirm={() => deleteQuestion(_id)}
+            <PermitContainer
+              permit={{
+                domain: DOMAINS.question,
+                can: CAN.EDIT,
+                except: isOwnerInstructor,
+              }}
             >
               <Button
-                danger
                 type="text"
                 className="action-button center"
-                loading={questionDeleteInProgress}
+                onClick={() =>
+                  router.push(`${BASE_ENDPOINT.question}/form/${_id}`)
+                }
               >
                 <FontAwesomeIcon
-                  icon={faTrashAlt}
+                  icon={faEdit}
                   className="icon"
-                  id="delete-icon"
-                  width={12}
+                  id="edit-icon"
+                  width={13}
                 />
               </Button>
-            </Popconfirm>
-            <Button
-              type="text"
-              className="action-button center"
-              onClick={() =>
-                router.push(`${BASE_ENDPOINT.question}/form/${_id}`)
-              }
+            </PermitContainer>
+            <PermitContainer
+              permit={{
+                domain: DOMAINS.question,
+                can: CAN.DELETE,
+                except: isOwnerInstructor,
+              }}
             >
-              <FontAwesomeIcon
-                icon={faEdit}
-                className="icon"
-                id="edit-icon"
-                width={13}
-              />
-            </Button>
+              <Popconfirm
+                placement="bottomLeft"
+                title="Silmek istediğinizden emin misiniz?"
+                okText="Evet"
+                cancelText="Hayır"
+                onConfirm={() => deleteQuestion(_id)}
+              >
+                <Button
+                  danger
+                  type="text"
+                  className="action-button center"
+                  loading={questionDeleteInProgress}
+                >
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    className="icon"
+                    id="delete-icon"
+                    width={12}
+                  />
+                </Button>
+              </Popconfirm>
+            </PermitContainer>
           </Row>
-        ),
+        );
+      },
     },
   ];
 

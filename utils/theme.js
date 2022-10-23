@@ -11,6 +11,8 @@ const theme = {
     deepDarkGray: "#6b7280",
     charCoal: "#3f3844",
     nestGray: "#e5e7eb",
+    primaryTextColor: "#0f172a",
+    secondaryTextColor: "#9ca3af",
     green: "#22c55e",
     limeGreen: "#00FF00",
     transparentGreen: "rgb(34, 197, 94, 0.7)",

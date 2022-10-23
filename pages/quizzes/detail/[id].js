@@ -18,12 +18,7 @@ import styled from "styled-components";
 import useRedux from "../../../hooks/useRedux";
 import QuestionCard from "../../../components/QuestionCard";
 import CustomTable from "../../../components/CustomTable";
-import {
-  BASE_ENDPOINT,
-  displayDate,
-  displayDuration,
-  displayFullName,
-} from "../../../utils";
+import { BASE_ENDPOINT, displayDate, displayDuration } from "../../../utils";
 import theme from "../../../utils/theme";
 import EditButton from "../../../components/Buttons/EditButton";
 import ResultCard from "../../../components/ResultCard";
@@ -62,15 +57,19 @@ function QuizDetail() {
     {
       title: "Öğrenci",
       dataIndex: "student",
-      render: (student) => (
-        <NameWithLink
-          onClick={() =>
-            router.push(BASE_ENDPOINT.student + "/" + student?._id)
-          }
-        >
-          {displayFullName(student)}
-        </NameWithLink>
-      ),
+      render: (student) => {
+        return (
+          <NameWithLink
+            detailAvailable={student?.fullName}
+            onClick={() =>
+              student?.fullName &&
+              router.push(BASE_ENDPOINT.student + "/" + student?._id)
+            }
+          >
+            {student?.fullName || "-"}
+          </NameWithLink>
+        );
+      },
     },
     {
       title: "Skor",
@@ -98,10 +97,86 @@ function QuizDetail() {
     },
   ];
 
+  const GeneralResults = () => (
+    <Row
+      gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
+      style={{ display: "flex", justifyContent: "space-around" }}
+    >
+      <ResultCard
+        title="Ortalama Başarı"
+        value={activeQuiz?.general?.scoreAvg}
+        fullPoint={activeQuiz?.questionList?.totalDocs}
+        label={`${Number(
+          (activeQuiz?.general?.scoreAvg /
+            activeQuiz?.questionList?.totalDocs) *
+            100
+        ).toFixed(2)}%`}
+        useFailColor
+      />
+      <ResultCard
+        title="Ortalama Bitirme Süresi"
+        unit="sn"
+        value={Math.round(activeQuiz?.general?.finishedAtAvg / 10) / 100}
+      />
+      <ResultCard
+        title="Tamamlanma"
+        value={activeQuiz?.general?.completedStudents}
+        fullPoint={activeQuiz?.studentCount}
+        label={`${activeQuiz?.general?.completedStudents}/${activeQuiz?.studentCount}`}
+      />
+    </Row>
+  );
+
+  const QuestionPaginate = () => (
+    <>
+      <Row
+        gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
+        className="questions"
+      >
+        {activeQuiz?.questionList?.docs?.map((question) => (
+          <Col span={8} key={question?._id}>
+            <QuestionCard question={question} selectable={false} />
+          </Col>
+        ))}
+      </Row>
+      <div className="center pagination">
+        <Pagination
+          size="small"
+          total={activeQuiz?.questionList?.totalDocs}
+          pageSize={limit}
+          showSizeChanger
+          showQuickJumper
+          onChange={(page) => {
+            console.log("_id", activeQuiz?._id);
+            router.push(
+              BASE_ENDPOINT.quiz +
+                `/detail/${activeQuiz?._id}?page=${page}&limit=${limit}`
+            );
+          }}
+        />
+      </div>
+    </>
+  );
+
+  const Results = () => (
+    <CustomTable
+      dataSource={activeQuiz?.scores}
+      columns={columns}
+      baseEndpoint={BASE_ENDPOINT.quiz + "/detail/" + activeQuiz?._id}
+      totalDocuments={activeQuiz?.scores?.length}
+    />
+  );
+
+  const items = [
+    { label: "Genel", key: "general", children: <GeneralResults /> }, // remember to pass the key prop
+    { label: "Sonuçlar", key: "results", children: <Results /> },
+    { label: "Sorular", key: "questions", children: <QuestionPaginate /> },
+  ];
+
   return (
     <Styled>
       <Head>
-        <title>Deneme Detayı</title>
+        <title>BilsemAI | Deneme Detayı</title>
         <meta name="quizzes" content="Deneme Detayı" />
         <link rel="icon" href="/ideas.png" />
       </Head>
@@ -114,15 +189,22 @@ function QuizDetail() {
             Soru: {activeQuiz?.questionList?.totalDocs}
           </HeaderInfo>
           <HeaderInfo color={theme.colors.red} icon={faClock}>
-            Süre: {displayDuration(activeQuiz?.duration)}
+            Süre:{" "}
+            {displayDuration(
+              activeQuiz?.duration ||
+                activeQuiz?.questionList?.docs?.reduce((total, current) => {
+                  total += current?.duration;
+                  return total;
+                }, 0)
+            )}
           </HeaderInfo>
           <HeaderInfo color={theme.colors.turquoise} icon={faUsers}>
-            Öğrenci: {activeQuiz.assignedStudents?.length || 0}
+            Öğrenci: {activeQuiz.studentCount || 0}
           </HeaderInfo>
         </Row>
         <Row>
           <HeaderInfo color={theme.colors.purple} icon={faUser}>
-            Oluşturan: {displayFullName(activeQuiz?.creator)}
+            Oluşturan: {activeQuiz?.creator?.fullName}
           </HeaderInfo>
           <HeaderInfo color={theme.colors.green} icon={faCalendarPlus}>
             Oluşturma Tarihi: {displayDate(activeQuiz?.createdAt)}
@@ -140,77 +222,16 @@ function QuizDetail() {
         )}
       </Card>
       <Card style={{ marginTop: 10 }}>
-        <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Genel" key="1">
-            <Row
-              gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
-              style={{ display: "flex", justifyContent: "space-around" }}
-            >
-              <ResultCard
-                title="Ortalama Başarı"
-                value={activeQuiz?.general?.scoreAvg}
-                fullPoint={activeQuiz?.questionList?.totalDocs}
-                label={`${
-                  (activeQuiz?.general?.scoreAvg /
-                    activeQuiz?.questionList?.totalDocs) *
-                  100
-                }%`}
-                useFailColor
-              />
-              <ResultCard
-                title="Ortalama Bitirme Süresi"
-                unit="sn"
-                value={
-                  Math.round(activeQuiz?.general?.finishedAtAvg / 10) / 100
-                }
-              />
-              <ResultCard
-                title="Tamamlanma"
-                value={activeQuiz?.general?.completedStudents}
-                fullPoint={activeQuiz?.assignedStudents?.length}
-                label={`${activeQuiz?.general?.completedStudents}/${activeQuiz?.assignedStudents?.length}`}
-              />
-            </Row>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Sonuçlar" key="2">
-            <CustomTable dataSource={activeQuiz?.scores} columns={columns} />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Sorular" key="3">
-            <Row
-              gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}
-              className="questions"
-            >
-              {activeQuiz?.questionList?.docs?.map((question) => (
-                <Col span={8} key={question?._id}>
-                  <QuestionCard question={question} selectable={false} />
-                </Col>
-              ))}
-            </Row>
-            <div className="center pagination">
-              <Pagination
-                size="small"
-                total={activeQuiz?.questionList?.totalDocs}
-                pageSize={limit}
-                showSizeChanger
-                showQuickJumper
-                onChange={(page) =>
-                  router.push(
-                    BASE_ENDPOINT.quiz +
-                      `/detail/${activeQuiz?._id}?page=${page}&limit=${limit}`
-                  )
-                }
-              />
-            </div>
-          </Tabs.TabPane>
-        </Tabs>
+        <Tabs defaultActiveKey="general" items={items} />
       </Card>
     </Styled>
   );
 }
 
 const NameWithLink = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
+  color: ${({ theme, detailAvailable }) =>
+    detailAvailable && theme.colors.primary};
+  cursor: ${({ detailAvailable }) => (detailAvailable ? "pointer" : "default")};
 `;
 
 const HeaderInfoStyled = styled.div`

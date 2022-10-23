@@ -4,12 +4,12 @@ import React from "react";
 import { BASE_ENDPOINT } from "../../../utils";
 import ScoreDetail from "../../ScoreDetail";
 
-function ScoreModal({ visible, onClose }) {
+function ScoreModal({ open, onClose }) {
   const router = useRouter();
   return (
     <Modal
       title="Deneme Sonucu"
-      visible={visible}
+      open={open}
       onCancel={() => {
         onClose();
         router.push(BASE_ENDPOINT.quiz);

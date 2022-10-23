@@ -1,18 +1,25 @@
 import { put, call, takeLatest } from "redux-saga/effects";
+import router from "next/router";
+
 import * as $ from "../actionTypes";
 import Api from "../../services/Api";
-import { $A, showErrorMessage, showSuccessMessage, TOKEN } from "../../utils";
+import {
+  $A,
+  BASE_ENDPOINT,
+  showErrorMessage,
+  showSuccessMessage,
+  TOKEN,
+} from "../../utils";
 
 const tryLoginSaga = function* ({ payload }) {
   try {
     localStorage.setItem(TOKEN, "");
     const { data } = yield call(Api.login, payload);
-    const { token, student, instructor } = data;
+    const { user, token } = data;
 
     localStorage.setItem(TOKEN, token);
-    if (instructor) yield put($A($.INSTRUCTOR_LOGIN_SUCCESS, instructor));
-    else if (student) yield put($A($.STUDENT_LOGIN_SUCCESS, student));
-    else throw new Error();
+    yield put($A($.LOGIN_SUCCESS, user));
+    router.push(BASE_ENDPOINT.dashboard);
   } catch (error) {
     showErrorMessage("Hatalı Email/Şifre");
     yield put($A($.LOGIN_FAILURE));
@@ -21,18 +28,24 @@ const tryLoginSaga = function* ({ payload }) {
 
 const tryAutoLoginSaga = function* () {
   try {
+    const returnPage = ["/signin", "/signup", "/"].includes(router.pathname)
+      ? router.pathname
+      : "/";
     const token = localStorage.getItem(TOKEN);
     if (token) {
       const { data } = yield call(Api.autoLogin);
-      const { student, instructor } = data;
 
-      if (instructor) yield put($A($.INSTRUCTOR_LOGIN_SUCCESS, instructor));
-      else if (student) yield put($A($.STUDENT_LOGIN_SUCCESS, student));
-      put($A($.AUTO_LOGIN_SUCCESS));
+      yield put($A($.LOGIN_SUCCESS, data));
+      yield put($A($.AUTO_LOGIN_SUCCESS));
+      if (router.pathname === "/") router.push(BASE_ENDPOINT.dashboard);
     } else {
+      router.push(returnPage);
       yield put($A($.AUTO_LOGIN_FAILURE));
     }
-  } catch {
+  } catch (error) {
+    console.log("error", error);
+    router.push("/");
+    localStorage.setItem(TOKEN, "");
     yield put($A($.AUTO_LOGIN_FAILURE));
   }
 };
@@ -40,23 +53,23 @@ const tryAutoLoginSaga = function* () {
 const trySignupInstructorSaga = function* ({ payload }) {
   try {
     const { data } = yield call(Api.signupInstructor, payload);
-    const { token, student, instructor } = data;
+    const { token, user } = data;
 
     localStorage.setItem(TOKEN, token);
-    if (instructor) yield put($A($.INSTRUCTOR_LOGIN_SUCCESS, instructor));
-    else if (student) yield put($A($.STUDENT_LOGIN_SUCCESS, student));
-    else throw new Error();
+    yield put($A($.LOGIN_SUCCESS, user));
     showSuccessMessage("Kayıt başarılı");
-  } catch {
-    showErrorMessage("Kaydolurken bir hata oluştu");
+  } catch (error) {
+    showErrorMessage(error || "Kaydolurken bir hata oluştu");
   }
 };
 
-const tryLogoutSaga = function () {
+const tryLogoutSaga = function* () {
   try {
     localStorage.setItem(TOKEN, "");
-    window.location.href = "/";
-  } catch {}
+    router.push("/");
+  } catch (error) {
+    showErrorMessage(error);
+  }
 };
 
 export default function* authSaga() {

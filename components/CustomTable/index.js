@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, Table } from "antd";
 import { useRouter } from "next/router";
+import styled from "styled-components";
 
 export default function CustomTable({
   columns,
@@ -35,39 +36,42 @@ export default function CustomTable({
     }${search ? "&search=" + search : ""}`;
   }
   return (
-    <div style={{ paddingBottom: 30 }}>
-      <Card>
-        <Table
-          columns={columns}
-          size={"small"}
-          dataSource={dataSource}
-          loading={loading}
-          pagination={{
-            hideOnSinglePage,
-            position: ["bottomCenter", "bottomRight"],
-            total: totalDocuments,
-            defaultCurrent: pagination.page,
-            current: pagination.page,
-            showQuickJumper: true,
-            pageSize: pagination.pageSize,
-            onShowSizeChange: (current, pageSize) => {
-              setPagination({ pageSize });
-              router.push(getUrl(current, pageSize));
-            },
+    <StyledContainer>
+      <Table
+        columns={columns}
+        size={"small"}
+        dataSource={dataSource}
+        loading={loading}
+        pagination={{
+          hideOnSinglePage,
+          position: ["bottomCenter", "bottomRight"],
+          total: totalDocuments,
+          defaultCurrent: pagination.page,
+          current: pagination.page,
+          showQuickJumper: true,
+          pageSize: pagination.pageSize,
+          onShowSizeChange: (current, pageSize) => {
+            setPagination({ pageSize });
+            router.push(getUrl(current, pageSize));
+          },
 
-            showTotal: (total) => (
-              <div style={{ color: "gray" }}>{`Total: ${total}`}</div>
-            ),
-            onChange: (current, pageSize) => {
-              setPagination({ page: current, pageSize });
-              router.push(getUrl(current, pageSize));
-            },
-            showSizeChanger: true,
-          }}
-          rowKey="_id"
-          {...props}
-        />
-      </Card>
-    </div>
+          showTotal: (total) => (
+            <div style={{ color: "gray" }}>{`Total: ${total}`}</div>
+          ),
+          onChange: (current, pageSize) => {
+            setPagination({ page: current, pageSize });
+            router.push(getUrl(current, pageSize));
+          },
+          showSizeChanger: true,
+        }}
+        rowKey="_id"
+        {...props}
+      />
+    </StyledContainer>
   );
 }
+
+const StyledContainer = styled(Card)`
+  margin-bottom: 30px;
+  overflow: hidden;
+`;

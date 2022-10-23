@@ -1,4 +1,5 @@
 import { put, call, takeLatest } from "redux-saga/effects";
+
 import * as $ from "../actionTypes";
 import Api from "../../services/Api";
 import { $A } from "../../utils";
@@ -14,7 +15,7 @@ const tryGetScoreListSaga = function* ({ payload }) {
       })
     );
   } catch (error) {
-    console.log("🤯 error", error);
+    showErrorMessage(error);
   }
 };
 
@@ -24,7 +25,7 @@ const tryGetScoreDetailSaga = function* ({ payload }) {
 
     yield put($A($.GET_SCORE_DETAIL_FINISHED, data));
   } catch (error) {
-    console.log("🤯 error", error);
+    showErrorMessage(error);
   }
 };
 

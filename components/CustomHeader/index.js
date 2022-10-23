@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 
-import Animated from "../Animated";
 import { BRAND_NAME } from "../../utils/index";
 import Profile from "../Profile";
 
@@ -14,7 +13,7 @@ function CustomHeader() {
   if (["/signin", "/signup"].includes(router.pathname))
     return (
       <SignStyled className="gBold" onClick={() => router.push("/")}>
-        <Animated>{BRAND_NAME}</Animated>
+        {BRAND_NAME}
       </SignStyled>
     );
 
@@ -22,11 +21,9 @@ function CustomHeader() {
 
   return (
     <Styled>
-      <div className="brand-name center gBold">
-        <Link href="/">
-          <Animated>{BRAND_NAME}</Animated>
-        </Link>
-      </div>
+      <Link href="/">
+        <div className="brand-name center gBold">{BRAND_NAME}</div>
+      </Link>
       <div className="profile">{<Profile />}</div>
     </Styled>
   );

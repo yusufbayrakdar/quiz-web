@@ -4,9 +4,9 @@ const initialState = {
   loggedIn: false,
   instructor: null,
   student: null,
+  user: null,
   loginInProgress: false,
   autoLoginInLoading: false,
-  userInfoVisible: false,
 };
 
 export default function authReducer(state = initialState, { type, payload }) {
@@ -14,21 +14,11 @@ export default function authReducer(state = initialState, { type, payload }) {
     case $.LOGIN_REQUEST:
       return { ...state, loginInProgress: true };
 
-    case $.INSTRUCTOR_LOGIN_SUCCESS:
+    case $.LOGIN_SUCCESS:
       return {
         ...state,
         loginInProgress: false,
-        student: null,
-        instructor: payload,
-        loggedIn: true,
-      };
-
-    case $.STUDENT_LOGIN_SUCCESS:
-      return {
-        ...state,
-        loginInProgress: false,
-        instructor: null,
-        student: payload,
+        user: payload,
         loggedIn: true,
       };
 
@@ -41,6 +31,7 @@ export default function authReducer(state = initialState, { type, payload }) {
     case $.AUTO_LOGIN_SUCCESS:
       return {
         ...state,
+        loggedIn: true,
         autoLoginInLoading: false,
       };
 
@@ -50,12 +41,6 @@ export default function authReducer(state = initialState, { type, payload }) {
         autoLoginInLoading: false,
         loggedIn: false,
         user: null,
-      };
-
-    case $.TOGGLE_USER_INFO:
-      return {
-        ...state,
-        userInfoVisible: payload || !state.userInfoVisible,
       };
 
     case $.LOGOUT_REQUEST:

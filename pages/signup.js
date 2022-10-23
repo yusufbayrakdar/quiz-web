@@ -42,7 +42,6 @@ function SignUp() {
       <Animated style={{ width: "33%" }}>
         <Form
           form={form}
-          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -50,23 +49,18 @@ function SignUp() {
           className="form"
         >
           <Form.Item
-            label="Ad"
-            name="firstName"
+            label="Tam Ad"
+            name="fullName"
             rules={[{ required: true, message: "Lütfen adınızı giriniz!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Soyad"
-            name="lastName"
-            rules={[{ required: true, message: "Lütfen soyadınızı giriniz!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Telefon"
             name="phone"
-            rules={[{ required: true, message: "Lütfen phoneinizi giriniz!" }]}
+            rules={[
+              { required: true, message: "Lütfen telefonunuzu giriniz!" },
+            ]}
           >
             <Row>
               <Col>
@@ -94,9 +88,6 @@ function SignUp() {
           </Form.Item>
 
           <div className="signup-button-container">
-            <Form.Item name="remember" valuePropName="checked">
-              <Checkbox>Beni hatırla</Checkbox>
-            </Form.Item>
             <Button
               type="primary"
               htmlType="submit"

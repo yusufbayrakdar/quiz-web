@@ -79,37 +79,69 @@ class Api {
   }
 
   login = (payload) => {
-    return this._doPost("/auth/login", payload);
+    const endpoint = "login";
+    return this._doPost("/auth/" + endpoint, payload);
   };
 
   signupInstructor = (payload) => {
-    return this._doPost("/instructors", payload);
+    return this._doPost("/users/instructor", payload);
+  };
+
+  getUsers = (payload) => {
+    const query = this.objectToQueryString(payload);
+    return this._doGetWithAuth(`/users${query}`);
+  };
+
+  getUserDetail = (payload) => {
+    return this._doGetWithAuth(`/users/${payload}`);
+  };
+
+  confirmInstructor = (_id) => {
+    return this._doGetWithAuth(`/users/${_id}/confirm-instructor`);
+  };
+
+  cancelInstructor = (_id) => {
+    return this._doGetWithAuth(`/users/${_id}/cancel-confirmation`);
   };
 
   autoLogin = () => {
     return this._doGetWithAuth("/auth/profile");
   };
 
-  getStudents = (payload) => {
-    const query = this.objectToQueryString(payload);
-    return this._doGetWithAuth(`/students${query}`);
-  };
-
   createStudent = (payload) => {
-    return this._doPostWithAuth(`/students`, payload);
+    return this._doPostWithAuth(`/users/student`, payload);
   };
 
   updateStudent = (payload) => {
-    return this._doPutWithAuth(`/students`, payload);
+    return this._doPutWithAuth(`/users/student`, payload);
+  };
+
+  getInstructorsOfStudent = (student) => {
+    return this._doGetWithAuth(`/users/instructors?student=${student}`);
+  };
+
+  addStudentToInstructors = (payload) => {
+    return this._doPostWithAuth(`/users/add-student-to-instructors`, payload);
+  };
+
+  getStudentsOfInstructor = (instructor) => {
+    return this._doGetWithAuth(`/users/students?instructor=${instructor}`);
+  };
+
+  addStudentsToInstructor = (payload) => {
+    return this._doPostWithAuth(`/users/add-students-to-instructor`, payload);
   };
 
   deleteStudent = (_id) => {
-    return this._doDeleteWithAuth(`/students/${_id}`);
+    return this._doDeleteWithAuth(`/users/student/${_id}`);
   };
 
-  getStudentDetail = ({ _id, ...payload }) => {
-    const query = this.objectToQueryString(payload);
-    return this._doGetWithAuth(`/students/${_id}${query}`);
+  addStudent = (_id) => {
+    return this._doGetWithAuth(`/users/add-student/${_id}`);
+  };
+
+  deleteStudentForAll = (_id) => {
+    return this._doDeleteWithAuth(`/users/student/${_id}/delete-for-all`);
   };
 
   getShapes = (payload) => {
@@ -117,8 +149,24 @@ class Api {
     return this._doGetWithAuth(`/shapes${query}`);
   };
 
+  getShapeDetail = (_id) => {
+    return this._doGetWithAuth(`/shapes/${_id}`);
+  };
+
+  createShape = (payload) => {
+    return this._doPostWithAuth("/shapes", payload);
+  };
+
+  updateShape = (payload) => {
+    return this._doPutWithAuth("/shapes", payload);
+  };
+
   getQuestionConfigs = () => {
     return this._doGetWithAuth(`/questions/configs`);
+  };
+
+  getFirebaseConfig = () => {
+    return this._doGetWithAuth("/configs/firebase");
   };
 
   getQuestionList = (payload) => {
@@ -150,6 +198,12 @@ class Api {
     return this._doPutWithAuth(`/quizzes`, quiz);
   };
 
+  assignQuizToStudent = (quiz) => {
+    return this._doPostWithAuth(`/quizzes/${quiz._id}/assign`, {
+      students: quiz.students,
+    });
+  };
+
   deleteQuiz = (_id) => {
     return this._doDeleteWithAuth(`/quizzes/${_id}`);
   };
@@ -157,6 +211,10 @@ class Api {
   getQuizList = (payload) => {
     const query = this.objectToQueryString(payload);
     return this._doGetWithAuth(`/quizzes${query}`);
+  };
+
+  getStudentsOfQuizByInstructor = (_id) => {
+    return this._doGetWithAuth(`/quizzes/${_id}/students`);
   };
 
   getQuizDetail = ({ _id, ...queryObject }) => {

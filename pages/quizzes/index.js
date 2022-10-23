@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { Button, Card, Row } from "antd";
+import { Button, Row } from "antd";
 import styled from "styled-components";
 
 import useRedux from "../../hooks/useRedux";
 import CustomTable from "../../components/CustomTable";
-import { BASE_ENDPOINT, displayDuration, displayFullName } from "../../utils";
-import SelectStudentModal from "../../components/Modals/SelectStudentModal";
+import { BASE_ENDPOINT, displayDuration, ROLES } from "../../utils";
+import SelectStudentModalForQuiz from "../../components/Modals/SelectStudentModalForQuiz";
 import DeleteButton from "../../components/Buttons/DeleteButton";
 import EditItemButton from "../../components/Buttons/EditItemButton";
 import StartButton from "../../components/Buttons/StartButton";
+import PermitContainer from "../../components/PermitContainer";
+import { CAN, D as DOMAINS } from "../../config/permission";
 
 function Quizzes() {
   const { dispatchAction, $ } = useRedux();
@@ -23,8 +25,8 @@ function Quizzes() {
   const page = query["page"] || 1;
   const limit = query["limit"] || 12;
 
-  const instructor = useSelector((state) => state.auth.instructor);
-  const student = useSelector((state) => state.auth.student);
+  const user = useSelector((state) => state.auth.user);
+  const isStudent = user?.role === ROLES.STUDENT;
   const quizList = useSelector((state) => state.quiz.quizList);
   const totalQuizzes = useSelector((state) => state.quiz.totalQuizzes);
   const quizListLoading = useSelector((state) => state.quiz.quizListLoading);
@@ -35,20 +37,16 @@ function Quizzes() {
     (state) => state.quiz.quizDeleteInProgress
   );
 
-  const [selectStudentModalVisible, setSelectStudentModalVisible] =
-    useState(false);
-  const [selectedQuizForStudentModal, setSelectedQuizForStudentModal] =
-    useState();
+  const [selectStudentModalOpenWithQuiz, setSelectStudentModalOpenWithQuiz] =
+    useState(null);
 
   useEffect(() => {
-    const studentFilter = student ? { assignedStudents: student?._id } : {};
     dispatchAction($.GET_QUIZ_LIST_REQUEST, {
       search,
       page,
       limit,
-      ...studentFilter,
     });
-  }, [$, dispatchAction, search, page, limit, student]);
+  }, [$, dispatchAction, search, page, limit]);
 
   const deleteQuiz = (_id) => {
     dispatchAction($.DELETE_QUIZ_REQUEST, _id);
@@ -56,13 +54,13 @@ function Quizzes() {
 
   const columns = [
     {
-      title: "Name",
+      title: "Deneme",
       dataIndex: "name",
       render: (name, { _id }) => (
         <NameWithLink
           onClick={() =>
             router.push(
-              student
+              isStudent
                 ? BASE_ENDPOINT.quiz + "/" + _id
                 : BASE_ENDPOINT.quiz + "/detail/" + _id
             )
@@ -80,11 +78,8 @@ function Quizzes() {
     },
     {
       title: "Öğrenci",
-      dataIndex: "assignedStudents",
-      render: (assignedStudents) =>
-        Array.isArray(assignedStudents) && (
-          <Info>{assignedStudents.length}</Info>
-        ),
+      dataIndex: "studentCount",
+      render: (studentCount) => <Info>{studentCount}</Info>,
     },
     {
       title: "Süre",
@@ -106,41 +101,82 @@ function Quizzes() {
     {
       title: "Eğitmen",
       dataIndex: "creator",
-      render: (creator) => creator && <Info>{displayFullName(creator)}</Info>,
+      render: (creator) =>
+        creator && (
+          <NameWithLink
+            onClick={() =>
+              router.push(BASE_ENDPOINT.instructor + "/" + creator._id)
+            }
+          >
+            {creator.fullName}
+          </NameWithLink>
+        ),
     },
     {
       title: "",
-      render: ({ _id, creator }) =>
-        creator._id && creator._id === instructor?._id ? (
-          <ActionButtons className="center">
-            <Button
-              type="text"
-              className="action-button center"
-              onClick={() => {
-                setSelectedQuizForStudentModal(_id);
-                setSelectStudentModalVisible(true);
+      render: ({ _id, creator }) => {
+        const isOwnerInstructor = user?._id === creator?._id;
+        return isStudent ? (
+          <StartButton _id={_id} />
+        ) : (
+          <ActionButtons>
+            <PermitContainer
+              permit={{
+                domain: DOMAINS.quiz,
+                can: CAN.ASSIGN,
               }}
             >
-              <div className="icon center" id="send-icon">
-                <Image
-                  src="/telegram.svg"
-                  width={13}
-                  height={13}
-                  alt="telegram-send-icon"
-                />
-              </div>
-            </Button>
-            <EditItemButton baseEndpoint={BASE_ENDPOINT.quiz} _id={_id} />
-            <DeleteButton
-              onConfirm={() => deleteQuiz(_id)}
-              loading={quizDeleteInProgress}
-            />
+              <Button
+                type="text"
+                className="action-button center"
+                onClick={() => {
+                  setSelectStudentModalOpenWithQuiz(_id);
+                }}
+              >
+                <div className="icon center" id="send-icon">
+                  <Image
+                    src="/telegram.svg"
+                    width={13}
+                    height={13}
+                    alt="telegram-send-icon"
+                  />
+                </div>
+              </Button>
+            </PermitContainer>
+            <PermitContainer
+              permit={{
+                domain: DOMAINS.quiz,
+                can: CAN.EDIT,
+                except: isOwnerInstructor,
+              }}
+            >
+              <EditItemButton baseEndpoint={BASE_ENDPOINT.quiz} _id={_id} />
+            </PermitContainer>
+            <PermitContainer
+              permit={{
+                domain: DOMAINS.quiz,
+                can: CAN.DELETE,
+                except: isOwnerInstructor,
+              }}
+            >
+              <DeleteButton
+                onConfirm={() => deleteQuiz(_id)}
+                loading={quizDeleteInProgress}
+              />
+            </PermitContainer>
           </ActionButtons>
-        ) : student ? (
-          <StartButton _id={_id} />
-        ) : null,
+        );
+      },
     },
   ];
+
+  const filteredColumns = [];
+  if (isStudent) {
+    for (let i = 0; i < columns.length; i++) {
+      if (i == 2) continue;
+      filteredColumns.push(columns[i]);
+    }
+  }
 
   return (
     <div>
@@ -150,14 +186,10 @@ function Quizzes() {
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Container>
-        <SelectStudentModal
-          visible={selectStudentModalVisible}
-          onClose={() => setSelectStudentModalVisible(false)}
-          quizId={selectedQuizForStudentModal}
-          selecteds={
-            quizList?.find((quiz) => quiz?._id === selectedQuizForStudentModal)
-              ?.assignedStudents
-          }
+        <SelectStudentModalForQuiz
+          open={selectStudentModalOpenWithQuiz}
+          onClose={() => setSelectStudentModalOpenWithQuiz(null)}
+          quizId={selectStudentModalOpenWithQuiz}
           refreshAction={{
             type: $.GET_QUIZ_LIST_REQUEST,
             payload: {
@@ -168,7 +200,7 @@ function Quizzes() {
           }}
         />
         <CustomTable
-          columns={columns}
+          columns={isStudent ? filteredColumns : columns}
           dataSource={quizList}
           totalDocuments={totalQuizzes}
           loading={quizListLoading || quizSavingInProgress}
@@ -179,9 +211,9 @@ function Quizzes() {
   );
 }
 
-const Container = styled(Card)`
+const Container = styled.div`
   width: 70vw;
-  margin: 20px 0;
+  margin: 50px 0;
 `;
 
 const Info = styled.div`

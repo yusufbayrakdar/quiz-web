@@ -5,21 +5,21 @@ import { useSelector } from "react-redux";
 import useRedux from "../../../hooks/useRedux";
 import StudentForm from "../../StudentForm";
 
-function EditStudentModal({ visible, onClose, student, refreshAction }) {
-  const resetForm = useSelector((state) => state.student.resetForm);
+function EditStudentModal({ open, onClose, student, refreshAction }) {
+  const resetForm = useSelector((state) => state.user.resetForm);
   const { dispatchAction, $ } = useRedux();
 
   useEffect(() => {
     if (resetForm) {
       onClose?.();
-      dispatchAction($.RESET_STUDENT_RESET);
+      dispatchAction($.RESET_USER_RESET);
     }
   }, [$, dispatchAction, resetForm, onClose]);
 
   return (
     <Modal
       title="Öğrenci Düzenle"
-      visible={visible}
+      open={open}
       onCancel={onClose}
       footer={false}
     >

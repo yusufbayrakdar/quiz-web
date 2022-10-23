@@ -7,19 +7,28 @@ import styled from "styled-components";
 import StudentForm from "../../components/StudentForm";
 
 function StudentCreate() {
-  const instructor = useSelector((state) => state.auth.instructor);
+  const user = useSelector((state) => state.auth.user);
 
-  if (!instructor?.confirmed) {
-    return "Yönetici onayı bekleniyor";
+  const Header = () => (
+    <Head>
+      <title>BilsemAI | Öğrenci Kayıt</title>
+      <meta name="description" content="Öğrenci Kayıt" />
+      <link rel="icon" href="/ideas.png" />
+    </Head>
+  );
+
+  if (!user?.confirmed) {
+    return (
+      <div className="center">
+        <Header />
+        Yönetici onayı bekleniyor
+      </div>
+    );
   }
 
   return (
     <Styled className="center">
-      <Head>
-        <title>Öğrenci Kayıt</title>
-        <meta name="description" content="Öğrenci Kayıt" />
-        <link rel="icon" href="/ideas.png" />
-      </Head>
+      <Header />
       <Card className="container">
         <span className="font-bold">Öğrenci Oluştur</span>
         <Divider />
@@ -34,7 +43,7 @@ const Styled = styled.div`
 
   .container {
     width: 100%;
-    height: 450px;
+    height: max-content;
   }
 `;
 

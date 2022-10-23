@@ -10,22 +10,24 @@ function Animated({
   delay = 0,
   ...props
 }) {
-  const animationClasses = animation
-    ? `animate__animated animate__${type} animate__faster ${
-        delay ? `animate__delay-${delay}s` : ""
-      }`
-    : "";
+  const animateType = "animate__" + type;
+  const animateDelay = delay ? " animate__delay-" + delay : "";
+  const animationClasses =
+    "animate__animated animate__faster " + animateType + animateDelay;
+  const animations = animation ? animationClasses : "";
+  const classes = `${animations} ${className}`;
+
   if (original) {
     return {
       ...children,
       props: {
         ...children.props,
-        className: `${children.props.className} ${animationClasses}`,
+        className: `${children.props.className} ${animations}`,
       },
     };
   }
   return (
-    <div className={animationClasses + className} style={style} {...props}>
+    <div className={classes} style={style} {...props}>
       {children}
     </div>
   );

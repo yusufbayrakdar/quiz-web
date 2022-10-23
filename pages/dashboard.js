@@ -4,9 +4,10 @@ import { Card, Row } from "antd";
 import { WarningOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+import { ROLES } from "../utils";
 
 function Dashboard() {
-  const instructor = useSelector((state) => state.auth.instructor);
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <Styled>
@@ -15,7 +16,7 @@ function Dashboard() {
         <meta name="description" content="Genel bakış" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      {instructor && !instructor.confirmed && (
+      {user && user.role === ROLES.INSTRUCTOR && !user.confirmed && (
         <Card>
           <Row className="warning-section">
             <WarningOutlined className="warning-icon center" />

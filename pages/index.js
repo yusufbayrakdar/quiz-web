@@ -31,10 +31,6 @@ function Index() {
       <Head>
         <title>BilsemAI</title>
 
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Secular+One"
-        />
         <link rel="icon" href="/ideas.png" />
 
         <meta charSet="utf-8" />
@@ -112,6 +108,8 @@ function Index() {
                 width={729 * rate}
                 height={1045 * rate}
                 alt="splash-screen-brain-image"
+                priority
+                quality={100}
               />
               <div
                 className="signin-button"

@@ -1,8 +1,9 @@
 import { Button, Card, Col, Select, Input, Row, Form, Tooltip } from "antd";
-import React, { useCallback, useEffect, forwardRef, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import styled from "styled-components";
 
 import useRedux from "../../../hooks/useRedux";
@@ -17,14 +18,14 @@ function QuestionCreate() {
   const { dispatchAction, $ } = useRedux();
   const router = useRouter();
   const { id } = router.query;
-  const editMode = id && id.length >= 24;
+  const editMode = id && id !== "create";
 
-  const scrollRef = forwardRef(null);
-  const shapes = useSelector((state) => state.question.shapes);
-  const shapesLoading = useSelector((state) => state.question.shapesLoading);
-  const nextPageShapes = useSelector((state) => state.question.nextPageShapes);
+  const scrollRef = useRef();
+  const shapes = useSelector((state) => state.shape.shapes);
+  const shapesLoading = useSelector((state) => state.shape.shapesLoading);
+  const nextPageShapes = useSelector((state) => state.shape.nextPageShapes);
   const hasNextPageShapes = useSelector(
-    (state) => state.question.hasNextPageShapes
+    (state) => state.shape.hasNextPageShapes
   );
   const activeQuestion = useSelector((state) => state.question.activeQuestion);
   const grades = useSelector((state) => state.question.grades);
@@ -34,7 +35,7 @@ function QuestionCreate() {
   const questionSavingInProgress = useSelector(
     (state) => state.question.questionSavingInProgress
   );
-  const instructor = useSelector((state) => state.auth.instructor);
+  const user = useSelector((state) => state.auth.user);
 
   const [duration, setDuration] = useState("");
   const [grade, setGrade] = useState("");
@@ -57,7 +58,6 @@ function QuestionCreate() {
   }, [categories, grades, durations]);
 
   useEffect(() => {
-    // @ts-ignore
     if (scrollRef?.current?.scrollTop) scrollRef.current.scrollTop = 0;
     dispatchAction($.GET_SHAPES, { search: searchInput, action: $.SET_SHAPES });
   }, [$, dispatchAction, searchInput]);
@@ -73,20 +73,17 @@ function QuestionCreate() {
       const selectedCategory = categories?.find(
         (c) => c.category === activeQuestion.category
       );
-
-      if (selectedCategory) setCategory(selectedCategory?._id);
+      if (selectedCategory) setCategory(selectedCategory._id);
 
       const selectedDuration = durations?.find(
         (d) => d.duration === activeQuestion.duration
       );
-
-      if (selectedDuration) setDuration(selectedDuration?._id);
+      if (selectedDuration) setDuration(selectedDuration._id);
 
       const selectedGrade = grades?.find(
         (g) => g.grade === activeQuestion.grade
       );
-
-      if (selectedGrade) setGrade(selectedGrade?._id);
+      if (selectedGrade) setGrade(selectedGrade._id);
 
       form.setFieldsValue({
         videoUrl: activeQuestion?.videoUrl,
@@ -103,9 +100,14 @@ function QuestionCreate() {
   useEffect(() => {
     if (!shapes.length) {
       dispatchAction($.GET_SHAPES, { action: $.SET_SHAPES });
+    }
+  }, [$, dispatchAction, shapes]);
+
+  useEffect(() => {
+    if (!categories.length || !durations.length || !grades.length) {
       dispatchAction($.GET_QUESTION_CONFIGS_REQUEST);
     }
-  }, [$, dispatchAction, shapes?.length]);
+  }, [$, dispatchAction, categories, durations, grades]);
 
   useEffect(() => {
     if (resetForm) {
@@ -113,6 +115,23 @@ function QuestionCreate() {
       dispatchAction($.QUESTION_FORM_RESET);
     }
   }, [$, dispatchAction, resetOptions, resetForm]);
+
+  const Header = () => (
+    <Head>
+      <title>Soru Oluştur</title>
+      <meta name="description" content="Soru Oluştur" />
+      <link rel="icon" href="/ideas.png" />
+    </Head>
+  );
+
+  if (!user?.confirmed) {
+    return (
+      <div className="center">
+        <Header />
+        Yönetici onayı bekleniyor
+      </div>
+    );
+  }
 
   const renderSelects = (OPTIONS, key, render) => {
     const options = [];
@@ -225,12 +244,8 @@ function QuestionCreate() {
 
   return (
     <Styled>
-      <Head>
-        <title>Soru Oluştur</title>
-        <meta name="description" content="Soru Oluştur" />
-        <link rel="icon" href="/ideas.png" />
-      </Head>
-      {instructor && (
+      <Header />
+      {user && (
         <Form
           autoComplete="off"
           layout="vertical"
@@ -267,9 +282,17 @@ function QuestionCreate() {
                       }}
                     >
                       <AiDnD itemInfo={shape} key={i}>
-                        <div className="image-container center">
-                          <img src={shape.imageUrl} alt="shape" />
-                        </div>
+                        <ImageContainer>
+                          <StyledImage
+                            src={shape.imageUrl}
+                            alt={shape.imageName + "-" + shape._id}
+                            priority
+                            quality={100}
+                            width={50}
+                            height={50}
+                            layout={"responsive"}
+                          />
+                        </ImageContainer>
                       </AiDnD>
                     </Col>
                   ))}
@@ -348,6 +371,16 @@ function QuestionCreate() {
   );
 }
 
+const ImageContainer = styled.div`
+  padding: 8px;
+`;
+
+const StyledImage = styled(Image)`
+  object-fit: contain;
+  width: 2.5vw;
+  height: 2.5vw;
+`;
+
 const Styled = styled.div`
   width: 83%;
   .iframe-container {
@@ -385,15 +418,6 @@ const Styled = styled.div`
     right: 0;
     bottom: 0;
     overflow: scroll;
-  }
-  .image-container {
-    padding: 8px;
-    img {
-      object-fit: contain;
-      pointer-events: none;
-      width: 2.5vw;
-      height: 2.5vw;
-    }
   }
 `;
 

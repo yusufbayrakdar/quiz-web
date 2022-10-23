@@ -10,7 +10,7 @@ import useRedux from "../hooks/useRedux";
 import Animated from "../components/Animated";
 import { BASE_ENDPOINT } from "../utils";
 
-function SignUp() {
+function SignIn() {
   const router = useRouter();
   const { dispatchAction, $ } = useRedux();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
@@ -43,7 +43,6 @@ function SignUp() {
       <Animated style={{ width: "33%" }}>
         <Form
           form={form}
-          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -100,7 +99,6 @@ function SignUp() {
               </Animated>
             </Form.Item>
           )}
-
           <Form.Item
             label="Şifre"
             name="password"
@@ -108,11 +106,7 @@ function SignUp() {
           >
             <Input.Password />
           </Form.Item>
-
           <div className="signin-button-container">
-            <Form.Item name="remember" valuePropName="checked">
-              <Checkbox>Beni hatırla</Checkbox>
-            </Form.Item>
             <Button type="primary" htmlType="submit">
               Giriş Yap
             </Button>
@@ -161,4 +155,4 @@ const Styled = styled.div`
   }
 `;
 
-export default SignUp;
+export default SignIn;

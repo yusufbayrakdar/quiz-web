@@ -1,15 +1,16 @@
-import { Button, Form, Input } from "antd";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { Button, Form, Input } from "antd";
+
 import useRedux from "../../hooks/useRedux";
-import { showErrorMessage, showWarningMessage } from "../../utils";
+import { ROLES, showErrorMessage, showWarningMessage } from "../../utils";
 
 function StudentForm({ student, refreshAction }) {
   const { dispatchAction, $ } = useRedux();
   const [form] = Form.useForm();
 
-  const instructor = useSelector((state) => state.auth.instructor);
-  const resetForm = useSelector((state) => state.student.resetForm);
+  const user = useSelector((state) => state.auth.user);
+  const resetForm = useSelector((state) => state.user.resetForm);
 
   useEffect(() => {
     if (resetForm) form.resetFields();
@@ -20,20 +21,19 @@ function StudentForm({ student, refreshAction }) {
   }, [student, form]);
 
   const onFinish = (values) => {
-    if (!instructor?.confirmed) {
+    if (!user?.confirmed) {
       return showWarningMessage("Yönetici onayı bekleniyor");
     }
 
     const labels = {
-      firstName: "Ad",
-      lastName: "Soyad",
+      fullName: "Ad Soyad",
       nickname: "Kullanıcı Adı",
     };
     let error = false;
     for (const key in values) {
-      if (values[key].length < 2 || values[key].length > 16) {
+      if (values[key].length < 4 || values[key].length > 32) {
         showErrorMessage(
-          { message: `${labels[key]} en az 2 en fazla 16 karakter olmalıdır` },
+          { message: `${labels[key]} en az 4 en fazla 32 karakter olmalıdır` },
           "Something went wrong",
           "",
           1
@@ -44,10 +44,12 @@ function StudentForm({ student, refreshAction }) {
     }
 
     if (!error) {
-      const editInfo = student ? { _id: student?._id, refreshAction } : {};
+      const constantInfo = student
+        ? { _id: student?._id, refreshAction }
+        : { role: ROLES.STUDENT };
       dispatchAction(
         student ? $.UPDATE_STUDENT_REQUEST : $.CREATE_STUDENT_REQUEST,
-        { ...editInfo, ...values }
+        { ...constantInfo, ...values }
       );
     }
   };
@@ -55,16 +57,9 @@ function StudentForm({ student, refreshAction }) {
   return (
     <Form form={form} layout="vertical" onFinish={onFinish}>
       <Form.Item
-        label="Ad"
-        name={"firstName"}
-        rules={[{ required: true, message: "Lütfen adınızı giriniz!" }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Soyad"
-        name={"lastName"}
-        rules={[{ required: true, message: "Lütfen soyadınızı giriniz!" }]}
+        label="Ad Soyad"
+        name={"fullName"}
+        rules={[{ required: true, message: "Lütfen öğrenci adını giriniz!" }]}
       >
         <Input />
       </Form.Item>
@@ -72,7 +67,10 @@ function StudentForm({ student, refreshAction }) {
         label="Kullanıcı Adı"
         name={"nickname"}
         rules={[
-          { required: true, message: "Lütfen kullanıcı adınızı giriniz!" },
+          {
+            required: true,
+            message: "Lütfen öğrenci kullanıcı adını giriniz!",
+          },
         ]}
       >
         <Input />

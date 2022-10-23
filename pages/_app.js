@@ -7,8 +7,8 @@ import styled from "styled-components";
 import "antd/dist/antd.css";
 import "animate.css";
 
-import { store } from "../redux/configureStore";
 import theme from "../utils/theme";
+import store from "../redux/configureStore";
 import Container from "../components/Container";
 import CustomHeader from "../components/CustomHeader";
 import CustomSider from "../components/CustomSider";
@@ -27,7 +27,7 @@ export default function App({ Component, pageProps }) {
                 <CustomHeader />
                 <Layout>
                   <CustomSider />
-                  <Content className="content">
+                  <Content className="content hide-scrollbar">
                     <Component {...pageProps} />
                   </Content>
                 </Layout>
@@ -56,6 +56,7 @@ const Styled = styled.div`
     height: 100%;
     justify-content: center;
     overflow-y: scroll;
+    overflow-x: hidden;
   }
 `;
 

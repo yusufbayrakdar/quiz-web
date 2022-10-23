@@ -3,31 +3,6 @@ import * as $ from "../actionTypes";
 import Api from "../../services/Api";
 import { $A, showErrorMessage, showSuccessMessage } from "../../utils";
 
-const tryGetShapesSaga = function* ({ payload }) {
-  try {
-    const putAction = payload.action;
-    delete payload.action;
-    const { data } = yield call(Api.getShapes, payload);
-    const {
-      docs: shapes,
-      totalDocs: totalShapes,
-      nextPage: nextPageShapes,
-      hasNextPage: hasNextPageShapes,
-    } = data;
-
-    yield put(
-      $A(putAction, {
-        shapes,
-        totalShapes,
-        nextPageShapes,
-        hasNextPageShapes,
-      })
-    );
-  } catch (error) {
-    yield put($A($.ADD_SHAPES, []));
-  }
-};
-
 const tryGetQuestionConfigsSaga = function* () {
   try {
     const { data } = yield call(Api.getQuestionConfigs);
@@ -38,7 +13,9 @@ const tryGetQuestionConfigsSaga = function* () {
     if (grades.length) payload = { ...payload, grades };
 
     yield put($A($.GET_QUESTION_CONFIGS_FINISHED, payload));
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const tryGetQuestionListSaga = function* ({ payload }) {
@@ -53,6 +30,7 @@ const tryGetQuestionListSaga = function* ({ payload }) {
       })
     );
   } catch (error) {
+    showErrorMessage(error);
     yield put(
       $A($.GET_QUESTION_LIST_FINISHED, { questionList: [], totalQuestions: 0 })
     );
@@ -66,6 +44,7 @@ const tryCreateQuestionSaga = function* ({ payload }) {
     yield put($A($.CREATE_QUESTION_FINISHED));
     showSuccessMessage("Soru başarıyla oluşturuldu");
   } catch (error) {
+    showErrorMessage(error);
     yield put($A($.CREATE_QUESTION_FINISHED));
   }
 };
@@ -89,6 +68,7 @@ const tryDeleteQuestionSaga = function* ({ payload }) {
     yield put($A($.GET_QUESTION_LIST_REQUEST));
     yield put($A($.DELETE_QUESTION_FINISHED));
   } catch (error) {
+    showErrorMessage(error);
     yield put($A($.GET_QUESTION_LIST_REQUEST));
     yield put($A($.DELETE_QUESTION_FINISHED));
   }
@@ -101,12 +81,12 @@ const tryGetQuestionDetailSaga = function* ({ payload }) {
 
     yield put($A($.GET_QUESTION_DETAIL_FINISHED, data));
   } catch (error) {
+    showErrorMessage(error);
     yield put($A($.GET_QUESTION_DETAIL_FINISHED, null));
   }
 };
 
 export default function* questionSaga() {
-  yield takeLatest($.GET_SHAPES, tryGetShapesSaga);
   yield takeLatest($.GET_QUESTION_CONFIGS_REQUEST, tryGetQuestionConfigsSaga);
   yield takeLatest($.CREATE_QUESTION_REQUEST, tryCreateQuestionSaga);
   yield takeLatest($.GET_QUESTION_LIST_REQUEST, tryGetQuestionListSaga);

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import useRedux from "../../hooks/useRedux";
-import { shuffle } from "../../utils";
+import { ROLES, shuffle } from "../../utils";
 import Info from "../Info";
 import Nest from "../Nest";
 
@@ -27,7 +27,8 @@ function Question({
   const activeQuestion = useSelector(
     (state) => questionListItem || state.question.activeQuestion
   );
-  const examMode = useSelector((state) => Boolean(state.auth.student));
+  const user = useSelector((state) => state.auth.user);
+  const examMode = user?.role === ROLES.STUDENT;
   const correctAnswer = activeQuestion?.correctAnswer;
   const preparedQuestion = prepareMap(activeQuestion?.question);
   const preparedChoices = prepareMap(activeQuestion?.choices);
@@ -56,7 +57,10 @@ function Question({
     setter(constraints);
   };
 
-  useEffect(() => () => dispatchAction($.QUESTION_FORM_RESET), []);
+  useEffect(
+    () => () => dispatchAction($.QUESTION_FORM_RESET),
+    [$, dispatchAction]
+  );
 
   useEffect(() => {
     calculateConstraints(preparedQuestion, setShowModeQuestionConstraints);
@@ -76,7 +80,8 @@ function Question({
       : showModeChoicesConstraints;
     for (let x = 0; x < 8; x++) {
       const nestId = `${x},${y}`;
-      const isCorrectAnswer = correctAnswer === map[nestId]?._id;
+      const isCorrectAnswer =
+        correctAnswer && correctAnswer === map[nestId]?._id;
       if (
         !showMode ||
         ((showMode || examMode) && isInRange(x, y, constraints))

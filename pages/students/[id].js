@@ -1,13 +1,16 @@
-import { Card } from "antd";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import CustomTable from "../../components/CustomTable";
+import styled from "styled-components";
 
+import CustomTable from "../../components/CustomTable";
 import ProfilePage from "../../components/ProfilePage";
 import useRedux from "../../hooks/useRedux";
 import { BASE_ENDPOINT, displayDate } from "../../utils";
+
+const defaultPageSize = 10;
 
 function StudentDetail() {
   const { dispatchAction, $ } = useRedux();
@@ -16,15 +19,44 @@ function StudentDetail() {
 
   const _id = query?.id;
   const page = query["page"] || 1;
-  const limit = query["limit"] || 10;
+  const limit = query["limit"] || defaultPageSize;
 
-  const activeStudent = useSelector((state) => state.student.activeStudent);
+  const activeStudent = useSelector((state) => state.user.activeUser);
+  const scoreList = useSelector((state) => state.score.scoreList);
+  const totalScores = useSelector((state) => state.score.totalScores);
+  const scoreListInProgress = useSelector(
+    (state) => state.score.scoreListInProgress
+  );
 
   useEffect(() => {
-    if (_id) dispatchAction($.GET_STUDENT_DETAIL_REQUEST, { _id, page, limit });
+    if (_id) {
+      dispatchAction($.GET_USER_DETAIL, _id);
+    }
+  }, [$, dispatchAction, _id]);
+
+  useEffect(() => {
+    if (_id) {
+      dispatchAction($.GET_SCORE_LIST_REQUEST, {
+        page,
+        limit,
+        student: _id,
+      });
+    }
   }, [$, dispatchAction, _id, page, limit]);
 
   const columns = [
+    {
+      title: "Deneme",
+      dataIndex: "quiz",
+      render: (quiz) =>
+        quiz?.name ? (
+          <Link href={BASE_ENDPOINT.quiz + "/detail/" + quiz._id}>
+            {quiz?.name}
+          </Link>
+        ) : (
+          "-"
+        ),
+    },
     {
       title: "Skor",
       dataIndex: "score",
@@ -54,23 +86,29 @@ function StudentDetail() {
   return (
     <>
       <Head>
-        <title>BilsemAi | Öğrenci Sayfası</title>
+        <title>BilsemAI | Öğrenci Sayfası</title>
         <meta name="students" content="Öğrenci Sayfası" />
         <link rel="icon" href="/ideas.png" />
       </Head>
-      <ProfilePage studentProp={activeStudent} />
+      <ProfilePage userProp={activeStudent} />
 
-      <div style={{ marginTop: 230, width: "81.4%" }}>
+      <StyledTable>
         <CustomTable
-          dataSource={activeStudent?.scores?.docs}
+          dataSource={scoreList}
           columns={columns}
-          totalDocuments={activeStudent?.scores?.totalDocs}
+          totalDocuments={totalScores}
           baseEndpoint={BASE_ENDPOINT.student + "/" + _id}
-          defaultPageSize={10}
+          defaultPageSize={defaultPageSize}
+          loading={scoreListInProgress}
         />
-      </div>
+      </StyledTable>
     </>
   );
 }
+
+const StyledTable = styled.div`
+  margin-top: 200px;
+  width: 73vw;
+`;
 
 export default StudentDetail;

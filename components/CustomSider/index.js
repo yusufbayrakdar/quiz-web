@@ -1,23 +1,14 @@
 import React, { useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { useRouter } from "next/router";
-
-import { BASE_ENDPOINT, TOKEN } from "../../utils";
-import {
-  QuestionCircleOutlined,
-  FormOutlined,
-  PlusCircleOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserGraduate,
-  faSignOutAlt,
-  faPoll,
-} from "@fortawesome/free-solid-svg-icons";
-import useRedux from "../../hooks/useRedux";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+
+import useRedux from "../../hooks/useRedux";
+import { ROLES, TOKEN } from "../../utils";
+import { isRoutePermitted } from "../../config/permission";
+import SIDER_ROUTES from "../../utils/siderRoutes";
 
 const { Sider } = Layout;
 
@@ -25,19 +16,9 @@ function CustomSider() {
   const router = useRouter();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const siderCollapsed = useSelector((state) => state.global.siderCollapsed);
+  const user = useSelector((state) => state.auth.user);
 
   const { dispatchAction, $ } = useRedux();
-
-  const instructor = useSelector((state) => state.auth.instructor);
-  const student = useSelector((state) => state.auth.student);
-  const restrictedPaths = [
-    "/questions",
-    "/questions/form/[id]",
-    "/students",
-    "/students/create",
-    "/quizzes/form/[id]",
-    "/quizzes/detail/[id]",
-  ];
 
   useEffect(() => {
     if (
@@ -48,14 +29,15 @@ function CustomSider() {
     }
   }, [router, loggedIn]);
 
-  const isInForbiddenPath = restrictedPaths.includes(router.pathname);
-  const unauthorizedInstructor = instructor && !instructor.confirmed;
+  const isInForbiddenPath = !isRoutePermitted({ pathname: router.pathname });
+  const unauthorizedInstructor =
+    user?.role === ROLES.INSTRUCTOR && !user?.confirmed;
   useEffect(() => {
-    if (isInForbiddenPath && (student || unauthorizedInstructor))
+    if (user && isInForbiddenPath) {
       router.push("/dashboard");
+    }
   }, [
-    student,
-    instructor,
+    user,
     router.pathname,
     isInForbiddenPath,
     router,
@@ -64,118 +46,55 @@ function CustomSider() {
 
   if (["/signin", "/signup", "/"].includes(router.pathname)) return null;
 
+  const getFilteredItems = () => {
+    const navigateTo = (pathname) => {
+      if (pathname) router.push(pathname);
+    };
+    const withNavigateItem = (item) =>
+      Object.assign(item, { onClick: () => navigateTo(item.pathname) });
+
+    const Items = SIDER_ROUTES.map((item) => {
+      if (item.type === "SubMenu") {
+        const filteredChildren = [];
+        for (let i = 0; i < item.children.length; i++) {
+          const child = item.children[i];
+          if (isRoutePermitted(child)) {
+            filteredChildren.push(withNavigateItem(child));
+          }
+        }
+
+        if (!filteredChildren.length) return null;
+        return { ...item, children: filteredChildren };
+      } else return isRoutePermitted(item) ? withNavigateItem(item) : null;
+    });
+    Items.push({
+      type: "Menu",
+      label: "Çıkış",
+      key: "logout",
+      icon: <FontAwesomeIcon icon={faSignOutAlt} width={15} />,
+      onClick: () => dispatchAction($.LOGOUT_REQUEST),
+    });
+
+    return Items;
+  };
+
+  const currentBasePath = "/" + router.pathname.split("/")[1];
+
   return (
     <Sider
       theme="light"
+      defaultopenkeys={[currentBasePath]}
       collapsible
       collapsed={siderCollapsed}
       onCollapse={(value) =>
         dispatchAction(value ? $.COLLAPSE_SIDER : $.DECOLLAPSE_SIDER)
       }
     >
-      <Menu mode="inline" defaultSelectedKeys={[router.pathname.split("?")[0]]}>
-        {instructor && (
-          <Menu.SubMenu
-            key="students-submenu"
-            icon={<FontAwesomeIcon icon={faUserGraduate} width={15} />}
-            title="Öğrenciler"
-            disabled={unauthorizedInstructor}
-          >
-            <Menu.Item
-              key={BASE_ENDPOINT.student}
-              icon={<UnorderedListOutlined />}
-              onClick={() => router.push(`${BASE_ENDPOINT.student}?page=1`)}
-            >
-              Liste
-            </Menu.Item>
-            <Menu.Item
-              key={`${BASE_ENDPOINT.student}/create`}
-              icon={<PlusCircleOutlined />}
-              onClick={() => router.push(`${BASE_ENDPOINT.student}/create`)}
-            >
-              Oluştur
-            </Menu.Item>
-          </Menu.SubMenu>
-        )}
-        {instructor && (
-          <Menu.SubMenu
-            key="questions-submenu"
-            icon={<QuestionCircleOutlined />}
-            title="Sorular"
-            disabled={unauthorizedInstructor}
-          >
-            <Menu.Item
-              key={BASE_ENDPOINT.question}
-              icon={<UnorderedListOutlined />}
-              onClick={() => router.push(`${BASE_ENDPOINT.question}?page=1`)}
-            >
-              Liste
-            </Menu.Item>
-            <Menu.Item
-              key={`${BASE_ENDPOINT.question}/form/create`}
-              icon={<PlusCircleOutlined />}
-              onClick={() =>
-                router.push(`${BASE_ENDPOINT.question}/form/create`)
-              }
-            >
-              Oluştur
-            </Menu.Item>
-          </Menu.SubMenu>
-        )}
-        {instructor ? (
-          <Menu.SubMenu
-            key="quizzes-submenu"
-            title="Denemeler"
-            icon={<FormOutlined />}
-          >
-            <Menu.Item
-              key={BASE_ENDPOINT.quiz}
-              icon={<UnorderedListOutlined />}
-              onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
-            >
-              Liste
-            </Menu.Item>
-            <Menu.Item
-              key={`${BASE_ENDPOINT.quiz}/form/create`}
-              icon={<PlusCircleOutlined />}
-              onClick={() => router.push(`${BASE_ENDPOINT.quiz}/form/create`)}
-            >
-              Oluştur
-            </Menu.Item>
-          </Menu.SubMenu>
-        ) : (
-          <Menu.Item
-            key={BASE_ENDPOINT.quiz}
-            icon={<FormOutlined />}
-            onClick={() => router.push(`${BASE_ENDPOINT.quiz}?page=1`)}
-          >
-            Denemeler
-          </Menu.Item>
-        )}
-        {student && (
-          <Menu.Item
-            key={BASE_ENDPOINT.quiz + "/results"}
-            icon={<FontAwesomeIcon icon={faPoll} width={8} />}
-            onClick={() => router.push(`${BASE_ENDPOINT.score}?page=1`)}
-          >
-            Sonuçlar
-          </Menu.Item>
-        )}
-        <Menu.Item
-          key={BASE_ENDPOINT.profile}
-          icon={<UserOutlined />}
-          onClick={() => router.push(BASE_ENDPOINT.profile)}
-        >
-          Profil
-        </Menu.Item>
-        <Menu.Item
-          key="5"
-          icon={<FontAwesomeIcon icon={faSignOutAlt} width={15} />}
-          onClick={() => dispatchAction($.LOGOUT_REQUEST)}
-        >
-          Çıkış
-        </Menu.Item>
-      </Menu>
+      <Menu
+        mode="inline"
+        defaultSelectedKeys={[router.pathname.split("?")[0]]}
+        items={getFilteredItems()}
+      />
     </Sider>
   );
 }

@@ -6,7 +6,7 @@ function Profile() {
   return (
     <>
       <Head>
-        <title>Profil</title>
+        <title>BilsemAI | Profil</title>
         <meta name="questions" content="Profil" />
         <link rel="icon" href="/ideas.png" />
       </Head>

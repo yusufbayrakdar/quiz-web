@@ -48,6 +48,16 @@ export const BASE_ENDPOINT = {
   signin: "/signin",
   signup: "/signup",
   profile: "/profile",
+  // Admin Only
+  shape: "/shapes",
+  settings: "/settings",
+  software: "/software",
+};
+
+export const ROLES = {
+  ADMIN: "admin",
+  INSTRUCTOR: "instructor",
+  STUDENT: "student",
 };
 
 export const updateQueryString = (key, value, customUrl) => {
@@ -80,11 +90,6 @@ export const updateQueryString = (key, value, customUrl) => {
     }
   }
 };
-
-export const displayFullName = (item) =>
-  item
-    ? `${item.firstName || ""}${item.lastName ? " " + item.lastName : ""}`
-    : "";
 
 export const displayDuration = (duration) => {
   const date = moment.utc(Number(duration) * 1000);

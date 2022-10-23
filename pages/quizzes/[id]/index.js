@@ -25,7 +25,7 @@ function Quiz() {
   const [duration, setDuration] = useState();
   const [countdownApi, setCountdownApi] = useState(null);
   const [startDate, setStartDate] = useState(Date.now());
-  const [resultModalVisible, setResultModalVisible] = useState(false);
+  const [resultModalOpen, setResultModalOpen] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -35,6 +35,7 @@ function Quiz() {
       setQuestionTurn(0);
       countdownApi?.stop();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [$, dispatchAction]);
 
   useEffect(() => dispatchAction($.COLLAPSE_SIDER), [$, dispatchAction]);
@@ -46,7 +47,7 @@ function Quiz() {
     } else if (totalQuestions) {
       countdownApi?.pause();
       dispatchAction($.FINISH_QUIZ_REQUEST, Date.now() - startDate);
-      setResultModalVisible(true);
+      setResultModalOpen(true);
     }
   }, [quizSubmission, totalQuestions]);
 
@@ -113,8 +114,8 @@ function Quiz() {
         <link rel="icon" href="/ideas.png" />
       </Head>
       <ScoreModal
-        visible={resultModalVisible}
-        onClose={() => setResultModalVisible(false)}
+        open={resultModalOpen}
+        onClose={() => setResultModalOpen(false)}
       />
       {duration && activeQuiz?.questionList?.totalDocs ? (
         <div className="header">

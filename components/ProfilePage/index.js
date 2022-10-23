@@ -1,43 +1,44 @@
-import React from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
-import { Button, Card, Col, Row } from "antd";
-import { UserOutlined, CheckOutlined, EditOutlined } from "@ant-design/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChild } from "@fortawesome/free-solid-svg-icons";
+import { Card, Col, Row } from "antd";
+import {
+  UserOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCrown } from "@fortawesome/free-solid-svg-icons";
 
-import { displayFullName } from "../../utils";
+import { ROLES } from "../../utils";
 
-function ProfilePage({ studentProp }) {
-  const instructor = useSelector((state) =>
-    studentProp ? null : state.auth.instructor
-  );
-  const student = useSelector((state) => studentProp || state.auth.student);
+function ProfilePage({ userProp }) {
+  const user = useSelector((state) => userProp || state.auth.user);
 
-  if (!student && !instructor) return null;
-  const { firstName, lastName, nickname, phone, confirmed } =
-    instructor || student;
+  if (!user) return null;
+  const { fullName, nickname, phone, confirmed, role } = user;
+  const isStudent = role === ROLES.STUDENT;
+  const isInstructor = role === ROLES.INSTRUCTOR;
+  const isAdmin = role === ROLES.ADMIN;
 
   const RoleBadge = () => (
     <Row className="badge role-badge">
       <div className="badge-icon center">
-        {instructor ? (
-          <Image src="/graduation.svg" alt="Eğitmen" width={15} height={15} />
-        ) : (
-          <FontAwesomeIcon icon={faChild} />
-        )}
+        <Image
+          src={isStudent ? "/child.svg" : "/graduation.svg"}
+          alt={isStudent ? "student-icon" : "instructor-icon"}
+          width={15}
+          height={15}
+        />
       </div>
-      <div className="badge-info gMed">
-        {instructor ? "Eğitmen" : "Öğrenci"}
-      </div>
+      <div className="badge-info gMed">{isStudent ? "Öğrenci" : "Eğitmen"}</div>
     </Row>
   );
 
   const ConfirmBadge = () => (
-    <Row className="badge confirm-badge" style={{ marginLeft: 16 }}>
+    <Row className="badge confirm-badge">
       <div className="badge-icon center">
-        <CheckOutlined />
+        {confirmed ? <CheckOutlined /> : <ClockCircleOutlined />}
       </div>
       <div className="badge-info gMed">
         {confirmed ? "Onaylı" : "Onay Bekliyor"}
@@ -45,8 +46,19 @@ function ProfilePage({ studentProp }) {
     </Row>
   );
 
+  const AdminBadge = () => {
+    return (
+      <Row className="badge admin-badge">
+        <div className="badge-icon center">
+          <FontAwesomeIcon className="crown" icon={faCrown} width={20} />
+        </div>
+        <div className="badge-info gMed">{"Admin"}</div>
+      </Row>
+    );
+  };
+
   return (
-    <Styled instructor={instructor}>
+    <Styled confirmed={confirmed ? 1 : 0} isstudent={isStudent ? 1 : 0}>
       <div className="top-line" />
       <Row className="container-1">
         <Col>
@@ -56,26 +68,26 @@ function ProfilePage({ studentProp }) {
             </Col>
             <Col className="container-2">
               <div>
-                <div className="user-name gBold">
-                  {displayFullName({ firstName, lastName })}
-                </div>
+                <div className="user-name gBold">{fullName}</div>
                 <div className="user-unique-id gMed">
-                  {instructor ? phone : `@${nickname}`}
+                  {isStudent ? `@${nickname}` : phone}
                 </div>
               </div>
-              <Row>
+              <Row className="badges-container">
                 <RoleBadge />
-                {instructor && <ConfirmBadge />}
+                {isInstructor && <ConfirmBadge />}
+                {isAdmin && <AdminBadge />}
               </Row>
             </Col>
           </Row>
         </Col>
-        <Col>
+        {/* TODO: Instructor Profile Edit */}
+        {/* <Col>
           <Button className="edit-button">
             <EditOutlined />
             Düzenle
           </Button>
-        </Col>
+        </Col> */}
       </Row>
     </Styled>
   );
@@ -83,11 +95,15 @@ function ProfilePage({ studentProp }) {
 
 const Styled = styled(Card)`
   width: 73%;
-  margin-top: 50px;
+  margin-top: 30px;
   border-radius: 12px;
   position: absolute;
   overflow: hidden;
+  z-index: 1;
 
+  .badges-container {
+    gap: 10px;
+  }
   .top-line {
     width: 100%;
     height: 8px;
@@ -136,14 +152,18 @@ const Styled = styled(Card)`
     margin-top: 16px;
   }
   .role-badge {
-    background-color: ${({ theme, instructor }) =>
-      theme.colors[instructor ? "primary" : "purple"]};
+    background-color: ${({ theme, isstudent }) =>
+      theme.colors[isstudent ? "purple" : "primary"]};
+  }
+  .admin-badge {
+    background-color: ${({ theme }) => theme.colors.yellow};
   }
   .confirm-badge {
-    background-color: ${({ theme, instructor }) =>
-      theme.colors[instructor?.confirmed ? "green" : "yellow"]};
+    background-color: ${({ theme, confirmed }) =>
+      theme.colors[confirmed ? "green" : "yellow"]};
   }
   .badge-icon {
+    color: ${({ theme }) => theme.colors.white};
     margin-right: 8px;
     margin-left: 8px;
   }

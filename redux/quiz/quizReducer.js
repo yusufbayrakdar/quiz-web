@@ -8,6 +8,8 @@ const initialState = {
     creator: "",
     duration: 0,
   },
+  activeQuizStudents: [],
+  activeQuizStudentsInProgress: false,
 
   quizList: [],
   totalQuizzes: 0,
@@ -206,6 +208,18 @@ export default function quizReducer(state = initialState, { type, payload }) {
         ...state,
         finishQuizInProgress: false,
         quizResult: payload,
+      };
+
+    case $.GET_STUDENTS_OF_QUIZ_BY_INSTRUCTOR_REQUEST:
+      return {
+        ...state,
+        activeQuizStudentsInProgress: true,
+      };
+    case $.GET_STUDENTS_OF_QUIZ_BY_INSTRUCTOR_FINISHED:
+      return {
+        ...state,
+        activeQuizStudentsInProgress: false,
+        activeQuizStudents: payload,
       };
 
     default:

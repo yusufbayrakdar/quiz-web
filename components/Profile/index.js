@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { Col, Row, Tooltip } from "antd";
@@ -8,43 +7,49 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import styled from "styled-components";
-import { BASE_ENDPOINT } from "../../utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCrown } from "@fortawesome/free-solid-svg-icons";
+
+import { BASE_ENDPOINT, ROLES } from "../../utils";
 
 function Profile() {
   const router = useRouter();
-  const instructor = useSelector((state) => state.auth.instructor);
-  const student = useSelector((state) => state.auth.student);
+  const user = useSelector((state) => state.auth.user);
 
-  if (!student && !instructor) return null;
-  const { firstName, lastName, nickname, phone, confirmed } =
-    instructor || student;
+  if (!user) return null;
+  const { fullName, nickname, phone, confirmed, role } = user;
 
-  const renderIcon = () => {
-    return confirmed ? (
-      <Tooltip title="Onaylı eğitmen" placement="left">
-        <CheckCircleOutlined className="confirmed-icon" />
-      </Tooltip>
-    ) : (
-      <Tooltip title="Yöneticinin onayı bekleniyor" placement="left">
-        <WarningOutlined className="warning-icon" />
-      </Tooltip>
+  const StatusIcon = () => {
+    if ([ROLES.ADMIN, ROLES.STUDENT].includes(role)) return null;
+    return (
+      <div className="status-icon">
+        {confirmed ? (
+          <Tooltip title="Onaylı eğitmen" placement="left">
+            <CheckCircleOutlined className="confirmed-icon" />
+          </Tooltip>
+        ) : (
+          <Tooltip title="Yöneticinin onayı bekleniyor" placement="left">
+            <WarningOutlined className="warning-icon" />
+          </Tooltip>
+        )}
+      </div>
     );
   };
 
   return (
     <Styled onClick={() => router.push(BASE_ENDPOINT.profile)}>
       <div className="user-circle center">
-        <UserOutlined className="user-icon" />
-        <div className="status-icon">
-          {typeof confirmed === "boolean" && renderIcon()}
-        </div>
+        {role === ROLES.ADMIN ? (
+          <FontAwesomeIcon className="crown" icon={faCrown} width={20} />
+        ) : (
+          <UserOutlined className="user-icon" width={20} />
+        )}
+        <StatusIcon />
       </div>
       <Col>
-        <div className="user-name gBold">
-          {firstName} {lastName}
-        </div>
+        <div className="user-name gBold">{fullName}</div>
         <div className="user-identity gMed">
-          {(nickname && `@${nickname}`) || phone}
+          {nickname ? `@${nickname}` : phone}
         </div>
       </Col>
     </Styled>
@@ -56,7 +61,11 @@ const Styled = styled(Row)`
   padding: 4px;
   cursor: pointer;
   border: ${({ theme }) => theme.colors.transparentGray} 1px solid;
+  min-width: 180px;
 
+  .crown {
+    color: ${({ theme }) => theme.colors.primary};
+  }
   .user-circle {
     border-radius: 50%;
     width: 40px;
@@ -92,7 +101,7 @@ const Styled = styled(Row)`
     color: ${({ theme }) => theme.colors.gray};
     font-weight: 300;
     font-size: 12px;
-    line-height: 14px;
+    line-height: 10px;
   }
 `;
 

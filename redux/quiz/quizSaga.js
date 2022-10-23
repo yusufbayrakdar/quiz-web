@@ -14,6 +14,7 @@ const tryCreateQuizSaga = function* ({ payload }) {
     reset?.();
     showSuccessMessage("Soru başarıyla oluşturuldu");
   } catch (error) {
+    showErrorMessage(error);
     yield put($A($.CREATE_QUIZ_FINISHED));
   }
 };
@@ -27,10 +28,23 @@ const tryUpdateQuizSaga = function* ({ payload }) {
     showSuccessMessage("Soru başarıyla güncellendi", 1.5);
     if (refreshAction) yield put(refreshAction);
   } catch (error) {
-    showErrorMessage("Güncellerken bir hata oluştu");
-    console.log(error);
+    showErrorMessage(error || "Güncellerken bir hata oluştu");
   }
   yield put($A($.UPDATE_QUIZ_FINISHED));
+};
+
+const tryAssignQuizToStudentSaga = function* ({ payload }) {
+  try {
+    const refreshAction = payload.refreshAction;
+    delete payload.refreshAction;
+    yield call(Api.assignQuizToStudent, payload);
+
+    showSuccessMessage("Öğrenci listesi güncellendi", 1.5);
+    if (refreshAction) yield put(refreshAction);
+  } catch (error) {
+    showErrorMessage(error);
+  }
+  yield put($A($.ASSIGN_QUIZ_TO_STUDENT_FINISHED));
 };
 
 const tryDeleteQuizSaga = function* ({ payload }) {
@@ -39,7 +53,7 @@ const tryDeleteQuizSaga = function* ({ payload }) {
 
     yield put($A($.GET_QUIZ_LIST_REQUEST));
   } catch (error) {
-    console.log(error);
+    showErrorMessage(error);
   }
   yield put($A($.DELETE_QUIZ_FINISHED));
 };
@@ -55,7 +69,17 @@ const tryGetQuizListSaga = function* ({ payload }) {
       })
     );
   } catch (error) {
-    console.log("🤯 error", error);
+    showErrorMessage(error);
+  }
+};
+
+const tryGetStudentsOfQuizByInstructorSaga = function* ({ payload }) {
+  try {
+    const { data } = yield call(Api.getStudentsOfQuizByInstructor, payload);
+
+    yield put($A($.GET_STUDENTS_OF_QUIZ_BY_INSTRUCTOR_FINISHED, data));
+  } catch (error) {
+    showErrorMessage(error);
   }
 };
 
@@ -67,7 +91,7 @@ const tryGetQuizDetailSaga = function* ({
 
     yield put($A($.GET_QUIZ_DETAIL_FINISHED, { ...data, add }));
   } catch (error) {
-    console.log("🤯 error", error);
+    showErrorMessage(error);
   }
 };
 
@@ -79,15 +103,23 @@ const tryFinishQuizSaga = function* ({ payload: finishedAt }) {
 
     yield put($A($.FINISH_QUIZ_FINISHED, data));
   } catch (error) {
+    showErrorMessage(error);
     yield put($A($.FINISH_QUIZ_FINISHED));
-    console.log("🤯 error", error);
   }
 };
 
 export default function* quizSaga() {
   yield takeLatest($.CREATE_QUIZ_REQUEST, tryCreateQuizSaga);
   yield takeLatest($.UPDATE_QUIZ_REQUEST, tryUpdateQuizSaga);
+  yield takeLatest(
+    $.ASSIGN_QUIZ_TO_STUDENT_REQUEST,
+    tryAssignQuizToStudentSaga
+  );
   yield takeLatest($.GET_QUIZ_LIST_REQUEST, tryGetQuizListSaga);
+  yield takeLatest(
+    $.GET_STUDENTS_OF_QUIZ_BY_INSTRUCTOR_REQUEST,
+    tryGetStudentsOfQuizByInstructorSaga
+  );
   yield takeLatest($.DELETE_QUIZ_REQUEST, tryDeleteQuizSaga);
   yield takeLatest($.GET_QUIZ_DETAIL_REQUEST, tryGetQuizDetailSaga);
   yield takeLatest($.FINISH_QUIZ_REQUEST, tryFinishQuizSaga);

@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
-import { Card, Col, Divider, Row } from "antd";
-import { Button, Input } from "antd";
+import { Button, Input, Card, Col, Row } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPhone, faUser } from "@fortawesome/free-solid-svg-icons";
 
 import CreateButton from "../Buttons/CreateButton";
+import Divider from "../Divider";
 import { updateQueryString } from "../../utils";
 
 const { Search } = Input;
 
 const TableHeaderBar = ({
   baseEndpoint,
-  hideCreate,
+  showCreate,
   searchPlaceholder = "Ara...",
   showPhoneFilter = false,
   showConfirmedFilter = false,
+  showOwnerFilter = false,
 }) => {
   const router = useRouter();
   const query = router.query;
@@ -30,27 +31,37 @@ const TableHeaderBar = ({
     isActiveDefault = "All";
   }
 
+  const isOwnerQuery = query["isOwner"];
   const hasPhoneQuery = query["hasPhone"];
   const confirmedQuery = query["confirmed"];
+  let isOwnerDefault =
+    isOwnerQuery === "true" ? 1 : isOwnerQuery === "false" ? 2 : 0;
   let hasPhoneDefault =
     hasPhoneQuery === "true" ? 1 : hasPhoneQuery === "false" ? 2 : 0;
+  const [isOwner, setIsOwner] = useState(isOwnerDefault);
   const [hasPhone, setHasPhone] = useState(hasPhoneDefault);
   let confirmedDefault =
     confirmedQuery === "true" ? 1 : confirmedQuery === "false" ? 2 : 0;
   const [confirmed, setConfirmed] = useState(confirmedDefault);
 
-  function setPhone() {
+  const setOwner = () => {
+    const newState = (isOwner + 1) % 3;
+    const status = { 1: "true", 2: "false" };
+    setIsOwner(newState);
+    router.push(updateQueryString("isOwner", status[newState]));
+  };
+  const setPhone = () => {
     const newState = (hasPhone + 1) % 3;
     const status = { 1: "true", 2: "false" };
     setHasPhone(newState);
     router.push(updateQueryString("hasPhone", status[newState]));
-  }
-  function setNewConfirmed() {
+  };
+  const setNewConfirmed = () => {
     const newState = (confirmed + 1) % 3;
     const status = { 1: "true", 2: "false" };
     setConfirmed(newState);
     router.push(updateQueryString("confirmed", status[newState]));
-  }
+  };
   const onSearch = (value) => {
     if (value.trim())
       router.push(`${baseEndpoint}?search=${encodeURIComponent(value.trim())}`);
@@ -85,11 +96,22 @@ const TableHeaderBar = ({
         </Col>
 
         <Row className="flex items-center">
-          {(showConfirmedFilter || showPhoneFilter) && (
+          {(showConfirmedFilter || showPhoneFilter || showOwnerFilter) && (
             <Divider type={"vertical"}></Divider>
           )}
+          {showOwnerFilter && (
+            <Button onClick={setOwner} className="center">
+              <FontAwesomeIcon icon={faUser} width={20} />
+
+              {isOwner !== 0 && (
+                <div style={{ marginLeft: 2 }}>
+                  {isOwner === 1 ? "(+)" : "(-)"}
+                </div>
+              )}
+            </Button>
+          )}
           {showPhoneFilter && (
-            <Button onClick={() => setPhone()} className="center">
+            <Button onClick={setPhone} className="center">
               <FontAwesomeIcon icon={faPhone} width={20} />
 
               {hasPhone !== 0 && (
@@ -100,7 +122,7 @@ const TableHeaderBar = ({
             </Button>
           )}
           {showConfirmedFilter && (
-            <Button onClick={() => setNewConfirmed()} className="center">
+            <Button onClick={setNewConfirmed} className="center">
               <FontAwesomeIcon icon={faCheck} width={20} />
 
               {confirmed !== 0 && (
@@ -112,11 +134,10 @@ const TableHeaderBar = ({
           )}
         </Row>
 
-        {hideCreate ? null : (
+        {showCreate && (
           <Col>
             <Divider type={"vertical"}></Divider>
             <CreateButton onClick={onCreate} />
-            <Divider type={"vertical"}></Divider>
           </Col>
         )}
       </Row>

@@ -1,4 +1,3 @@
-import { Card } from "antd";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -7,12 +6,14 @@ import styled from "styled-components";
 
 import CustomTable from "../../components/CustomTable";
 import useRedux from "../../hooks/useRedux";
-import { BASE_ENDPOINT, displayDate } from "../../utils";
+import { BASE_ENDPOINT, displayDate, ROLES } from "../../utils";
 
 const defaultPageSize = 12;
 
 function Scores() {
   const { dispatchAction, $ } = useRedux();
+  const user = useSelector((state) => state.auth.user);
+  const isStudent = user?.role === ROLES.STUDENT;
   const scoreList = useSelector((state) => state.score.scoreList);
   const totalScores = useSelector((state) => state.score.totalScores);
   const router = useRouter();
@@ -27,11 +28,28 @@ function Scores() {
 
   const columns = [
     {
+      title: "Öğrenci",
+      dataIndex: "student",
+      render: (student) => (
+        <NameWithLink
+          onClick={() =>
+            router.push(BASE_ENDPOINT.student + "/" + student?._id)
+          }
+        >
+          {student?.fullName || "-"}
+        </NameWithLink>
+      ),
+    },
+    {
       title: "Deneme",
       dataIndex: "quiz",
       render: (quiz) => (
         <NameWithLink
-          onClick={() => router.push(BASE_ENDPOINT.quiz + "/" + quiz?._id)}
+          onClick={() =>
+            router.push(
+              BASE_ENDPOINT.quiz + (isStudent ? "/" : "/detail/") + quiz?._id
+            )
+          }
         >
           {quiz?.name || "-"}
         </NameWithLink>
@@ -63,6 +81,8 @@ function Scores() {
     },
   ];
 
+  if (user?.role === ROLES.STUDENT) columns.shift();
+
   return (
     <div>
       <Container>
@@ -88,9 +108,9 @@ const NameWithLink = styled.div`
   cursor: pointer;
 `;
 
-const Container = styled(Card)`
+const Container = styled.div`
   width: 70vw;
-  margin: 20px 0;
+  margin: 50px 0;
 `;
 
 export default Scores;
