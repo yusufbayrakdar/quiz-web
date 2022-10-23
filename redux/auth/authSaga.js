@@ -19,7 +19,7 @@ const tryLoginSaga = function* ({ payload }) {
 
     localStorage.setItem(TOKEN, token);
     yield put($A($.LOGIN_SUCCESS, user));
-    router.push(BASE_ENDPOINT.dashboard);
+    router.push(BASE_ENDPOINT.quiz);
   } catch (error) {
     showErrorMessage("Hatalı Email/Şifre");
     yield put($A($.LOGIN_FAILURE));
@@ -37,7 +37,7 @@ const tryAutoLoginSaga = function* () {
 
       yield put($A($.LOGIN_SUCCESS, data));
       yield put($A($.AUTO_LOGIN_SUCCESS));
-      if (router.pathname === "/") router.push(BASE_ENDPOINT.dashboard);
+      if (router.pathname === "/") router.push(BASE_ENDPOINT.quiz);
     } else {
       router.push(returnPage);
       yield put($A($.AUTO_LOGIN_FAILURE));

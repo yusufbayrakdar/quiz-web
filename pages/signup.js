@@ -13,7 +13,6 @@ import Animated from "../components/Animated";
 function SignUp() {
   const { dispatchAction, $ } = useRedux();
   const router = useRouter();
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
@@ -24,13 +23,6 @@ function SignUp() {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-
-  useEffect(() => {
-    if (loggedIn) {
-      form.resetFields();
-      router.push(BASE_ENDPOINT.dashboard);
-    }
-  }, [loggedIn, form, router]);
 
   return (
     <Styled className="center">

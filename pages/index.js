@@ -5,16 +5,13 @@ import styled from "styled-components";
 import { Button, Col, Row } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
 
 import Animated from "../components/Animated";
 import { BASE_ENDPOINT, BRAND_NAME } from "../utils";
 import { useRouter } from "next/router";
 
 function Index() {
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
   const router = useRouter();
-  if (loggedIn) router.push(BASE_ENDPOINT.dashboard);
   const rate = 0.68;
 
   const renderInfo = (key, value) => {

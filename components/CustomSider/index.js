@@ -6,7 +6,7 @@ import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 
 import useRedux from "../../hooks/useRedux";
-import { ROLES, TOKEN } from "../../utils";
+import { BASE_ENDPOINT, ROLES, TOKEN } from "../../utils";
 import { isRoutePermitted } from "../../config/permission";
 import SIDER_ROUTES from "../../utils/siderRoutes";
 
@@ -34,7 +34,7 @@ function CustomSider() {
     user?.role === ROLES.INSTRUCTOR && !user?.confirmed;
   useEffect(() => {
     if (user && isInForbiddenPath) {
-      router.push("/dashboard");
+      router.push(BASE_ENDPOINT.quiz);
     }
   }, [
     user,

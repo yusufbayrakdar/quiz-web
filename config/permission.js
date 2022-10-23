@@ -7,17 +7,16 @@ const ROLES = {
 };
 
 export const CAN = {
-  ASSIGN: "ASSIGN",
-  ACTIVATE: "ACTIVATE",
   CREATE: "CREATE",
-  CONFIRM_EMAIL: "CONFIRM_EMAIL",
-  DEACTIVATE: "DEACTIVATE",
-  DETAIL_VIEW: "DETAIL_VIEW",
   EDIT: "EDIT",
   DELETE: "DELETE",
-  IMAGE_UPLOAD: "IMAGE_UPLOAD",
   LIST_VIEW: "LIST_VIEW",
   DETAIL_VIEW: "DETAIL_VIEW",
+  ASSIGN: "ASSIGN",
+  ACTIVATE: "ACTIVATE",
+  DEACTIVATE: "DEACTIVATE",
+  IMAGE_UPLOAD: "IMAGE_UPLOAD",
+  CONFIRM_EMAIL: "CONFIRM_EMAIL",
 };
 
 export const D = {
@@ -33,24 +32,24 @@ export const D = {
 // prettier-ignore
 export const PERMITS = {
   [ROLES.ADMIN]: {
-    [D.question]: [CAN.ACTIVATE, CAN.CREATE, CAN.DEACTIVATE, CAN.EDIT, CAN.LIST_VIEW, CAN.DETAIL_VIEW],
-    [D.quiz]: [CAN.ACTIVATE, CAN.CREATE, CAN.DEACTIVATE, CAN.EDIT, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ASSIGN, CAN.DELETE],
-    [D.student]: [CAN.ACTIVATE, CAN.CREATE, CAN.DEACTIVATE, CAN.EDIT, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ASSIGN, CAN.DELETE],
-    [D.instructor]: [CAN.ACTIVATE, CAN.CREATE, CAN.DEACTIVATE, CAN.EDIT, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ASSIGN],
-    [D.shape]: [CAN.ACTIVATE, CAN.CREATE, CAN.DEACTIVATE, CAN.EDIT, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.IMAGE_UPLOAD],
+    [D.question]: [CAN.CREATE, CAN.EDIT, CAN.DELETE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ACTIVATE, CAN.DEACTIVATE],
+    [D.quiz]: [CAN.CREATE, CAN.EDIT, CAN.DELETE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ASSIGN, CAN.ACTIVATE, CAN.DEACTIVATE],
+    [D.student]: [CAN.CREATE, CAN.EDIT, CAN.DELETE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ASSIGN, CAN.ACTIVATE, CAN.DEACTIVATE],
+    [D.instructor]: [CAN.CREATE, CAN.EDIT, CAN.DELETE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ACTIVATE, CAN.DEACTIVATE, CAN.ASSIGN],
+    [D.shape]: [CAN.CREATE, CAN.EDIT, CAN.DELETE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ACTIVATE, CAN.DEACTIVATE, CAN.IMAGE_UPLOAD],
     [D.score]: [CAN.LIST_VIEW, CAN.DETAIL_VIEW],
   },
   [ROLES.INSTRUCTOR]: {
     [D.question]: [CAN.CREATE, CAN.LIST_VIEW, CAN.DETAIL_VIEW],
     [D.quiz]: [CAN.CREATE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.ASSIGN],
-    [D.student]: [CAN.CREATE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.DELETE],
-    [D.instructor]: [CAN.CREATE, CAN.LIST_VIEW, CAN.DETAIL_VIEW],
-    [D.shape]: [CAN.CREATE, CAN.LIST_VIEW, CAN.DETAIL_VIEW, CAN.IMAGE_UPLOAD],
-    [D.score]: [CAN.LIST_VIEW],
+    [D.student]: [CAN.CREATE, CAN.DELETE, CAN.LIST_VIEW, CAN.DETAIL_VIEW],
+    [D.instructor]: [CAN.LIST_VIEW, CAN.DETAIL_VIEW],
+    [D.shape]: [CAN.LIST_VIEW, CAN.DETAIL_VIEW],
+    [D.score]: [CAN.LIST_VIEW, CAN.DETAIL_VIEW],
   },
   [ROLES.STUDENT]: {
     [D.quiz]: [CAN.LIST_VIEW, CAN.DETAIL_VIEW],
-    [D.score]: [CAN.LIST_VIEW],
+    [D.score]: [CAN.LIST_VIEW, CAN.DETAIL_VIEW],
   },
 };
 
@@ -77,18 +76,11 @@ const routes = {
   Profile: "/profile",
 };
 
-const initialPage = {
-  [ROLES.ADMIN]: routes.Dashboard,
-  [ROLES.STUDENT]: routes.Dashboard,
-  [ROLES.INSTRUCTOR]: routes.Dashboard,
-};
-
 export const ROUTES = routes;
 
 const PERMIT_FOR_ROUTES = {
   [ROLES.ADMIN]: Object.values(routes),
   [ROLES.INSTRUCTOR]: [
-    routes.Dashboard,
     routes.Students,
     routes.StudentDetail,
     routes.StudentsCreate,
@@ -102,33 +94,10 @@ const PERMIT_FOR_ROUTES = {
     routes.Scores,
     routes.Profile,
   ],
-  [ROLES.STUDENT]: [
-    routes.Dashboard,
-    routes.Quizzes,
-    routes.Quiz,
-    routes.Scores,
-    routes.Profile,
-  ],
+  [ROLES.STUDENT]: [routes.Quizzes, routes.Quiz, routes.Scores, routes.Profile],
 };
 
 export const isRoutePermitted = ({ pathname }) => {
   const { user } = store.getState().auth;
   return PERMIT_FOR_ROUTES[user?.role]?.includes(pathname);
-};
-
-export const filterPermittedItems = (routes) => {
-  const { user } = store.getState().auth;
-
-  let filteredRoutes = routes.filter(({ path }) =>
-    PERMIT_FOR_ROUTES[user?.role]?.includes(path)
-  );
-
-  if (!filteredRoutes.find((e) => e.path === ROUTES.Dashboard)) {
-    filteredRoutes = [
-      { path: ROUTES.Dashboard, name: "", redirect: initialPage[user?.role] },
-      ...filteredRoutes,
-    ];
-  }
-
-  return filteredRoutes;
 };
