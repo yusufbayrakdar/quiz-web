@@ -32,6 +32,7 @@ function Scores() {
       dataIndex: "student",
       render: (student) => (
         <NameWithLink
+          available={student?._id ? 1 : 0}
           onClick={() =>
             router.push(BASE_ENDPOINT.student + "/" + student?._id)
           }
@@ -43,17 +44,22 @@ function Scores() {
     {
       title: "Deneme",
       dataIndex: "quiz",
-      render: (quiz) => (
-        <NameWithLink
-          onClick={() =>
-            router.push(
-              BASE_ENDPOINT.quiz + (isStudent ? "/" : "/detail/") + quiz?._id
-            )
-          }
-        >
-          {quiz?.name || "-"}
-        </NameWithLink>
-      ),
+      render: (quiz) => {
+        console.log(quiz);
+        return (
+          <NameWithLink
+            available={quiz?._id ? 1 : 0}
+            onClick={() =>
+              quiz?._id &&
+              router.push(
+                BASE_ENDPOINT.quiz + (isStudent ? "/" : "/detail/") + quiz?._id
+              )
+            }
+          >
+            {quiz?.name || "-"}
+          </NameWithLink>
+        );
+      },
     },
     {
       title: "Skor",
@@ -104,8 +110,9 @@ function Scores() {
 }
 
 const NameWithLink = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
+  color: ${({ theme, available }) =>
+    theme.colors[available ? "primary" : "black"]};
+  cursor: ${({ available }) => (available ? "pointer" : "default")};
 `;
 
 const Container = styled.div`
