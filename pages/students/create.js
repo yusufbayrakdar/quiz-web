@@ -11,7 +11,7 @@ function StudentCreate() {
 
   const Header = () => (
     <Head>
-      <title>BilsemAI | Öğrenci Kayıt</title>
+      <title>Öğrenci Kayıt | BilsemAI</title>
       <meta name="description" content="Öğrenci Kayıt" />
       <link rel="icon" href="/ideas.png" />
     </Head>

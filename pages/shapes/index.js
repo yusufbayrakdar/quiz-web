@@ -75,7 +75,7 @@ function Shapes() {
   return (
     <PageContainer>
       <Head>
-        <title>Admin - shapes</title>
+        <title>Şekiller | BilsemAI</title>
         <meta name="description" content="shapes" />
         <link rel="icon" href="/ideas.png" />
       </Head>

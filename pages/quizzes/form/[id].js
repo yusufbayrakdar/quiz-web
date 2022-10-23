@@ -103,10 +103,11 @@ function QuizForm() {
       });
   }, [form, activeQuiz]);
 
+  const pageTitle = editMode ? "Deneme Düzenle" : "Deneme Oluştur";
   const Header = () => (
     <Head>
-      <title>BilsemAI | Sorular</title>
-      <meta name="quizzes" content="Sorular" />
+      <title>{pageTitle} | BilsemAI</title>
+      <meta name="quizzes" content={pageTitle} />
       <link rel="icon" href="/ideas.png" />
     </Head>
   );

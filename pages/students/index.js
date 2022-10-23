@@ -179,7 +179,7 @@ function Students() {
   return (
     <Styled>
       <Head>
-        <title>BilsemAI | Öğrenciler</title>
+        <title>Öğrenciler | BilsemAI</title>
         <meta name="description" content="Öğrenciler" />
         <link rel="icon" href="/ideas.png" />
       </Head>

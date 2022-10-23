@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Head from "next/head";
 import { useSelector } from "react-redux";
 import { Card, Col, Row } from "antd";
 import {
@@ -57,8 +58,28 @@ function ProfilePage({ userProp }) {
     );
   };
 
+  const t = (role) => {
+    switch (role) {
+      case ROLES.STUDENT:
+        return "Öğrenci";
+      case ROLES.INSTRUCTOR:
+        return "Eğitmen";
+      case ROLES.ADMIN:
+        return "Admin";
+
+      default:
+        return "";
+    }
+  };
   return (
     <Styled confirmed={confirmed ? 1 : 0} isstudent={isStudent ? 1 : 0}>
+      <Head>
+        <title>
+          {fullName} · {t(role)} | BilsemAI
+        </title>
+        <meta name="students" content="Öğrenci Sayfası" />
+        <link rel="icon" href="/ideas.png" />
+      </Head>
       <div className="top-line" />
       <Row className="container-1">
         <Col>

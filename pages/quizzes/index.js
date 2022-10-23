@@ -181,7 +181,7 @@ function Quizzes() {
   return (
     <div>
       <Head>
-        <title>Denemeler</title>
+        <title>Denemeler | BilsemAI</title>
         <meta name="quizzes" content="Denemeler" />
         <link rel="icon" href="/ideas.png" />
       </Head>

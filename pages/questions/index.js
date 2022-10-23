@@ -134,7 +134,7 @@ function Questions() {
   return (
     <Styled>
       <Head>
-        <title>Sorular</title>
+        <title>Sorular | BilsemAI</title>
         <meta name="questions" content="Sorular" />
         <link rel="icon" href="/ideas.png" />
       </Head>

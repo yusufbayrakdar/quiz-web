@@ -173,10 +173,11 @@ function QuizDetail() {
     { label: "Sorular", key: "questions", children: <QuestionPaginate /> },
   ];
 
+  const pageTitle = activeQuiz?.name ? activeQuiz?.name + " · " : "";
   return (
     <Styled>
       <Head>
-        <title>BilsemAI | Deneme Detayı</title>
+        <title>{pageTitle}Deneme | BilsemAI</title>
         <meta name="quizzes" content="Deneme Detayı" />
         <link rel="icon" href="/ideas.png" />
       </Head>

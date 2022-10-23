@@ -85,11 +85,6 @@ function StudentDetail() {
 
   return (
     <>
-      <Head>
-        <title>BilsemAI | Öğrenci Sayfası</title>
-        <meta name="students" content="Öğrenci Sayfası" />
-        <link rel="icon" href="/ideas.png" />
-      </Head>
       <ProfilePage userProp={activeStudent} />
 
       <StyledTable>

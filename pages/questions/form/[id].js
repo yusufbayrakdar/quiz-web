@@ -116,10 +116,11 @@ function QuestionCreate() {
     }
   }, [$, dispatchAction, resetOptions, resetForm]);
 
+  const pageTitle = editMode ? "Soru Düzenle" : "Soru Oluştur";
   const Header = () => (
     <Head>
-      <title>Soru Oluştur</title>
-      <meta name="description" content="Soru Oluştur" />
+      <title>{pageTitle} | Bilsem AI</title>
+      <meta name="description" content={pageTitle} />
       <link rel="icon" href="/ideas.png" />
     </Head>
   );

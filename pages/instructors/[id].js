@@ -12,6 +12,7 @@ import CustomTable from "../../components/CustomTable";
 import { BASE_ENDPOINT, ROLES } from "../../utils";
 import SelectStudentModalForInstructor from "../../components/Modals/SelectStudentModalForInstructor";
 import Copyable from "../../components/Copyable";
+import ProfilePage from "../../components/ProfilePage";
 
 const defaultPageSize = 10;
 
@@ -72,12 +73,11 @@ function InstructorDetail() {
   ];
 
   if (!activeUser) return null;
-  const { fullName, phone } = activeUser;
-
+  const { fullName } = activeUser;
   return (
-    <InstructorsContainer>
+    <Container>
       <Head>
-        <title>BilsemAI | Eğitmenler - {fullName}</title>
+        <title>{fullName} · Eğitmen | BilsemAI</title>
         <meta name="description" content="Eğitmenler" />
         <link rel="icon" href="/ideas.png" />
       </Head>
@@ -96,13 +96,8 @@ function InstructorDetail() {
           },
         }}
       />
-      <Card>
-        <div className="fullName gBold">{fullName}</div>
-        <div className="phone gMed">{`(${phone?.slice(0, 3)}) ${phone?.slice(
-          4
-        )}`}</div>
-      </Card>
-      <Card>
+      <ProfilePage userProp={activeUser} />
+      <Card className="table">
         <div className="table-header">
           <div className="card-title gBold">Kayıtlı Öğrenciler</div>
           <div
@@ -122,14 +117,18 @@ function InstructorDetail() {
           hideOnSinglePage={false}
         />
       </Card>
-    </InstructorsContainer>
+    </Container>
   );
 }
 
-export const InstructorsContainer = styled.div`
+export const Container = styled.div`
   width: 83%;
   margin-top: 10px;
 
+  .table {
+    margin-top: 200px;
+    width: 73vw;
+  }
   .student-name {
     color: ${({ theme }) => theme.colors.primary};
     cursor: pointer;
@@ -154,16 +153,6 @@ export const InstructorsContainer = styled.div`
     &:hover {
       background-color: ${({ theme }) => theme.colors.gray};
     }
-  }
-  .fullName {
-    font-size: 24px;
-    line-height: 1.2;
-    color: ${({ theme }) => theme.colors.primaryTextColor};
-  }
-  .phone {
-    font-size: 16px;
-    line-height: 1;
-    color: ${({ theme }) => theme.colors.secondaryTextColor};
   }
   .card-title {
     font-size: 20px;

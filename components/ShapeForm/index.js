@@ -50,15 +50,16 @@ function ShapeForm({ _id }) {
     }
   }, [activeShape, form, _id]);
 
+  const pageTitle = _id ? "Şekil Düzenle" : "Şekil Oluştur";
   return (
     <div className="m-auto" style={{ width: "80%" }}>
       <Head>
-        <title>Şekil Oluştur</title>
+        <title>{pageTitle} | BilsemAI</title>
         <meta name="description" content="Şekil Oluştur" />
         <link rel="icon" href="/ideas.png" />
       </Head>
       <Card>
-        <span className="font-bold">Şekil Oluştur</span>
+        <span className="font-bold">{pageTitle}</span>
         <Divider />
         <Form
           form={form}

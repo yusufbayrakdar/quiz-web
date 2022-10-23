@@ -98,8 +98,8 @@ function Instructors() {
   return (
     <div style={{ width: "83%" }}>
       <Head>
-        <title>Admin - Eğitmenler</title>
-        <meta name="description" content="Admin - Eğitmenler" />
+        <title>Eğitmenler | BilsemAI</title>
+        <meta name="description" content="Eğitmenler" />
         <link rel="icon" href="/ideas.png" />
       </Head>
       <TableHeaderBar

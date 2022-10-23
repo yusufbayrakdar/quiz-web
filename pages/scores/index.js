@@ -87,7 +87,7 @@ function Scores() {
     <div>
       <Container>
         <Head>
-          <title>Sonuçlar</title>
+          <title>Sonuçlar | BilsemAI</title>
           <meta name="score" content="Sonuçlar" />
           <link rel="icon" href="/ideas.png" />
         </Head>
